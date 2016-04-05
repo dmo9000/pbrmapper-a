@@ -1,0 +1,10 @@
+In order to build the source code successfully on Windows: 
+
+  export PKG_CONFIG_PATH=/usr/i686-w64-mingw32/sys-root/mingw/lib/pkgconfig
+
+In order to run the executable, the directory containing Mingw32 DLL's
+needs to be added to the PATH variable, eg: 
+
+  export PATH=$PATH:/usr/i686-w64-mingw32/sys-root/mingw/bin
+
+(this is something that should be handled by a Windows installer)
