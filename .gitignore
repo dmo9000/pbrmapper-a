@@ -1,2 +1,4 @@
+src/autom4te.cache/
 src/simple.exe
 src/simple
+src/*~
