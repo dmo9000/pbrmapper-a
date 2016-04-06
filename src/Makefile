@@ -1,6 +1,6 @@
 
 
-simple: 
+simple: main.cc 
 	g++ main.cc -std=c++11  -o simple `pkg-config gtkmm-3.0 --cflags --libs`
 
 

@@ -1,14 +1,14 @@
 #include <gtkmm.h>
 #include <iostream>
 
-Gtk::Window* pDialog = nullptr;
+Gtk::Window* pMainWindow = nullptr;
 Gtk::DrawingArea* pDrawingArea = nullptr;
 
 static
 void on_button_clicked()
 {
-  if(pDialog)
-    pDialog->hide(); //hide() will cause main::run() to end.
+  if(pMainWindow)
+    pMainWindow->hide(); //hide() will cause main::run() to end.
 }
 
 int main (int argc, char **argv)
@@ -38,10 +38,13 @@ int main (int argc, char **argv)
   }
 
   //Get the GtkBuilder-instantiated Dialog:
-  refBuilder->get_widget("applicationwindow1", pDialog);
+  refBuilder->get_widget("applicationwindow1", pMainWindow);
+
+	pMainWindow->set_title("Substance Instainer");
+
   refBuilder->get_widget("drawingarea1", pDrawingArea);
 
-  if(pDialog)
+  if(pMainWindow)
   {
     //Get the GtkBuilder-instantiated Button, and connect a signal handler:
     Gtk::ImageMenuItem* pButton = nullptr;
@@ -51,10 +54,10 @@ int main (int argc, char **argv)
       pButton->signal_activate().connect( sigc::ptr_fun(on_button_clicked) );
     }
 
-    app->run(*pDialog);
+    app->run(*pMainWindow);
   }
 
-  delete pDialog;
+  delete pMainWindow;
 
   return 0;
 }
