@@ -167,9 +167,15 @@
           </packing>
         </child>
         <child>
-          <object class="GtkDrawingArea" id="drawingarea1">
+          <object class="GtkViewport" id="viewport1">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
+            <child>
+              <object class="GtkDrawingArea" id="drawingarea1">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+              </object>
+            </child>
           </object>
           <packing>
             <property name="expand">True</property>
