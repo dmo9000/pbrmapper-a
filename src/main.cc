@@ -3,6 +3,7 @@
 
 Gtk::Window* pMainWindow = nullptr;
 Gtk::DrawingArea* pDrawingArea = nullptr;
+Gtk::Statusbar* pStatusBar = nullptr;
 
 static
 void on_button_clicked()
@@ -39,10 +40,12 @@ int main (int argc, char **argv)
 
   //Get the GtkBuilder-instantiated Dialog:
   refBuilder->get_widget("applicationwindow1", pMainWindow);
-
 	pMainWindow->set_title("Substance Instainer");
-
   refBuilder->get_widget("drawingarea1", pDrawingArea);
+  pDrawingArea->show_now();
+  refBuilder->get_widget("statusbar1", pStatusBar);
+
+	pStatusBar->push("Welcome to Substance Instainer!");
 
   if(pMainWindow)
   {
