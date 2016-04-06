@@ -48,7 +48,7 @@ int main (int argc, char **argv)
     refBuilder->get_widget("imagemenuitem5", pButton);
     if(pButton)
     {
-      //pButton->signal_clicked().connect( sigc::ptr_fun(on_button_clicked) );
+      pButton->signal_activate().connect( sigc::ptr_fun(on_button_clicked) );
     }
 
     app->run(*pDialog);
