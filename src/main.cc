@@ -2,6 +2,7 @@
 #include <iostream>
 
 Gtk::Window* pDialog = nullptr;
+Gtk::DrawingArea* pDrawingArea = nullptr;
 
 static
 void on_button_clicked()
@@ -38,14 +39,16 @@ int main (int argc, char **argv)
 
   //Get the GtkBuilder-instantiated Dialog:
   refBuilder->get_widget("applicationwindow1", pDialog);
+  refBuilder->get_widget("drawingarea1", pDrawingArea);
+
   if(pDialog)
   {
     //Get the GtkBuilder-instantiated Button, and connect a signal handler:
-    Gtk::Button* pButton = nullptr;
-    refBuilder->get_widget("quit_button", pButton);
+    Gtk::ImageMenuItem* pButton = nullptr;
+    refBuilder->get_widget("imagemenuitem5", pButton);
     if(pButton)
     {
-      pButton->signal_clicked().connect( sigc::ptr_fun(on_button_clicked) );
+      //pButton->signal_clicked().connect( sigc::ptr_fun(on_button_clicked) );
     }
 
     app->run(*pDialog);
