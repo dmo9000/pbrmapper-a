@@ -6,6 +6,27 @@
 
 #define M_PI           3.14159265358979323846
 
+GType Clock::gtype = 0;
+
+Clock::Clock () :
+  Glib::ObjectBase ("customwidget")
+{
+}
+
+Glib::ObjectBase *
+Clock::wrap_new (GObject *o)
+{
+  if (gtk_widget_is_toplevel (GTK_WIDGET (o)))
+    {
+      return new Clock (GTK_ENTRY (o));
+    }
+  else
+    {
+      return Gtk::manage(new Clock (GTK_ENTRY (o)));
+    }
+}
+
+
 Clock::Clock()
 : m_radius(0.42), m_line_width(0.05)
 {
@@ -121,4 +142,18 @@ bool Clock::on_timeout()
         win->invalidate_rect(r, false);
     }
     return true;
+}
+
+void Clock::register_type ()
+{
+
+	if (gtype) 
+		return;
+
+  Clock dummy;
+  GtkWidget *widget = GTK_WIDGET(dummy.gobj());
+  gtype = G_OBJECT_TYPE (widget);
+  
+  Glib::wrap_register (gtype, Clock::wrap_new);
+
 }

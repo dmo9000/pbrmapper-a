@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<glade-catalog name="customwidgets" library="customwidgetsglade" depends="gtk+">
+ 
+  <init-function>custom_widgets_glade_init</init-function>
+ 
+  <glade-widget-classes>
+    <glade-widget-class name="gtkmm__CustomObject_customwidget" generic-name="customwidget" icon-name="widget-gtk-entry" title="Custom Widget">
+    </glade-widget-class>
+  </glade-widget-classes>
+ 
+  <glade-widget-group name="customwidgets" title="Custom Widgets" >
+    <glade-widget-class-ref name="gtkmm__CustomObject_customwidget" />
+  </glade-widget-group>
+ 
+</glade-catalog>

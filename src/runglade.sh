@@ -1,0 +1,1 @@
+GLADE_CATALOG_SEARCH_PATH=glade/catalogs glade

@@ -51,11 +51,6 @@ int main (int argc, char **argv)
 	pStatusBar->push("Welcome to Substance Instainer!");
   refBuilder->get_widget("viewport1", pViewPort);
 
-  Gtk::Window win;
-  Clock c;
-  win.add(c);
-  c.show();	
-
   if(pMainWindow)
   {
     //Get the GtkBuilder-instantiated Button, and connect a signal handler:
