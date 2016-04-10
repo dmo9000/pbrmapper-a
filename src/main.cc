@@ -1,9 +1,13 @@
 #include <gtkmm.h>
 #include <iostream>
+#include <assert.h>
+#include "clock.h"
+
 
 Gtk::Window* pMainWindow = nullptr;
 Gtk::DrawingArea* pDrawingArea = nullptr;
 Gtk::Statusbar* pStatusBar = nullptr;
+Gtk::Viewport *pViewPort = nullptr;
 
 static
 void on_button_clicked()
@@ -44,8 +48,9 @@ int main (int argc, char **argv)
   refBuilder->get_widget("drawingarea1", pDrawingArea);
   pDrawingArea->show_now();
   refBuilder->get_widget("statusbar1", pStatusBar);
-
 	pStatusBar->push("Welcome to Substance Instainer!");
+
+  refBuilder->get_widget("viewport1", pViewPort);
 
   if(pMainWindow)
   {
