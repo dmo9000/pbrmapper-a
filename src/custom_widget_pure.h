@@ -3,7 +3,7 @@
  
 #include <gtkmm.h>
  
-class CustomWidget : public Gtk::Entry
+class CustomWidget : public Gtk::DrawingArea
 {
 };
  
