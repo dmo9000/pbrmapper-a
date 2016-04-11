@@ -20,7 +20,9 @@ public:
 protected:
 	bool on_timeout();
   bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
-
+  double m_radius = 0.42;
+  double m_line_width = 0.05;
+// //: m_radius(0.42), m_line_width(0.05)
 };
  
 #endif
