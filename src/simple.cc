@@ -2,10 +2,12 @@
 #include <iostream>
 #include <assert.h>
 //#include "clock.h"
+#include "custom_widget.h"
 #include "custom_widget_glade.h"
 
 Gtk::Window* pMainWindow = nullptr;
-//Gtk::DrawingArea* pDrawingArea = nullptr;
+//Gtk::DrawingArea* pCustomWidget = nullptr;
+CustomWidget *pCustomWidget = nullptr;
 Gtk::Statusbar* pStatusBar = nullptr;
 Gtk::Viewport *pViewPort = nullptr;
 
@@ -47,11 +49,12 @@ int main (int argc, char **argv)
   //Get the GtkBuilder-instantiated Dialog:
   refBuilder->get_widget("applicationwindow1", pMainWindow);
 	pMainWindow->set_title("Substance Instainer");
-  //refBuilder->get_widget("drawingarea1", pDrawingArea);
-  //pDrawingArea->show_now();
   refBuilder->get_widget("statusbar1", pStatusBar);
 	pStatusBar->push("Welcome to Substance Instainer!");
   refBuilder->get_widget("viewport1", pViewPort);
+
+  refBuilder->get_widget("customwidget1", pCustomWidget);
+  pCustomWidget->show_now();
 
   if(pMainWindow)
   {

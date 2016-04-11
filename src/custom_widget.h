@@ -11,11 +11,16 @@ private:
  
   CustomWidget (GtkDrawingArea *gobj);
   CustomWidget ();
- 
   static Glib::ObjectBase * wrap_new (GObject* o);
+  
  
 public:
   static void register_type ();
+
+protected:
+	bool on_timeout();
+  bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
+
 };
  
 #endif
