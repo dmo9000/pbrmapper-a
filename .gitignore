@@ -2,3 +2,6 @@ src/autom4te.cache/
 src/simple.exe
 src/simple
 src/*~
+src/custom_widget_example
+src/libcustomwidgetsglade.so
+

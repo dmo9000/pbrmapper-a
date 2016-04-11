@@ -1,11 +1,11 @@
 #include <gtkmm.h>
 #include <iostream>
 #include <assert.h>
-#include "clock.h"
-
+//#include "clock.h"
+#include "custom_widget_glade.h"
 
 Gtk::Window* pMainWindow = nullptr;
-Gtk::DrawingArea* pDrawingArea = nullptr;
+//Gtk::DrawingArea* pDrawingArea = nullptr;
 Gtk::Statusbar* pStatusBar = nullptr;
 Gtk::Viewport *pViewPort = nullptr;
 
@@ -19,6 +19,8 @@ void on_button_clicked()
 int main (int argc, char **argv)
 {
   auto app = Gtk::Application::create(argc, argv, "org.gtkmm.example");
+
+  custom_widgets_register();
 
   //Load the GtkBuilder file and instantiate its widgets:
   auto refBuilder = Gtk::Builder::create();
