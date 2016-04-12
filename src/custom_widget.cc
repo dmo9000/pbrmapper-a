@@ -64,13 +64,32 @@ bool CustomWidget::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
   const int height = allocation.get_height();
 
   cr->scale(width, height);
-  cr->translate(0.5, 0.5);
+  cr->translate(0.1, 0.1);
   cr->set_line_width(m_line_width);
   cr->save();
-  //cr->set_source_rgba(0.337, 0.612, 0.117, 0.9);   // green
-  cr->set_source_rgba(0.2, 0.2, 0.2, 1.0);   // green
+  //cr->set_source_rgba(0.337, 0.612, 0.117, 0.9);   
+  cr->set_source_rgba(0.2, 0.2, 0.2, 1.0);   
 
   cr->paint();
+
+  cr->set_source_rgba(0.8, 0.8, 0.8, 1.0);   
+
+  cr->set_line_width(0.5);
+
+  //cr->translate(-1920, -1080);
+  //
+  
+ 		cr->move_to(0,0);
+		cr->line_to(1920, 1080);
+		cr->stroke();
+
+  //for (int y = 0 ; y < 1080 ; y +=16) {
+	 //   cr->move_to(-1920, 0);
+	  //  cr->line_to(y, 1920);
+   // 	cr->stroke();
+//			std::cout << "y = " << y;
+//			}
+
   cr->restore();
 
 	return true;
