@@ -67,7 +67,9 @@ bool CustomWidget::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
   cr->translate(0.5, 0.5);
   cr->set_line_width(m_line_width);
   cr->save();
-  cr->set_source_rgba(0.337, 0.612, 0.117, 0.9);   // green
+  //cr->set_source_rgba(0.337, 0.612, 0.117, 0.9);   // green
+  cr->set_source_rgba(0.2, 0.2, 0.2, 1.0);   // green
+
   cr->paint();
   cr->restore();
 
