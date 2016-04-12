@@ -69,7 +69,7 @@ CustomWidget::register_type ()
 bool CustomWidget::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 {
 
-	std::cout << "CustomWidget::on_draw()\n";
+//	std::cout << "CustomWidget::on_draw()\n";
 
   Gtk::Allocation allocation = get_allocation();
   const int width = allocation.get_width();
@@ -113,7 +113,7 @@ bool CustomWidget::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     cr->restore(); /* stack-pen-size */
   }
 
-  std::cout << "Getting the current time ...\n";
+  //std::cout << "Getting the current time ...\n";
   // store the current time
   time_t rawtime;
   time(&rawtime);
@@ -163,7 +163,7 @@ bool CustomWidget::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 bool CustomWidget::on_timeout()
 {
 
-	  std::cout << "CustomWidget::on_timeout()\n";
+	  //std::cout << "CustomWidget::on_timeout()\n";
     // force our program to redraw the entire clock.
     auto win = get_window();
     if (win)
