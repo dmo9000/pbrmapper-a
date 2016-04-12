@@ -55,6 +55,7 @@ int main (int argc, char **argv)
 
   refBuilder->get_widget("customwidget1", pCustomWidget);
   pCustomWidget->show_now();
+	pCustomWidget->enable_timeout();
 
   if(pMainWindow)
   {

@@ -16,6 +16,7 @@ private:
  
 public:
   static void register_type ();
+	void enable_timeout();
 
 protected:
 	bool on_timeout();

@@ -13,7 +13,6 @@
  
 GType CustomWidget::gtype = 0;
 
- 
 CustomWidget::CustomWidget (GtkDrawingArea *gobj) :
   Gtk::DrawingArea (gobj)
 {
@@ -26,7 +25,7 @@ CustomWidget::CustomWidget () :
 
   std::cout << "Connecting timeout signal\n";
 
-  Glib::signal_timeout().connect( sigc::mem_fun(*this, &CustomWidget::on_timeout), 1000 );
+//  Glib::signal_timeout().connect( sigc::mem_fun(this, &CustomWidget::on_timeout), 1000 );
 }
 
 /*
@@ -157,6 +156,8 @@ bool CustomWidget::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
   cr->arc(0, 0, m_line_width / 3.0, 0, 2 * M_PI);
   cr->fill();
 
+//  Glib::signal_timeout().connect( sigc::mem_fun(this, &CustomWidget::on_timeout), 1000 );
+
 	return true;
 
 }
@@ -176,3 +177,9 @@ bool CustomWidget::on_timeout()
     return true;
 }
 
+void CustomWidget::enable_timeout()
+{
+
+	Glib::signal_timeout().connect( sigc::mem_fun(this, &CustomWidget::on_timeout), 1000 );
+
+}
