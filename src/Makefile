@@ -1,6 +1,6 @@
 all: simple 
 
-simple: simple.cc clock.cc glade/default_layout.glade 
+simple: simple.cc glade/default_layout.glade 
 	g++ custom_widget.cc custom_widget_glade.c -g -ggdb -fPIC -shared -std=c++11  -o libcustomwidgetsglade.so  `pkg-config gtkmm-3.0 --cflags --libs` 
 	g++ simple.cc custom_widget_glade.c -std=c++11 -g -ggdb -o simple `pkg-config gtkmm-3.0 --cflags --libs` -L. -lcustomwidgetsglade
 
