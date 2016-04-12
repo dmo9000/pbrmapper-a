@@ -156,8 +156,6 @@ bool CustomWidget::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
   cr->arc(0, 0, m_line_width / 3.0, 0, 2 * M_PI);
   cr->fill();
 
-//  Glib::signal_timeout().connect( sigc::mem_fun(this, &CustomWidget::on_timeout), 1000 );
-
 	return true;
 
 }
@@ -180,6 +178,6 @@ bool CustomWidget::on_timeout()
 void CustomWidget::enable_timeout()
 {
 
-	Glib::signal_timeout().connect( sigc::mem_fun(this, &CustomWidget::on_timeout), 1000 );
+	Glib::signal_timeout().connect( sigc::mem_fun(*this, &CustomWidget::on_timeout), 1000 );
 
 }
