@@ -23,20 +23,8 @@ CustomWidget::CustomWidget () :
 //: m_radius(0.42), m_line_width(0.05)
 {
 
-  std::cout << "Connecting timeout signal\n";
-
-//  Glib::signal_timeout().connect( sigc::mem_fun(this, &CustomWidget::on_timeout), 1000 );
 }
 
-/*
-Clock::Clock()
-: m_radius(0.42), m_line_width(0.05)
-{
-  Glib::signal_timeout().connect( sigc::mem_fun(*this, &Clock::on_timeout), 1000 );
-}
-*/
-
- 
 Glib::ObjectBase *
 CustomWidget::wrap_new (GObject *o)
 {
@@ -82,6 +70,10 @@ bool CustomWidget::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
   cr->set_source_rgba(0.337, 0.612, 0.117, 0.9);   // green
   cr->paint();
   cr->restore();
+
+	return true;
+
+
   cr->arc(0, 0, m_radius, 0, 2 * M_PI);
   cr->save();
   cr->set_source_rgba(1.0, 1.0, 1.0, 0.8);
@@ -110,7 +102,7 @@ bool CustomWidget::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
       m_radius * cos (i * M_PI / 6),
       m_radius * sin (i * M_PI / 6));
     cr->stroke();
-    cr->restore(); /* stack-pen-size */
+    cr->restore(); 
   }
 
   //std::cout << "Getting the current time ...\n";

@@ -1,14 +1,12 @@
-all: simple 
+all: libcustomwidgetsglade simple 
 
-simple: simple.cc glade/default_layout.glade 
-	g++ custom_widget.cc custom_widget_glade.c -g -ggdb -fPIC -shared -std=c++11  -o libcustomwidgetsglade.so  `pkg-config gtkmm-3.0 --cflags --libs` 
+libcustomwidgetsglade: custom_widget.cc custom_widget_glade.c custom_widget.h custom_widget_glade.h custom_widget_pure.h
+	g++ custom_widget.cc custom_widget_glade.c -g -ggdb -fPIC -shared -std=c++11  -o libcustomwidgetsglade.so  `pkg-config gtkmm-3.0 --cflags --libs`
+
+simple: simple.cc glade/default_layout.glade libcustomwidgetsglade 
 	g++ simple.cc custom_widget_glade.c -std=c++11 -g -ggdb -o simple `pkg-config gtkmm-3.0 --cflags --libs` -L. -lcustomwidgetsglade
-
-#custom_widget_example:
-#	g++ -g -ggdb -std=c++11 custom_widget_example.cc custom_widget.cc custom_widget_glade.c -o custom_widget_example -fPIC `pkg-config --cflags --libs gtkmm-3.0` -L. -lcustomwidgetsglade	
-
 
 
 clean:
-	rm -rf *.o *.so simple simple.exe *~ autom4te.cache custom_widget_example
+	rm -rf *.o *.so *.dll simple simple.exe *~ autom4te.cache 
 	find . -name "*~" -print -exec rm -f {} \;
