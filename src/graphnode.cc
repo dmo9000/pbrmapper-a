@@ -44,11 +44,17 @@ int GraphNode::Get_Y()
 
 int GraphNode::AddInput() 
 {
+	GraphConnector *new_connector = NULL;
+	new_connector = new GraphConnector;
+	inputs.push_back(new_connector);
 	return -1;
 }
 
 int GraphNode::AddOutput() 
 {
+	GraphConnector *new_connector = NULL;
+	new_connector = new GraphConnector;
+	outputs.push_back(new_connector);
 	return -1;
 }
 

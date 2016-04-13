@@ -149,13 +149,33 @@ CustomWidget::on_draw (const Cairo::RefPtr < Cairo::Context > &cr)
 					/* get input connector count and draw that many inputs */
 					
 					int num_inputs = nodeptr->NumberOfInputs();
-					std::cerr << "num_inputs: " << num_inputs << "\n";
+					//std::cerr << "num_inputs: " << num_inputs << "\n";
 					
+					for (int i = 0 ; i < num_inputs ; i++) {
+							cr->set_source_rgba (0.9, 0.5, 0.1, 1.0);
+							cr->arc(x, y+16+(i*16), 5, 0, 2*M_PI);
+							cr->fill();
+							cr->set_source_rgba (0.0, 0.0, 0.0, 1.0);
+	  					cr->set_line_width (2);
+							cr->arc(x, y+16+(i*16), 5, 0, 2*M_PI);
+							cr->stroke();
+							}	
 					/* get output connector count and draw that many inputs */
 
 					int num_outputs = nodeptr->NumberOfOutputs();
+					//std::cerr << "num_outputs: " << num_outputs << "\n";
 
-					std::cerr << "num_outputs: " << num_outputs << "\n";
+					for (int i = 0 ; i < num_outputs ; i++) {
+							cr->set_source_rgba (0.9, 0.5, 0.1, 1.0);
+							cr->arc(x+64, y+16+(i*16), 5, 0, 2*M_PI);
+							cr->fill();
+							cr->set_source_rgba (0.0, 0.0, 0.0, 1.0);
+	  					cr->set_line_width (2);
+							cr->arc(x+64, y+16+(i*16), 5, 0, 2*M_PI);
+							cr->stroke();
+							}	
+					/* get output connector count and draw that many inputs */
+
 					}
 
   cr->restore ();
@@ -200,8 +220,8 @@ CustomWidget::on_button_press_event (GdkEventButton * event)
   NewNode = new GraphNode(node_seq_id, (event->x / viewport_scale), 
 				(event->y / viewport_scale));
   nodelist.push_back(NewNode);
-	NewNode->AddInput();
-	NewNode->AddOutput();
+	for (int i = 0; i < 3; i ++ ) NewNode->AddInput();
+	for (int i = 0; i < 3; i ++ ) NewNode->AddOutput();
 	on_timeout();
   return true;
 }

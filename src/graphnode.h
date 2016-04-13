@@ -14,6 +14,7 @@ struct _connection_ {
 
 struct _connector_ {
 									int connection_id = -1;	
+									int state = -1;
 									};
 
 typedef struct _connection_ GraphConnection;
