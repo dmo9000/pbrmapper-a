@@ -23,10 +23,9 @@ CustomWidget::CustomWidget () :
 //: m_radius(0.42), m_line_width(0.05)
 {
 
-  Gtk::DrawingArea *foo; 
-
   std::cout << "IN constructor\n";
 //  add_events(Gdk::EXPOSURE_MASK);
+  add_events(Gdk::KEY_PRESS_MASK);
   add_events(Gdk::BUTTON_PRESS_MASK);
 //  add_events(Gdk::SCROLL_MASK);
 //
@@ -53,11 +52,10 @@ CustomWidget::wrap_new (GObject *o)
 void
 CustomWidget::register_type ()
 {
+	std::cout << "CustomWidget::register_type()\n";
   if (gtype)
     return;
 
-	std::cout << "CustomWidget::register_type()\n";
- 
   CustomWidget dummy;
   GtkWidget *widget = GTK_WIDGET (dummy.gobj ());
   gtype = G_OBJECT_TYPE (widget);
@@ -89,8 +87,6 @@ bool CustomWidget::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
   cr->set_line_cap(Cairo::LINE_CAP_BUTT);
 
   //cr->translate(-1920, -1080);
-  //
-  
  	//	cr->move_to(0,0);
 		cr->line_to(width, height);
 		cr->stroke();
@@ -223,13 +219,24 @@ bool CustomWidget::on_timeout()
 void CustomWidget::enable_timeout()
 {
 	Glib::signal_timeout().connect( sigc::mem_fun(*this, &CustomWidget::on_timeout), 1000 );
+  add_events(Gdk::BUTTON_PRESS_MASK);
+ // add_events(Gdk::KEY_PRESS_MASK);
+  //set_flags(Gtk::CAN_FOCUS);
+   grab_focus(); 
+ // signal_key_press_event().connect( sigc::ptr_fun(&CustomWidget::on_key_press_event); 
 }
 
 
 bool CustomWidget::on_button_press_event(GdkEventButton *event)
 {
 
-	std::cout << "Button pusher alert!!\n";
-
+	std::cout << "MOUSE BUTTON!!\n";
 	return true;
+}
+
+bool CustomWidget::on_key_press_event(GdkEventKey* event)
+{
+	std::cout << "KEYBOARD BUTTON!!\n";
+	return true;
+
 }
