@@ -9,8 +9,8 @@ libcustomwidgetsglade: custom_widget.cc custom_widget_glade.c custom_widget.h cu
 #	[[ `./config.guess` =~ cygwin$ ]] && \
 #			ln -sf libcustomwidgetsglade.so cygcustomwidgetsglade.dll
 
-simple: simple.cc glade/default_layout.glade libcustomwidgetsglade 
-	g++ simple.cc custom_widget_glade.c -std=c++11 -g -ggdb -o simple `pkg-config gtkmm-3.0 --cflags --libs` -L. -lcustomwidgetsglade
+simple: simple.cc graphnode.cc glade/default_layout.glade libcustomwidgetsglade 
+	g++ graphnode.cc simple.cc custom_widget_glade.c -std=c++11 -g -ggdb -o simple `pkg-config gtkmm-3.0 --cflags --libs` -L. -lcustomwidgetsglade
 
 
 clean:
