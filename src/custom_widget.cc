@@ -170,10 +170,10 @@ bool
 CustomWidget::on_button_press_event (GdkEventButton * event)
 {
 
-  std::cerr << "MOUSE BUTTON!!\n";
+  //std::cerr << "Mouse click at x=" << event->x << " y=" << event->y << "\n";
 	GraphNode *NewNode = NULL;
 	node_seq_id++;
-  NewNode = new GraphNode(node_seq_id);
+  NewNode = new GraphNode(node_seq_id, event->x, event->y);
   nodelist.push_back(NewNode);
   return true;
 }

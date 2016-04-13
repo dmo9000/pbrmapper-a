@@ -7,11 +7,13 @@ GraphNode::Identify()
 	//std::cerr << "GraphNode[" << node_seq_id << ":" << is_valid << "] speaking \n";
 }
 
-GraphNode::GraphNode(int seq_id) 
+GraphNode::GraphNode(int seq_id, double spawnx, double spawny) 
 {
 	node_seq_id = seq_id;
-	std::cerr << "GraphNode(" << node_seq_id << ") constructor\n";
+	x = spawnx;
+	y = spawny;
 	is_valid = 1;
+	std::cerr << "GraphNode(" << node_seq_id << ":" << x << ":" << y << ") constructor\n";
 }
 
 GraphNode::~GraphNode() 
