@@ -23,6 +23,16 @@ CustomWidget::CustomWidget () :
 //: m_radius(0.42), m_line_width(0.05)
 {
 
+  Gtk::DrawingArea *foo; 
+
+  std::cout << "IN constructor\n";
+//  add_events(Gdk::EXPOSURE_MASK);
+  add_events(Gdk::BUTTON_PRESS_MASK);
+//  add_events(Gdk::SCROLL_MASK);
+//
+  //signal_scroll_event().connect( sigc::mem_fun( *this, &CustomWidget::onScrollEvent ) );
+  //self.signal_scroll_event().connect(sigc::mem_fun(*this, &CustomWidget::on_drawarea_scroll));
+
 }
 
 Glib::ObjectBase *
@@ -63,7 +73,7 @@ bool CustomWidget::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
   const int width = allocation.get_width();
   const int height = allocation.get_height();
 
-  cr->scale(1, 1);
+  cr->scale(viewport_scale, viewport_scale);
   cr->translate(0,0);
   //cr->translate(0.1, 0.1);
   //cr->set_line_width(m_line_width);
@@ -88,8 +98,10 @@ bool CustomWidget::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
   for (int x = 0 ; x < 1920 ; x +=8) {
 			if (!(x % 64)) {
   				cr->set_line_width(0.2);
+  				cr->set_source_rgba(0.0, 0.0, 0.0, 1.0);   
 					} else {
   				cr->set_line_width(0.1);
+  				cr->set_source_rgba(0.8, 0.8, 0.8, 1.0);   
 					} 
 	
 	    cr->move_to(x, 0);
@@ -100,8 +112,10 @@ bool CustomWidget::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
   for (int y = 0 ; y < 1080 ; y +=8) {
 			if (!(y % 64)) {
   				cr->set_line_width(0.2);
+  				cr->set_source_rgba(0.0, 0.0, 0.0, 1.0);   
 					} else {
   				cr->set_line_width(0.1);
+  				cr->set_source_rgba(0.8, 0.8, 0.8, 1.0);   
 					} 
 	    cr->move_to(0, y);
 	    cr->line_to(1920, y);
@@ -208,7 +222,14 @@ bool CustomWidget::on_timeout()
 
 void CustomWidget::enable_timeout()
 {
-
 	Glib::signal_timeout().connect( sigc::mem_fun(*this, &CustomWidget::on_timeout), 1000 );
+}
 
+
+bool CustomWidget::on_button_press_event(GdkEventButton *event)
+{
+
+	std::cout << "Button pusher alert!!\n";
+
+	return true;
 }
