@@ -63,9 +63,10 @@ bool CustomWidget::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
   const int width = allocation.get_width();
   const int height = allocation.get_height();
 
-  cr->scale(width, height);
-  cr->translate(0.1, 0.1);
-  cr->set_line_width(m_line_width);
+  cr->scale(1, 1);
+  cr->translate(0,0);
+  //cr->translate(0.1, 0.1);
+  //cr->set_line_width(m_line_width);
   cr->save();
   //cr->set_source_rgba(0.337, 0.612, 0.117, 0.9);   
   cr->set_source_rgba(0.2, 0.2, 0.2, 1.0);   
@@ -74,21 +75,38 @@ bool CustomWidget::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 
   cr->set_source_rgba(0.8, 0.8, 0.8, 1.0);   
 
-  cr->set_line_width(0.5);
+  cr->set_line_width(0.1);
+  cr->set_line_cap(Cairo::LINE_CAP_BUTT);
 
   //cr->translate(-1920, -1080);
   //
   
- 		cr->move_to(0,0);
-		cr->line_to(1920, 1080);
+ 	//	cr->move_to(0,0);
+		cr->line_to(width, height);
 		cr->stroke();
 
-  //for (int y = 0 ; y < 1080 ; y +=16) {
-	 //   cr->move_to(-1920, 0);
-	  //  cr->line_to(y, 1920);
-   // 	cr->stroke();
-//			std::cout << "y = " << y;
-//			}
+  for (int x = 0 ; x < 1920 ; x +=8) {
+			if (!(x % 64)) {
+  				cr->set_line_width(0.2);
+					} else {
+  				cr->set_line_width(0.1);
+					} 
+	
+	    cr->move_to(x, 0);
+	    cr->line_to(x, 1080);
+    	cr->stroke();
+ 			}
+
+  for (int y = 0 ; y < 1080 ; y +=8) {
+			if (!(y % 64)) {
+  				cr->set_line_width(0.2);
+					} else {
+  				cr->set_line_width(0.1);
+					} 
+	    cr->move_to(0, y);
+	    cr->line_to(1920, y);
+    	cr->stroke();
+			}
 
   cr->restore();
 
