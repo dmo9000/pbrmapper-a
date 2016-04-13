@@ -7,7 +7,11 @@
 #include <gtkmm/drawingarea.h>
 #include "graphnode.h"
 
+#define NODE_SIZE 64
+
 std::vector<GraphNode*> nodelist;
+std::vector<GraphConnection*> connectionlist;
+
 int node_seq_id = 0;
 
 #define M_PI           3.14159265358979323846
@@ -27,7 +31,7 @@ Glib::ObjectBase ("customwidget")
 //: m_radius(0.42), m_line_width(0.05)
 {
 
-  std::cerr << "IN constructor\n";
+  std::cerr << "CustomWidget::CustomWidget()\n";
   add_events (Gdk::KEY_PRESS_MASK);
   add_events (Gdk::BUTTON_PRESS_MASK);
 
@@ -35,7 +39,7 @@ Glib::ObjectBase ("customwidget")
 
 Glib::ObjectBase * CustomWidget::wrap_new (GObject * o)
 {
-  std::cerr << "CustomWidget::wrap_now()\n";
+  std::cerr << "CustomWidget::wrap_new()\n";
 
   if (gtk_widget_is_toplevel (GTK_WIDGET (o)))
     {
@@ -125,16 +129,31 @@ CustomWidget::on_draw (const Cairo::RefPtr < Cairo::Context > &cr)
       cr->stroke ();
     }
 
-  cr->restore ();
-
-
   /* iterate through the vector of graphnodes */ 
 
   for (std::vector<GraphNode*>::iterator it = nodelist.begin();\
 						 it != nodelist.end(); ++it) {
 					GraphNode *nodeptr = *it;	
 					nodeptr->Identify();
+				 	double x = nodeptr->Get_X();
+					double y = nodeptr->Get_Y();
+					//std::cerr << "Drawing: " << x << ":" << y << "\n";
+					cr->set_source_rgba (1.0, 1.0, 1.0, 1.0);
+					cr->rectangle(x, y, NODE_SIZE, NODE_SIZE);
+					cr->fill();
+					cr->set_source_rgba (0.0, 0.0, 0.0, 1.0);
+					cr->rectangle(x, y, NODE_SIZE, NODE_SIZE);
+	  			cr->set_line_width (2);
+					cr->stroke();
+
+					/* iterate through inputs */
+					
+					
+
+					/* iterate through inputs */
 					}
+
+  cr->restore ();
 
   return true;
 
@@ -172,9 +191,12 @@ CustomWidget::on_button_press_event (GdkEventButton * event)
 
   //std::cerr << "Mouse click at x=" << event->x << " y=" << event->y << "\n";
 	GraphNode *NewNode = NULL;
+
 	node_seq_id++;
-  NewNode = new GraphNode(node_seq_id, event->x, event->y);
+  NewNode = new GraphNode(node_seq_id, (event->x / viewport_scale), 
+				(event->y / viewport_scale));
   nodelist.push_back(NewNode);
+	on_timeout();
   return true;
 }
 
