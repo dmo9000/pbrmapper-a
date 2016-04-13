@@ -1,15 +1,23 @@
 #include <iostream>
 #include "graphnode.h"
 
-GraphNode::GraphNode() 
+GraphNode::Identify()
 {
-	std::cout << "GraphNode() constructor\n";
+
+	//std::cerr << "GraphNode[" << node_seq_id << ":" << is_valid << "] speaking \n";
 }
 
+GraphNode::GraphNode(int seq_id) 
+{
+	node_seq_id = seq_id;
+	std::cerr << "GraphNode(" << node_seq_id << ") constructor\n";
+	is_valid = 1;
+}
 
 GraphNode::~GraphNode() 
 {
-	std::cout << "GraphNode() destructor\n";
+	std::cerr << "GraphNode(" << node_seq_id << ") destructor\n";
+	is_valid = 0;
 }
 
 
