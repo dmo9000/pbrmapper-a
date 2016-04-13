@@ -23,7 +23,7 @@ CustomWidget::CustomWidget () :
 //: m_radius(0.42), m_line_width(0.05)
 {
 
-  std::cout << "IN constructor\n";
+  std::cerr << "IN constructor\n";
 //  add_events(Gdk::EXPOSURE_MASK);
   add_events(Gdk::KEY_PRESS_MASK);
   add_events(Gdk::BUTTON_PRESS_MASK);
@@ -37,7 +37,7 @@ CustomWidget::CustomWidget () :
 Glib::ObjectBase *
 CustomWidget::wrap_new (GObject *o)
 {
-	std::cout << "CustomWidget::wrap_now()\n";
+	std::cerr << "CustomWidget::wrap_now()\n";
 
   if (gtk_widget_is_toplevel (GTK_WIDGET (o)))
     {
@@ -52,7 +52,7 @@ CustomWidget::wrap_new (GObject *o)
 void
 CustomWidget::register_type ()
 {
-	std::cout << "CustomWidget::register_type()\n";
+	std::cerr << "CustomWidget::register_type()\n";
   if (gtype)
     return;
 
@@ -65,7 +65,7 @@ CustomWidget::register_type ()
 bool CustomWidget::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 {
 
-//	std::cout << "CustomWidget::on_draw()\n";
+//	std::cerr << "CustomWidget::on_draw()\n";
 
   Gtk::Allocation allocation = get_allocation();
   const int width = allocation.get_width();
@@ -154,7 +154,7 @@ bool CustomWidget::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     cr->restore(); 
   }
 
-  //std::cout << "Getting the current time ...\n";
+  //std::cerr << "Getting the current time ...\n";
   // store the current time
   time_t rawtime;
   time(&rawtime);
@@ -204,7 +204,7 @@ bool CustomWidget::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 bool CustomWidget::on_timeout()
 {
 
-	  //std::cout << "CustomWidget::on_timeout()\n";
+	  //std::cerr << "CustomWidget::on_timeout()\n";
     // force our program to redraw the entire clock.
     auto win = get_window();
     if (win)
@@ -230,13 +230,13 @@ void CustomWidget::enable_timeout()
 bool CustomWidget::on_button_press_event(GdkEventButton *event)
 {
 
-	std::cout << "MOUSE BUTTON!!\n";
+	std::cerr << "MOUSE BUTTON!!\n";
 	return true;
 }
 
 bool CustomWidget::on_key_press_event(GdkEventKey* event)
 {
-	std::cout << "KEYBOARD BUTTON!!\n";
+	std::cerr << "KEYBOARD BUTTON!!\n";
 	return true;
 
 }
