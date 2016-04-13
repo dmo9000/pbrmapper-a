@@ -43,6 +43,8 @@ public:
 	void Set_Y(int ny);
 	int AddInput();
 	int AddOutput();
+	int NumberOfInputs();
+	int NumberOfOutputs();
 
 protected:
 

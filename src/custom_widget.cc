@@ -146,11 +146,16 @@ CustomWidget::on_draw (const Cairo::RefPtr < Cairo::Context > &cr)
 	  			cr->set_line_width (2);
 					cr->stroke();
 
-					/* iterate through inputs */
+					/* get input connector count and draw that many inputs */
 					
+					int num_inputs = nodeptr->NumberOfInputs();
+					std::cerr << "num_inputs: " << num_inputs << "\n";
 					
+					/* get output connector count and draw that many inputs */
 
-					/* iterate through inputs */
+					int num_outputs = nodeptr->NumberOfOutputs();
+
+					std::cerr << "num_outputs: " << num_outputs << "\n";
 					}
 
   cr->restore ();
@@ -184,7 +189,6 @@ CustomWidget::enable_timeout ()
   grab_focus ();
 }
 
-
 bool
 CustomWidget::on_button_press_event (GdkEventButton * event)
 {
@@ -196,6 +200,8 @@ CustomWidget::on_button_press_event (GdkEventButton * event)
   NewNode = new GraphNode(node_seq_id, (event->x / viewport_scale), 
 				(event->y / viewport_scale));
   nodelist.push_back(NewNode);
+	NewNode->AddInput();
+	NewNode->AddOutput();
 	on_timeout();
   return true;
 }

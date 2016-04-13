@@ -12,7 +12,6 @@ GraphNode::GraphNode(int seq_id, double spawnx, double spawny)
 	node_seq_id = seq_id;
 	x = spawnx;
 	y = spawny;
-	
 	is_valid = 1;
 	std::cerr << "GraphNode(" << node_seq_id << ":" << x << ":" << y << ") constructor\n";
 }
@@ -51,4 +50,14 @@ int GraphNode::AddInput()
 int GraphNode::AddOutput() 
 {
 	return -1;
+}
+
+int GraphNode::NumberOfInputs()
+{
+	return inputs.size(); 
+}
+
+int GraphNode::NumberOfOutputs()
+{
+	return outputs.size();
 }
