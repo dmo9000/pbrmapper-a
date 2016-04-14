@@ -15,8 +15,7 @@ int node_seq_id = 0;
 
 #include "custom_widget.h"
 
-GType
-  CustomWidget::gtype = 0;
+GType CustomWidget::gtype = 0;
 
 CustomWidget::CustomWidget (GtkDrawingArea * gobj):
 Gtk::DrawingArea (gobj)
@@ -144,6 +143,12 @@ CustomWidget::on_draw (const Cairo::RefPtr < Cairo::Context > &cr)
       cr->set_line_width (2);
       cr->stroke ();
 
+			if (nodeptr == selected_node) {
+      	cr->set_source_rgba (1.0, 0.9, 0.0, 1.0);
+      	cr->rectangle (x -3, y -3, sx + 6, sy +6);
+				cr->stroke();
+				}
+
       /* get input connector count and draw that many inputs */
 
       int num_inputs = nodeptr->NumberOfInputs ();
@@ -179,8 +184,6 @@ CustomWidget::on_draw (const Cairo::RefPtr < Cairo::Context > &cr)
 
   /* draw the connections */
 
-	std::cerr << "connection count: " << connectionlist.size() << "\n";
-
 	for (std::vector <GraphConnection *>::iterator it = connectionlist.begin ();
        it != connectionlist.end (); ++it)
     	{
@@ -207,10 +210,7 @@ CustomWidget::on_draw (const Cairo::RefPtr < Cairo::Context > &cr)
 					//cr->stroke();
 					cr->curve_to(sx+64, sy-32, tx-64, ty+32, tx, ty);	
 					cr->stroke();
-
-
-			}
-
+				}
 
   cr->restore ();
 
@@ -247,18 +247,35 @@ bool
 CustomWidget::on_button_press_event (GdkEventButton * event)
 {
 
-  std::cerr << "Mouse click at x=" << event->
-    x << " y=" << event->y << " event->type=" << event->type << "\n";
+  //std::cerr << "Mouse click at x=" << event->
+  //  x << " y=" << event->y << " event->type=" << event->type << "\n";
   GraphNode *NewNode = NULL;
 
   switch (event->type)
     {
     case GDK_BUTTON_PRESS:
       /* select: single click - check if click was on canvas or overlapped with node */
+			for (std::vector < GraphNode * >::iterator it = nodelist.begin ();
+		       it != nodelist.end (); ++it)
+		    {
+		      GraphNode *nodeptr = *it;
+		      double x = nodeptr->Get_X ();
+		      double y = nodeptr->Get_Y ();
+		      double sx = nodeptr->Get_SX ();
+		      double sy = nodeptr->Get_SY ();
+
+				if ((event->x >= x && event->x <= (x+sx)) &&
+							((event->y >= y && event->y <= (y+sy)))) {
+								std::cerr << "+++ node selected id=" << nodeptr->GetID() << " +++ \n";
+								selected_node = nodeptr;
+								}				
+				}
+
       break;
     case GDK_2BUTTON_PRESS:
       /* create: double click - create new node on the canvas */
       NewNode = new GraphNode (node_seq_id, (event->x / viewport_scale), (event->y / viewport_scale)); nodelist.push_back (NewNode);
+			selected_node = NewNode;
       if (node_seq_id)
 					{
 				  NewNode->AddInput ();
@@ -273,8 +290,6 @@ CustomWidget::on_button_press_event (GdkEventButton * event)
 					connectionlist.push_back(new_connection);
 					}
 	    NewNode->AddOutput ();
-			
-      on_timeout ();
       node_seq_id++;
       break;
     case GDK_3BUTTON_PRESS:
@@ -282,6 +297,8 @@ CustomWidget::on_button_press_event (GdkEventButton * event)
     default:
       break;
     }
+
+  on_timeout ();
   return true;
 }
 
@@ -315,7 +332,6 @@ CustomWidget::on_key_press_event (GdkEventKey * event)
 
     }
 
-  show_now ();
   return true;
 
 }

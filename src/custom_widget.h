@@ -14,12 +14,14 @@ private:
   static Glib::ObjectBase * wrap_new (GObject* o);
 	std::vector<GraphNode*>nodelist;
 	std::vector<GraphConnection*>connectionlist;
+  GraphNode *selected_node = NULL;
 
  
 public:
   static void register_type ();
 	void enable_timeout();
 	GraphNode* GetNodeByID(int);
+
 
 protected:
 	bool on_timeout();

@@ -46,7 +46,6 @@ private:
 public:
 	GraphNode (int seq_id, double spawnx, double spawny);
   ~GraphNode();
-// 	void Identify();
 	int GetID();
 	int Get_X();
 	int Get_Y();
