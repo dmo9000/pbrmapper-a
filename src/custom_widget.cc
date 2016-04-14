@@ -9,8 +9,8 @@
 
 #define NODE_SIZE 64
 
-std::vector<GraphNode*> nodelist;
-std::vector<GraphConnection*> connectionlist;
+std::vector<GraphNode*>nodelist;
+std::vector<GraphConnection*>connectionlist;
 
 int node_seq_id = 0;
 
@@ -30,11 +30,9 @@ CustomWidget::CustomWidget ():
 Glib::ObjectBase ("customwidget")
 //: m_radius(0.42), m_line_width(0.05)
 {
-
   std::cerr << "CustomWidget::CustomWidget()\n";
   add_events (Gdk::KEY_PRESS_MASK);
   add_events (Gdk::BUTTON_PRESS_MASK);
-
 }
 
 Glib::ObjectBase * CustomWidget::wrap_new (GObject * o)
@@ -129,54 +127,60 @@ CustomWidget::on_draw (const Cairo::RefPtr < Cairo::Context > &cr)
       cr->stroke ();
     }
 
-  /* iterate through the vector of graphnodes */ 
+  /* iterate through the vector of graphnodes */
 
-  for (std::vector<GraphNode*>::iterator it = nodelist.begin();\
-						 it != nodelist.end(); ++it) {
-					GraphNode *nodeptr = *it;	
-					nodeptr->Identify();
-				 	double x = nodeptr->Get_X();
-					double y = nodeptr->Get_Y();
-					//std::cerr << "Drawing: " << x << ":" << y << "\n";
-					cr->set_source_rgba (1.0, 1.0, 1.0, 1.0);
-					cr->rectangle(x, y, NODE_SIZE, NODE_SIZE);
-					cr->fill();
-					cr->set_source_rgba (0.0, 0.0, 0.0, 1.0);
-					cr->rectangle(x, y, NODE_SIZE, NODE_SIZE);
-	  			cr->set_line_width (2);
-					cr->stroke();
+  for (std::vector < GraphNode * >::iterator it = nodelist.begin ();
+       it != nodelist.end (); ++it)
+    {
+      GraphNode *nodeptr = *it;
+      nodeptr->Identify ();
+      double x = nodeptr->Get_X ();
+      double y = nodeptr->Get_Y ();
+			double sx = nodeptr->Get_SX ();
+			double sy = nodeptr->Get_SY ();
 
-					/* get input connector count and draw that many inputs */
-					
-					int num_inputs = nodeptr->NumberOfInputs();
-					//std::cerr << "num_inputs: " << num_inputs << "\n";
-					
-					for (int i = 0 ; i < num_inputs ; i++) {
-							cr->set_source_rgba (0.9, 0.5, 0.1, 1.0);
-							cr->arc(x, y+16+(i*16), 5, 0, 2*M_PI);
-							cr->fill();
-							cr->set_source_rgba (0.0, 0.0, 0.0, 1.0);
-	  					cr->set_line_width (2);
-							cr->arc(x, y+16+(i*16), 5, 0, 2*M_PI);
-							cr->stroke();
-							}	
-					/* get output connector count and draw that many inputs */
+      //std::cerr << "Drawing: " << x << ":" << y << "\n";
+      cr->set_source_rgba (1.0, 1.0, 1.0, 1.0);
+      cr->rectangle (x, y, sx, sy);
+      cr->fill ();
+      cr->set_source_rgba (0.0, 0.0, 0.0, 1.0);
+      cr->rectangle (x, y, sx, sy);
+      cr->set_line_width (2);
+      cr->stroke ();
 
-					int num_outputs = nodeptr->NumberOfOutputs();
-					//std::cerr << "num_outputs: " << num_outputs << "\n";
+      /* get input connector count and draw that many inputs */
 
-					for (int i = 0 ; i < num_outputs ; i++) {
-							cr->set_source_rgba (0.9, 0.5, 0.1, 1.0);
-							cr->arc(x+64, y+16+(i*16), 5, 0, 2*M_PI);
-							cr->fill();
-							cr->set_source_rgba (0.0, 0.0, 0.0, 1.0);
-	  					cr->set_line_width (2);
-							cr->arc(x+64, y+16+(i*16), 5, 0, 2*M_PI);
-							cr->stroke();
-							}	
-					/* get output connector count and draw that many inputs */
+      int num_inputs = nodeptr->NumberOfInputs ();
+      //std::cerr << "num_inputs: " << num_inputs << "\n";
 
-					}
+      for (int i = 0; i < num_inputs; i++)
+	{
+	  cr->set_source_rgba (0.9, 0.5, 0.1, 1.0);
+	  cr->arc (x, y + 16 + (i * 16), 5, 0, 2 * M_PI);
+	  cr->fill ();
+	  cr->set_source_rgba (0.0, 0.0, 0.0, 1.0);
+	  cr->set_line_width (2);
+	  cr->arc (x, y + 16 + (i * 16), 5, 0, 2 * M_PI);
+	  cr->stroke ();
+	}
+      /* get output connector count and draw that many inputs */
+
+      int num_outputs = nodeptr->NumberOfOutputs ();
+      //std::cerr << "num_outputs: " << num_outputs << "\n";
+
+      for (int i = 0; i < num_outputs; i++)
+	{
+	  cr->set_source_rgba (0.9, 0.5, 0.1, 1.0);
+	  cr->arc (x + 64, y + 16 + (i * 16), 5, 0, 2 * M_PI);
+	  cr->fill ();
+	  cr->set_source_rgba (0.0, 0.0, 0.0, 1.0);
+	  cr->set_line_width (2);
+	  cr->arc (x + 64, y + 16 + (i * 16), 5, 0, 2 * M_PI);
+	  cr->stroke ();
+	}
+      /* get output connector count and draw that many inputs */
+
+    }
 
   cr->restore ();
 
@@ -213,16 +217,39 @@ bool
 CustomWidget::on_button_press_event (GdkEventButton * event)
 {
 
-  //std::cerr << "Mouse click at x=" << event->x << " y=" << event->y << "\n";
-	GraphNode *NewNode = NULL;
+  std::cerr << "Mouse click at x=" << event->
+    x << " y=" << event->y << " event->type=" << event->type << "\n";
+  GraphNode *NewNode = NULL;
 
-	node_seq_id++;
-  NewNode = new GraphNode(node_seq_id, (event->x / viewport_scale), 
-				(event->y / viewport_scale));
-  nodelist.push_back(NewNode);
-	for (int i = 0; i < 3; i ++ ) NewNode->AddInput();
-	for (int i = 0; i < 3; i ++ ) NewNode->AddOutput();
-	on_timeout();
+  switch (event->type)
+    {
+    case GDK_BUTTON_PRESS:
+      /* select: single click - check if click was on canvas or overlapped with node */
+      break;
+    case GDK_2BUTTON_PRESS:
+      /* create: double click - create new node on the canvas */
+      NewNode = new GraphNode (node_seq_id, (event->x / viewport_scale), (event->y / viewport_scale)); nodelist.push_back (NewNode);
+      if (node_seq_id)
+					{
+				  NewNode->AddInput ();
+					/* create a new connection between this node and the previous one */
+					GraphConnection *new_connection = new GraphConnection;
+					new_connection->src_node = (node_seq_id - 1);
+					new_connection->src_port = 0;
+					new_connection->tgt_node = (node_seq_id);
+					new_connection->tgt_port = 0;
+					connectionlist.push_back(new_connection);
+					}
+	    NewNode->AddOutput ();
+			
+      on_timeout ();
+      node_seq_id++;
+      break;
+    case GDK_3BUTTON_PRESS:
+      break;
+    default:
+      break;
+    }
   return true;
 }
 
@@ -242,10 +269,12 @@ CustomWidget::on_key_press_event (GdkEventKey * event)
 	  switch (inputdata)
 	    {
 	    case '+':
-				if (viewport_scale <= 3) viewport_scale++;
+	      if (viewport_scale <= 3)
+		viewport_scale++;
 	      break;
 	    case '-':
-				if  (viewport_scale >=1) viewport_scale--;
+	      if (viewport_scale >= 1)
+		viewport_scale--;
 	      break;
 	    default:
 	      break;

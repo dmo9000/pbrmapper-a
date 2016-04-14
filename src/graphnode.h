@@ -27,19 +27,22 @@ private:
 	int node_seq_id = 0;
   int is_valid = 0;
  	bool is_dirty;
-	int sx = 0;
-	int sy = 0;
+	int sx = 64;
+	int sy = 64;
 	double x = 0;
 	double y = 0;
   std::vector<GraphConnector*> inputs;
   std::vector<GraphConnector*> outputs;
+	int Recalculate_Size();
   
 public:
 	GraphNode (int seq_id, double spawnx, double spawny);
   ~GraphNode();
- 	Identify();
+ 	void Identify();
 	int Get_X();
 	int Get_Y();
+	int Get_SX();
+	int Get_SY();
 	void Set_X(int nx);
 	void Set_Y(int ny);
 	int AddInput();
