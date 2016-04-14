@@ -3,9 +3,9 @@
 
 #include <vector>
 
-#define SRC_TYPE_UNDEF		-1
-#define SRC_TYPE_INPUT		0
-#define SRC_TYPE_OUTPUT		1	
+#define SOCKTYPE_UNDEF		-1
+#define SOCKTYPE_INPUT		0
+#define SOCKTYPE_OUTPUT		1	
 	
 
 struct _connection_ {
@@ -46,7 +46,8 @@ private:
 public:
 	GraphNode (int seq_id, double spawnx, double spawny);
   ~GraphNode();
- 	void Identify();
+// 	void Identify();
+	int GetID();
 	int Get_X();
 	int Get_Y();
 	int Get_SX();

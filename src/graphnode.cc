@@ -1,12 +1,6 @@
 #include <iostream>
 #include "graphnode.h"
 
-void GraphNode::Identify()
-{
-
-//	std::cerr << "GraphNode[" << node_seq_id << ":" << is_valid << ":" << x << ":" << y << "] nspeaking \n";
-}
-
 GraphNode::GraphNode(int seq_id, double spawnx, double spawny)
 {
 	node_seq_id = seq_id;
@@ -56,7 +50,7 @@ int GraphNode::AddInput()
 {
 	GraphConnector *new_connector = NULL;
 	new_connector = new GraphConnector;
-	new_connector->type = SRC_TYPE_INPUT; 	
+	new_connector->type = SOCKTYPE_INPUT; 	
 	inputs.push_back(new_connector);
   Recalculate_Size();
 	return -1;
@@ -66,7 +60,7 @@ int GraphNode::AddOutput()
 {
 	GraphConnector *new_connector = NULL;
 	new_connector = new GraphConnector;
-	new_connector->type = SRC_TYPE_OUTPUT;
+	new_connector->type = SOCKTYPE_OUTPUT;
 	outputs.push_back(new_connector);
   Recalculate_Size();
 	return -1;
@@ -86,11 +80,11 @@ int GraphNode::GetPinX(int index, int type)
 {
 
 	switch (type) {
-			case SRC_TYPE_INPUT:
+			case SOCKTYPE_INPUT:
 					return x; 
 					break;
-			case SRC_TYPE_OUTPUT:
-					return y;
+			case SOCKTYPE_OUTPUT:
+					return x + 64;
 					break;
 			default:
 				return -1;
@@ -101,7 +95,7 @@ int GraphNode::GetPinX(int index, int type)
 
 int GraphNode::GetPinY(int index, int type)
 {
-	return y + 8 + ((index -1) * 16);
+	return y + 8 + ((index) * 16) + 8;
 
 }
 
@@ -116,4 +110,11 @@ int GraphNode::Recalculate_Size()
 			sy = (((min_inputs-1) * 16) + 32);
 			std::cerr << "graphnode(" << node_seq_id << "): new size x=" << sx << ", y=" << sy << "\n"; 	
 			}
+}
+
+int GraphNode::GetID()
+{
+
+	return node_seq_id;
+
 }

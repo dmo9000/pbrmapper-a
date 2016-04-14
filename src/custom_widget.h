@@ -19,6 +19,7 @@ private:
 public:
   static void register_type ();
 	void enable_timeout();
+	GraphNode* GetNodeByID(int);
 
 protected:
 	bool on_timeout();

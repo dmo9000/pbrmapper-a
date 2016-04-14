@@ -130,7 +130,6 @@ CustomWidget::on_draw (const Cairo::RefPtr < Cairo::Context > &cr)
        it != nodelist.end (); ++it)
     {
       GraphNode *nodeptr = *it;
-      nodeptr->Identify ();
       double x = nodeptr->Get_X ();
       double y = nodeptr->Get_Y ();
 			double sx = nodeptr->Get_SX ();
@@ -180,7 +179,38 @@ CustomWidget::on_draw (const Cairo::RefPtr < Cairo::Context > &cr)
 
   /* draw the connections */
 
-	std::cerr << "connection count: " << connectionlist.size() << "\n";;
+	std::cerr << "connection count: " << connectionlist.size() << "\n";
+
+	for (std::vector <GraphConnection *>::iterator it = connectionlist.begin ();
+       it != connectionlist.end (); ++it)
+    	{
+					GraphConnection *connectptr = *it;	
+					GraphNode *src_node = NULL;
+					GraphNode *tgt_node = NULL;
+ 					std::cerr << "+++ processing connection ...\n"; 
+					//int sx = connectptr->src_node, connectptr->src_type, connectptr->src_port;
+					src_node = GetNodeByID(connectptr->src_node);
+					tgt_node = GetNodeByID(connectptr->tgt_node);
+					int sx = src_node->GetPinX(connectptr->src_port, connectptr->src_type);
+					int sy = src_node->GetPinY(connectptr->src_port, connectptr->src_type);
+					int tx = tgt_node->GetPinX(connectptr->tgt_port, connectptr->tgt_type);
+					int ty = tgt_node->GetPinY(connectptr->tgt_port, connectptr->tgt_type);
+					std::cerr << "drawing (" << sx << "," << sy << ":" << tx << "," << ty << ")\n";
+	  			cr->set_line_width (2);
+	  			cr->set_source_rgba (0.0, 0.0, 0.0, 1.0);
+					cr->move_to(sx, sy);
+					int mx = (sx + tx) / 2;
+					int my = (sy + ty) / 2;
+					//cr->curve_to(sx+64, sy-32, mx, my, mx, my);
+					//cr->move_to(mx, my);
+					//cr->curve_to(mx, my, tx-64, ty+32, tx, ty);
+					//cr->stroke();
+					cr->curve_to(sx+64, sy-32, tx-64, ty+32, tx, ty);	
+					cr->stroke();
+
+
+			}
+
 
   cr->restore ();
 
@@ -235,8 +265,10 @@ CustomWidget::on_button_press_event (GdkEventButton * event)
 					/* create a new connection between this node and the previous one */
 					GraphConnection *new_connection = new GraphConnection;
 					new_connection->src_node = (node_seq_id - 1);
+					new_connection->src_type = SOCKTYPE_OUTPUT; 
 					new_connection->src_port = 0;
 					new_connection->tgt_node = (node_seq_id);
+					new_connection->tgt_type = SOCKTYPE_INPUT; 
 					new_connection->tgt_port = 0;
 					connectionlist.push_back(new_connection);
 					}
@@ -286,4 +318,19 @@ CustomWidget::on_key_press_event (GdkEventKey * event)
   show_now ();
   return true;
 
+}
+
+GraphNode* CustomWidget::GetNodeByID(int id)
+{
+	for (std::vector < GraphNode * >::iterator it = nodelist.begin ();
+ 	      it != nodelist.end (); ++it)
+ 		   {
+					 GraphNode *nodeptr = *it;
+					if (nodeptr->GetID() == id) {
+							return nodeptr;
+							}
+	
+				}
+	std::cerr << "+++ couldn't find node with id " << id << "\n";
+	return NULL;
 }
