@@ -16,12 +16,18 @@ private:
 	std::vector<GraphConnection*>connectionlist;
   GraphNode *selected_node = NULL;
 	GraphNode *grabbed_node = NULL;
+	/* cursor location */
+	double cx = 0;
+  double cy = 0;			
+	double ocx = 0;
+	double ocy = 0;
 
  
 public:
   static void register_type ();
 	void enable_timeout();
 	GraphNode* GetNodeByID(int);
+	
 
 
 protected:
@@ -30,6 +36,8 @@ protected:
   bool on_button_press_event(GdkEventButton*); 
   bool on_button_release_event(GdkEventButton*); 
   bool on_key_press_event(GdkEventKey*); 
+	bool point_is_within_radius(double x, double y, double cx, double cy, double r); 
+  virtual bool on_motion_notify_event(GdkEventMotion *);
   double m_radius = 0.42;
   double m_line_width = 0.05;
   int viewport_scale = 1;

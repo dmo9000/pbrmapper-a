@@ -27,7 +27,7 @@ Glib::ObjectBase ("customwidget")
 //: m_radius(0.42), m_line_width(0.05)
 {
   std::cerr << "CustomWidget::CustomWidget()\n";
-  add_events (Gdk::KEY_PRESS_MASK);
+//  add_events (Gdk::KEY_PRESS_MASK);
 //  add_events (Gdk::BUTTON_PRESS_MASK);
 //  add_events (Gdk::BUTTON_RELEASE_MASK);
 }
@@ -157,7 +157,12 @@ CustomWidget::on_draw (const Cairo::RefPtr < Cairo::Context > &cr)
 
       for (int i = 0; i < num_inputs; i++)
 	{
-	  cr->set_source_rgba (0.9, 0.5, 0.1, 1.0);
+
+		if (point_is_within_radius(x, y + 16 + (i * 16), cx, cy, 5 * viewport_scale)) {
+					  cr->set_source_rgba (0.0, 0.0, 1.0, 1.0);
+						} else {
+					  cr->set_source_rgba (0.9, 0.5, 0.1, 1.0);
+						}
 	  cr->arc (x, y + 16 + (i * 16), 5, 0, 2 * M_PI);
 	  cr->fill ();
 	  cr->set_source_rgba (0.0, 0.0, 0.0, 1.0);
@@ -242,10 +247,29 @@ CustomWidget::enable_timeout ()
     connect (sigc::mem_fun (*this, &CustomWidget::on_timeout), 1000);
   add_events (Gdk::BUTTON_PRESS_MASK);
   add_events (Gdk::BUTTON_RELEASE_MASK);
-  add_events (Gdk::POINTER_MOTION_MASK);
+  add_events (Gdk::POINTER_MOTION_MASK | Gdk::ENTER_NOTIFY_MASK );
+//  signal_enter_notify_event().connect(sigc::mem_fun(*this,&CustomWidget::MotionNotify));
+  signal_motion_notify_event().connect(sigc::mem_fun(*this,&CustomWidget::on_motion_notify_event));
   grab_focus ();
 }
 
+
+bool 
+CustomWidget::on_motion_notify_event(GdkEventMotion *event)
+{
+
+	cx = event->x;
+	cy = event->y;
+
+	if (grabbed_node) {
+		//std::cerr << "+++ motion notify (x=" << event->x << ",y=" << event->y << "+++\n";
+		grabbed_node->Set_X(event->x - 32);
+		grabbed_node->Set_Y(event->y - 32);
+		}
+
+	on_timeout();
+	return true;
+}
 
 bool
 CustomWidget::on_button_release_event (GdkEventButton * event)
@@ -257,6 +281,7 @@ CustomWidget::on_button_release_event (GdkEventButton * event)
 				if (grabbed_node) {
 						std::cerr << "+++ dropping grabbed node id=" << grabbed_node->GetID() << " +++\n";
 						grabbed_node = NULL;
+						on_timeout();
 						}
 				break;
 		default:
@@ -368,7 +393,8 @@ CustomWidget::on_key_press_event (GdkEventKey * event)
 
 }
 
-GraphNode* CustomWidget::GetNodeByID(int id)
+GraphNode* 
+CustomWidget::GetNodeByID(int id)
 {
 	for (std::vector < GraphNode * >::iterator it = nodelist.begin ();
  	      it != nodelist.end (); ++it)
@@ -382,3 +408,27 @@ GraphNode* CustomWidget::GetNodeByID(int id)
 	std::cerr << "+++ couldn't find node with id " << id << "\n";
 	return NULL;
 }
+
+
+/* FIXME: I think this is a bit general to belong here, and should go in a free-range function */
+bool 
+CustomWidget::point_is_within_radius(double x, double y, double cx, double cy, double radius)
+{
+
+	double distance = sqrt((double)(cx-x)*(cx-x) + (cy-y)*(cy-y));
+
+	//std::cerr << "cx=" << cx << ",cy=" << cy << ",distance=" << distance << ",radius=" << radius << "\n";
+	if (distance <= radius) {
+			return true;
+			}
+	/*
+	if (std::pow((x - cx), 2.0) + (std::pow((y - cy), 2.0) < (std::pow(radius, 2.0))))
+			{
+				return true;
+			}
+	*/
+
+	return false;
+
+}
+
