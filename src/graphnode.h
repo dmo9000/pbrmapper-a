@@ -3,26 +3,31 @@
 
 #include <vector>
 
-#define SOCKTYPE_UNDEF		-1
-#define SOCKTYPE_INPUT		0
-#define SOCKTYPE_OUTPUT		1	
+#define SOCKTYPE_UNDEF					-1
+#define SOCKTYPE_INPUT					0
+#define SOCKTYPE_OUTPUT					1	
+
+#define STATE_INVALID						-1
+#define STATE_UNCONNECTED 			0	
+#define STATE_CONNECTED_ONE			1	
+#define STATE_CONNECTED_MULTI		2
 	
 
 struct _connection_ {
 										int id;
 										int src_node  = -1;
-										int src_type	= -1;
+										int src_type	= SOCKTYPE_UNDEF;
 										int src_port  = -1;
 										int tgt_node  = -1;
-										int tgt_type  = -1;
+										int tgt_type  = SOCKTYPE_UNDEF;
 										int tgt_port  = -1;
-										int state = -1;
+										int state = STATE_UNCONNECTED;
 										};
 
 struct _connector_ {
 										int connection_id = -1;	
-										int type = -1;
-										int state = -1;
+										int type = SOCKTYPE_UNDEF;
+										int state = STATE_UNCONNECTED;
 									};
 
 typedef struct _connection_ GraphConnection;
@@ -59,6 +64,8 @@ public:
 	int AddOutput();
 	int NumberOfInputs();
 	int NumberOfOutputs();
+	int GetPortStatus(int, int);
+	bool SetPortStatus(int, int, int, int);
 
 protected:
 

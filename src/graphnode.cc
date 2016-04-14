@@ -16,6 +16,44 @@ GraphNode::~GraphNode()
 	is_valid = 0;
 }
 
+int GraphNode::GetPortStatus(int type, int portnum)
+{
+	GraphConnector *connector = NULL;
+
+	switch (type) {
+			case SOCKTYPE_INPUT:
+				connector = inputs[portnum];
+				break;
+			case SOCKTYPE_OUTPUT:
+				connector = outputs[portnum];
+				break;
+				}
+	if (connector) {
+				return connector->state;
+				} 
+	return STATE_INVALID; 
+}
+
+bool GraphNode::SetPortStatus(int portnum, int type, int connection_id, int state)
+{
+	GraphConnector *connector = NULL;
+
+	switch (type) {
+			case SOCKTYPE_INPUT:
+				connector = inputs[portnum];
+				break;
+			case SOCKTYPE_OUTPUT:
+				connector = outputs[portnum];
+				break;
+				}
+	if (connector) {
+				connector->connection_id = connection_id; 
+				connector->state = state;
+				return true;
+				} 
+	return false; 
+}
+
 void GraphNode::Set_X(int nx)
 {
 	x = nx;
@@ -114,3 +152,4 @@ int GraphNode::GetID()
 {
 	return node_seq_id;
 }
+

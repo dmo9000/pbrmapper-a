@@ -14,6 +14,11 @@ private:
   static Glib::ObjectBase * wrap_new (GObject* o);
 	std::vector<GraphNode*>nodelist;
 	std::vector<GraphConnection*>connectionlist;
+	GraphNode *hover_node = NULL;
+	int hover_port = -1;
+	int hover_type = SOCKTYPE_UNDEF;  
+	bool hover_latch = false;
+	int hover_status = STATE_UNCONNECTED;
   GraphNode *selected_node = NULL;
 	GraphNode *grabbed_node = NULL;
 	/* cursor location */

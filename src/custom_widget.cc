@@ -159,10 +159,36 @@ CustomWidget::on_draw (const Cairo::RefPtr < Cairo::Context > &cr)
 	{
 
 		if (point_is_within_radius(x, y + 16 + (i * 16), cx, cy, 5 * viewport_scale)) {
-					  cr->set_source_rgba (0.0, 0.0, 1.0, 1.0);
+						if (!hover_latch) {
+							hover_node = nodeptr;
+							hover_type = SOCKTYPE_INPUT;
+							hover_port = i;
+							hover_status = hover_node->GetPortStatus(hover_type, i);
+							hover_latch = true;
+						  //std::cerr << "latch\n";
+							}
+              switch (hover_status) {
+                    case STATE_UNCONNECTED:
+                      cr->set_source_rgba (0.0, 1.0, 0.0, 1.0);
+                      break;
+                    default:
+                      cr->set_source_rgba (1.0, 0.0, 0.0, 1.0);
+                      break;
+                  }
 						} else {
 					  cr->set_source_rgba (0.9, 0.5, 0.1, 1.0);
+						/* unlock latch */
+						if (hover_latch && (hover_node == nodeptr) && (hover_type == SOCKTYPE_INPUT) && hover_port == i) {
+								//std::cerr << "unlatch\n";
+								hover_latch = false;
+								hover_node = NULL;
+								hover_type = SOCKTYPE_UNDEF;
+								hover_port = -1;
+								hover_status = STATE_INVALID;
+								}
 						}
+
+
 	  cr->arc (x, y + 16 + (i * 16), 5, 0, 2 * M_PI);
 	  cr->fill ();
 	  cr->set_source_rgba (0.0, 0.0, 0.0, 1.0);
@@ -175,9 +201,39 @@ CustomWidget::on_draw (const Cairo::RefPtr < Cairo::Context > &cr)
       int num_outputs = nodeptr->NumberOfOutputs ();
       //std::cerr << "num_outputs: " << num_outputs << "\n";
 
+
       for (int i = 0; i < num_outputs; i++)
 	{
-	  cr->set_source_rgba (0.9, 0.5, 0.1, 1.0);
+    if (point_is_within_radius(x + 64, y + 16 + (i * 16), cx, cy, 5 * viewport_scale)) {
+						if (!hover_latch) {
+							hover_node = nodeptr;
+							hover_type = SOCKTYPE_OUTPUT;
+							hover_port = i;
+							hover_status = hover_node->GetPortStatus(hover_type, i);
+							hover_latch = true;
+					  	//std::cerr << "latch\n";
+							}
+							switch (hover_status) {
+										case STATE_UNCONNECTED:
+            					cr->set_source_rgba (0.0, 1.0, 0.0, 1.0);
+											break;
+										default:
+            					cr->set_source_rgba (1.0, 0.0, 0.0, 1.0);
+											break;
+									}
+            } else {
+            cr->set_source_rgba (0.9, 0.5, 0.1, 1.0);
+						/* unlock latch */
+						if (hover_latch && (hover_node == nodeptr) && (hover_type == SOCKTYPE_OUTPUT) && hover_port == i) {
+								//std::cerr << "unlatch\n";
+								hover_latch = false;
+								hover_node = NULL;
+								hover_type = SOCKTYPE_UNDEF;
+								hover_port = -1;
+								hover_status = STATE_INVALID;
+								}
+            }
+
 	  cr->arc (x + 64, y + 16 + (i * 16), 5, 0, 2 * M_PI);
 	  cr->fill ();
 	  cr->set_source_rgba (0.0, 0.0, 0.0, 1.0);
@@ -258,8 +314,8 @@ bool
 CustomWidget::on_motion_notify_event(GdkEventMotion *event)
 {
 
-	cx = event->x;
-	cy = event->y;
+	cx = event->x * viewport_scale;
+	cy = event->y * viewport_scale;
 
 	if (grabbed_node) {
 		//std::cerr << "+++ motion notify (x=" << event->x << ",y=" << event->y << "+++\n";
@@ -277,9 +333,9 @@ CustomWidget::on_button_release_event (GdkEventButton * event)
   switch (event->type)
     {
 		case GDK_BUTTON_RELEASE:
-				std::cerr << "+++ mouse button released +++\n";
+//				std::cerr << "+++ mouse button released +++\n";
 				if (grabbed_node) {
-						std::cerr << "+++ dropping grabbed node id=" << grabbed_node->GetID() << " +++\n";
+//						std::cerr << "+++ dropping grabbed node id=" << grabbed_node->GetID() << " +++\n";
 						grabbed_node = NULL;
 						on_timeout();
 						}
@@ -314,7 +370,7 @@ CustomWidget::on_button_press_event (GdkEventButton * event)
 
 				if ((event->x >= x && event->x <= (x+sx)) &&
 							((event->y >= y && event->y <= (y+sy)))) {
-								std::cerr << "+++ node selected id=" << nodeptr->GetID() << " +++ \n";
+//								std::cerr << "+++ node selected id=" << nodeptr->GetID() << " +++ \n";
 								selected_node = nodeptr;
 								grabbed_node = nodeptr;
 								on_timeout();
@@ -333,20 +389,37 @@ CustomWidget::on_button_press_event (GdkEventButton * event)
       /* create: double click - create new node on the canvas */
       NewNode = new GraphNode (node_seq_id, (event->x / viewport_scale), (event->y / viewport_scale)); nodelist.push_back (NewNode);
 			selected_node = NewNode;
+		  NewNode->AddInput ();
       if (node_seq_id)
 					{
-				  NewNode->AddInput ();
 					/* create a new connection between this node and the previous one */
+					GraphNode *src_node_ptr = NULL;
+					GraphNode *tgt_node_ptr = NULL;
 					GraphConnection *new_connection = new GraphConnection;
+
 					new_connection->src_node = (node_seq_id - 1);
 					new_connection->src_type = SOCKTYPE_OUTPUT; 
 					new_connection->src_port = 0;
+					src_node_ptr = GetNodeByID(new_connection->src_node);
+					src_node_ptr->SetPortStatus(new_connection->src_port, SOCKTYPE_OUTPUT, -1, STATE_CONNECTED_ONE); 
+
 					new_connection->tgt_node = (node_seq_id);
 					new_connection->tgt_type = SOCKTYPE_INPUT; 
 					new_connection->tgt_port = 0;
+					tgt_node_ptr = GetNodeByID(new_connection->tgt_node);
+					tgt_node_ptr->SetPortStatus(new_connection->tgt_port, SOCKTYPE_INPUT, -1, STATE_CONNECTED_ONE); 
+
 					connectionlist.push_back(new_connection);
 					}
+
+		  NewNode->AddInput ();
+			NewNode->AddInput ();
+			NewNode->AddInput ();
 	    NewNode->AddOutput ();
+	    NewNode->AddOutput ();
+	    NewNode->AddOutput ();
+	    NewNode->AddOutput ();
+
       node_seq_id++;
       break;
     case GDK_3BUTTON_PRESS:
