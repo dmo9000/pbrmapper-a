@@ -78,7 +78,6 @@ int GraphNode::NumberOfOutputs()
 
 int GraphNode::GetPinX(int index, int type)
 {
-
 	switch (type) {
 			case SOCKTYPE_INPUT:
 					return x; 
@@ -96,7 +95,6 @@ int GraphNode::GetPinX(int index, int type)
 int GraphNode::GetPinY(int index, int type)
 {
 	return y + 8 + ((index) * 16) + 8;
-
 }
 
 int GraphNode::Recalculate_Size()
@@ -114,7 +112,5 @@ int GraphNode::Recalculate_Size()
 
 int GraphNode::GetID()
 {
-
 	return node_seq_id;
-
 }

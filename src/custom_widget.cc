@@ -28,7 +28,8 @@ Glib::ObjectBase ("customwidget")
 {
   std::cerr << "CustomWidget::CustomWidget()\n";
   add_events (Gdk::KEY_PRESS_MASK);
-  add_events (Gdk::BUTTON_PRESS_MASK);
+//  add_events (Gdk::BUTTON_PRESS_MASK);
+//  add_events (Gdk::BUTTON_RELEASE_MASK);
 }
 
 Glib::ObjectBase * CustomWidget::wrap_new (GObject * o)
@@ -190,7 +191,7 @@ CustomWidget::on_draw (const Cairo::RefPtr < Cairo::Context > &cr)
 					GraphConnection *connectptr = *it;	
 					GraphNode *src_node = NULL;
 					GraphNode *tgt_node = NULL;
- 					std::cerr << "+++ processing connection ...\n"; 
+ 					//std::cerr << "+++ processing connection ...\n"; 
 					//int sx = connectptr->src_node, connectptr->src_type, connectptr->src_port;
 					src_node = GetNodeByID(connectptr->src_node);
 					tgt_node = GetNodeByID(connectptr->tgt_node);
@@ -198,7 +199,7 @@ CustomWidget::on_draw (const Cairo::RefPtr < Cairo::Context > &cr)
 					int sy = src_node->GetPinY(connectptr->src_port, connectptr->src_type);
 					int tx = tgt_node->GetPinX(connectptr->tgt_port, connectptr->tgt_type);
 					int ty = tgt_node->GetPinY(connectptr->tgt_port, connectptr->tgt_type);
-					std::cerr << "drawing (" << sx << "," << sy << ":" << tx << "," << ty << ")\n";
+					//std::cerr << "drawing (" << sx << "," << sy << ":" << tx << "," << ty << ")\n";
 	  			cr->set_line_width (2);
 	  			cr->set_source_rgba (0.0, 0.0, 0.0, 1.0);
 					cr->move_to(sx, sy);
@@ -240,15 +241,37 @@ CustomWidget::enable_timeout ()
   Glib::signal_timeout ().
     connect (sigc::mem_fun (*this, &CustomWidget::on_timeout), 1000);
   add_events (Gdk::BUTTON_PRESS_MASK);
+  add_events (Gdk::BUTTON_RELEASE_MASK);
+  add_events (Gdk::POINTER_MOTION_MASK);
   grab_focus ();
+}
+
+
+bool
+CustomWidget::on_button_release_event (GdkEventButton * event)
+{
+  switch (event->type)
+    {
+		case GDK_BUTTON_RELEASE:
+				std::cerr << "+++ mouse button released +++\n";
+				if (grabbed_node) {
+						std::cerr << "+++ dropping grabbed node id=" << grabbed_node->GetID() << " +++\n";
+						grabbed_node = NULL;
+						}
+				break;
+		default:
+				std::cerr << "+++ unexpected event received in on_button_release_event +++\n";
+		}
+
+	return true;
 }
 
 bool
 CustomWidget::on_button_press_event (GdkEventButton * event)
 {
 
-  //std::cerr << "Mouse click at x=" << event->
-  //  x << " y=" << event->y << " event->type=" << event->type << "\n";
+//  std::cerr << "Mouse click at x=" << event->
+//    x << " y=" << event->y << " event->type=" << event->type << "\n";
   GraphNode *NewNode = NULL;
 
   switch (event->type)
@@ -268,9 +291,18 @@ CustomWidget::on_button_press_event (GdkEventButton * event)
 							((event->y >= y && event->y <= (y+sy)))) {
 								std::cerr << "+++ node selected id=" << nodeptr->GetID() << " +++ \n";
 								selected_node = nodeptr;
+								grabbed_node = nodeptr;
+								on_timeout();
+								return true;
 								}				
 				}
 
+			/* clicked on canvas */
+			//std::cerr << "+++ canvas click +++ \n";
+			
+			selected_node = NULL;
+			on_timeout();
+			return true;
       break;
     case GDK_2BUTTON_PRESS:
       /* create: double click - create new node on the canvas */
