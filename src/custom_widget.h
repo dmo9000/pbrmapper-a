@@ -3,15 +3,18 @@
  
 #include <gtkmm.h>
 #include <gtkmm/drawingarea.h>
- 
+#include "graphnode.h"
+
 class CustomWidget : public Gtk::DrawingArea
 {
 private:
   static GType gtype;
- 
   CustomWidget (GtkDrawingArea *gobj);
   CustomWidget ();
   static Glib::ObjectBase * wrap_new (GObject* o);
+	std::vector<GraphNode*>nodelist;
+	std::vector<GraphConnection*>connectionlist;
+
  
 public:
   static void register_type ();

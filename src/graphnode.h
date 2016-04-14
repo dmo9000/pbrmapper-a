@@ -3,18 +3,26 @@
 
 #include <vector>
 
+#define SRC_TYPE_UNDEF		-1
+#define SRC_TYPE_INPUT		0
+#define SRC_TYPE_OUTPUT		1	
+	
+
 struct _connection_ {
 										int id;
 										int src_node  = -1;
+										int src_type	= -1;
 										int src_port  = -1;
 										int tgt_node  = -1;
+										int tgt_type  = -1;
 										int tgt_port  = -1;
 										int state = -1;
 										};
 
 struct _connector_ {
-									int connection_id = -1;	
-									int state = -1;
+										int connection_id = -1;	
+										int type = -1;
+										int state = -1;
 									};
 
 typedef struct _connection_ GraphConnection;
@@ -45,6 +53,8 @@ public:
 	int Get_SY();
 	void Set_X(int nx);
 	void Set_Y(int ny);
+	int GetPinX(int index, int type);
+	int GetPinY(int index, int type);
 	int AddInput();
 	int AddOutput();
 	int NumberOfInputs();

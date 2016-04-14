@@ -9,9 +9,6 @@
 
 #define NODE_SIZE 64
 
-std::vector<GraphNode*>nodelist;
-std::vector<GraphConnection*>connectionlist;
-
 int node_seq_id = 0;
 
 #define M_PI           3.14159265358979323846
@@ -163,7 +160,7 @@ CustomWidget::on_draw (const Cairo::RefPtr < Cairo::Context > &cr)
 	  cr->arc (x, y + 16 + (i * 16), 5, 0, 2 * M_PI);
 	  cr->stroke ();
 	}
-      /* get output connector count and draw that many inputs */
+      /* get output connector count and draw that many outputs */
 
       int num_outputs = nodeptr->NumberOfOutputs ();
       //std::cerr << "num_outputs: " << num_outputs << "\n";
@@ -177,10 +174,13 @@ CustomWidget::on_draw (const Cairo::RefPtr < Cairo::Context > &cr)
 	  cr->set_line_width (2);
 	  cr->arc (x + 64, y + 16 + (i * 16), 5, 0, 2 * M_PI);
 	  cr->stroke ();
-	}
-      /* get output connector count and draw that many inputs */
+	  }
 
     }
+
+  /* draw the connections */
+
+	std::cerr << "connection count: " << connectionlist.size() << "\n";;
 
   cr->restore ();
 

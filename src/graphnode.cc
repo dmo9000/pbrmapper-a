@@ -56,6 +56,7 @@ int GraphNode::AddInput()
 {
 	GraphConnector *new_connector = NULL;
 	new_connector = new GraphConnector;
+	new_connector->type = SRC_TYPE_INPUT; 	
 	inputs.push_back(new_connector);
   Recalculate_Size();
 	return -1;
@@ -65,6 +66,7 @@ int GraphNode::AddOutput()
 {
 	GraphConnector *new_connector = NULL;
 	new_connector = new GraphConnector;
+	new_connector->type = SRC_TYPE_OUTPUT;
 	outputs.push_back(new_connector);
   Recalculate_Size();
 	return -1;
@@ -78,6 +80,29 @@ int GraphNode::NumberOfInputs()
 int GraphNode::NumberOfOutputs()
 {
 	return outputs.size();
+}
+
+int GraphNode::GetPinX(int index, int type)
+{
+
+	switch (type) {
+			case SRC_TYPE_INPUT:
+					return x; 
+					break;
+			case SRC_TYPE_OUTPUT:
+					return y;
+					break;
+			default:
+				return -1;
+				break;
+			}
+	return -1;
+}
+
+int GraphNode::GetPinY(int index, int type)
+{
+	return y + 8 + ((index -1) * 16);
+
 }
 
 int GraphNode::Recalculate_Size()
