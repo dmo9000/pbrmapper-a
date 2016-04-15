@@ -19,6 +19,7 @@ private:
 	int hover_type = SOCKTYPE_UNDEF;  
 	bool hover_latch = false;
 	int hover_status = STATE_UNCONNECTED;
+	double hover_radius = 5.0;
   GraphNode *selected_node = NULL;
 	GraphNode *grabbed_node = NULL;
 	/* cursor location */

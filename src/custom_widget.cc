@@ -157,7 +157,7 @@ CustomWidget::on_draw (const Cairo::RefPtr < Cairo::Context > &cr)
 
       for (int i = 0; i < num_inputs; i++)
 	{
-
+		hover_radius = 5.0;
 		if (point_is_within_radius(x, y + 16 + (i * 16), cx, cy, 5 * viewport_scale)) {
 						if (!hover_latch) {
 							hover_node = nodeptr;
@@ -167,6 +167,7 @@ CustomWidget::on_draw (const Cairo::RefPtr < Cairo::Context > &cr)
 							hover_latch = true;
 						  //std::cerr << "latch\n";
 							}
+							hover_radius = 6.0;
               switch (hover_status) {
                     case STATE_UNCONNECTED:
                       cr->set_source_rgba (0.0, 1.0, 0.0, 1.0);
@@ -185,15 +186,16 @@ CustomWidget::on_draw (const Cairo::RefPtr < Cairo::Context > &cr)
 								hover_type = SOCKTYPE_UNDEF;
 								hover_port = -1;
 								hover_status = STATE_INVALID;
+								hover_radius = 5.0;
 								}
 						}
 
 
-	  cr->arc (x, y + 16 + (i * 16), 5, 0, 2 * M_PI);
+	  cr->arc (x, y + 16 + (i * 16), hover_radius, 0, 2 * M_PI);
 	  cr->fill ();
 	  cr->set_source_rgba (0.0, 0.0, 0.0, 1.0);
 	  cr->set_line_width (2);
-	  cr->arc (x, y + 16 + (i * 16), 5, 0, 2 * M_PI);
+	  cr->arc (x, y + 16 + (i * 16), hover_radius, 0, 2 * M_PI);
 	  cr->stroke ();
 	}
       /* get output connector count and draw that many outputs */
@@ -204,6 +206,7 @@ CustomWidget::on_draw (const Cairo::RefPtr < Cairo::Context > &cr)
 
       for (int i = 0; i < num_outputs; i++)
 	{
+		hover_radius = 5.0;
     if (point_is_within_radius(x + 64, y + 16 + (i * 16), cx, cy, 5 * viewport_scale)) {
 						if (!hover_latch) {
 							hover_node = nodeptr;
@@ -213,6 +216,7 @@ CustomWidget::on_draw (const Cairo::RefPtr < Cairo::Context > &cr)
 							hover_latch = true;
 					  	//std::cerr << "latch\n";
 							}
+							hover_radius = 6.0;
 							switch (hover_status) {
 										case STATE_UNCONNECTED:
             					cr->set_source_rgba (0.0, 1.0, 0.0, 1.0);
@@ -231,14 +235,15 @@ CustomWidget::on_draw (const Cairo::RefPtr < Cairo::Context > &cr)
 								hover_type = SOCKTYPE_UNDEF;
 								hover_port = -1;
 								hover_status = STATE_INVALID;
+								hover_radius = 5.0;
 								}
             }
 
-	  cr->arc (x + 64, y + 16 + (i * 16), 5, 0, 2 * M_PI);
+	  cr->arc (x + 64, y + 16 + (i * 16), hover_radius, 0, 2 * M_PI);
 	  cr->fill ();
 	  cr->set_source_rgba (0.0, 0.0, 0.0, 1.0);
 	  cr->set_line_width (2);
-	  cr->arc (x + 64, y + 16 + (i * 16), 5, 0, 2 * M_PI);
+	  cr->arc (x + 64, y + 16 + (i * 16), hover_radius, 0, 2 * M_PI);
 	  cr->stroke ();
 	  }
 
@@ -358,6 +363,26 @@ CustomWidget::on_button_press_event (GdkEventButton * event)
   switch (event->type)
     {
     case GDK_BUTTON_PRESS:
+
+			if (hover_node && hover_latch) {
+						std::cerr <<  "+++ clicked on latched connector node +++\n";	
+						switch (hover_status) {
+									case STATE_UNCONNECTED:
+										std::cerr << "+++ try to create new connection +++\n";
+										break;
+									case STATE_CONNECTED_ONE:
+								  case STATE_CONNECTED_MULTI:
+										std::cerr << "+++ try to unlink connection +++\n";
+										break;
+									default:
+										std::cerr << "+++ connector in unknown state +++\n";
+										break;
+									}
+						on_timeout();
+					  return true;
+						}
+
+
       /* select: single click - check if click was on canvas or overlapped with node */
 			for (std::vector < GraphNode * >::iterator it = nodelist.begin ();
 		       it != nodelist.end (); ++it)
@@ -476,12 +501,10 @@ CustomWidget::GetNodeByID(int id)
 					if (nodeptr->GetID() == id) {
 							return nodeptr;
 							}
-	
 				}
 	std::cerr << "+++ couldn't find node with id " << id << "\n";
 	return NULL;
 }
-
 
 /* FIXME: I think this is a bit general to belong here, and should go in a free-range function */
 bool 
@@ -494,12 +517,6 @@ CustomWidget::point_is_within_radius(double x, double y, double cx, double cy, d
 	if (distance <= radius) {
 			return true;
 			}
-	/*
-	if (std::pow((x - cx), 2.0) + (std::pow((y - cy), 2.0) < (std::pow(radius, 2.0))))
-			{
-				return true;
-			}
-	*/
 
 	return false;
 
