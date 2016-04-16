@@ -27,9 +27,6 @@ Glib::ObjectBase ("customwidget")
 //: m_radius(0.42), m_line_width(0.05)
 {
   std::cerr << "CustomWidget::CustomWidget()\n";
-//  add_events (Gdk::KEY_PRESS_MASK);
-//  add_events (Gdk::BUTTON_PRESS_MASK);
-//  add_events (Gdk::BUTTON_RELEASE_MASK);
 }
 
 Glib::ObjectBase * CustomWidget::wrap_new (GObject * o)
@@ -163,7 +160,7 @@ CustomWidget::on_draw (const Cairo::RefPtr < Cairo::Context > &cr)
 							hover_node = nodeptr;
 							hover_type = SOCKTYPE_INPUT;
 							hover_port = i;
-							hover_status = hover_node->GetPortStatus(hover_type, i);
+							hover_status = hover_node->GetPortStatus(i, hover_type);
 							hover_latch = true;
 						  //std::cerr << "latch\n";
 							}
@@ -212,7 +209,7 @@ CustomWidget::on_draw (const Cairo::RefPtr < Cairo::Context > &cr)
 							hover_node = nodeptr;
 							hover_type = SOCKTYPE_OUTPUT;
 							hover_port = i;
-							hover_status = hover_node->GetPortStatus(hover_type, i);
+							hover_status = hover_node->GetPortStatus(i, hover_type);
 							hover_latch = true;
 					  	//std::cerr << "latch\n";
 							}
@@ -257,7 +254,6 @@ CustomWidget::on_draw (const Cairo::RefPtr < Cairo::Context > &cr)
 					GraphConnection *connectptr = *it;	
 					GraphNode *src_node = NULL;
 					GraphNode *tgt_node = NULL;
- 					//std::cerr << "+++ processing connection ...\n"; 
 					//int sx = connectptr->src_node, connectptr->src_type, connectptr->src_port;
 					src_node = GetNodeByID(connectptr->src_node);
 					tgt_node = GetNodeByID(connectptr->tgt_node);
@@ -304,8 +300,8 @@ CustomWidget::on_timeout ()
 void
 CustomWidget::enable_timeout ()
 {
-  Glib::signal_timeout ().
-    connect (sigc::mem_fun (*this, &CustomWidget::on_timeout), 1000);
+  //Glib::signal_timeout ().
+   // connect (sigc::mem_fun (*this, &CustomWidget::on_timeout), 1000);
   add_events (Gdk::BUTTON_PRESS_MASK);
   add_events (Gdk::BUTTON_RELEASE_MASK);
   add_events (Gdk::POINTER_MOTION_MASK | Gdk::ENTER_NOTIFY_MASK );
@@ -361,6 +357,8 @@ CustomWidget::on_button_press_event (GdkEventButton * event)
   GraphNode *NewNode = NULL;
 	GraphConnector *unlink_source = NULL;
 	GraphConnection *unlink_connection = NULL;
+	GraphNode *src_node_ptr = NULL;
+  GraphNode *tgt_node_ptr = NULL;
 
   switch (event->type)
     {
@@ -424,38 +422,28 @@ CustomWidget::on_button_press_event (GdkEventButton * event)
       /* create: double click - create new node on the canvas */
       NewNode = new GraphNode (node_seq_id, (event->x / viewport_scale), (event->y / viewport_scale)); nodelist.push_back (NewNode);
 			selected_node = NewNode;
-		  NewNode->AddInput ();
-      if (node_seq_id)
-					{
+      if (node_seq_id) {
 					/* create a new connection between this node and the previous one */
-					GraphNode *src_node_ptr = NULL;
-					GraphNode *tgt_node_ptr = NULL;
-					GraphConnection *new_connection = new GraphConnection;
+					if (GetNodeByID(node_seq_id - 1)) {
+		  			NewNode->AddInput ();
+						GraphConnection *new_connection = new GraphConnection;
+						new_connection->src_node = (node_seq_id - 1);
+						new_connection->tgt_node = (node_seq_id);
 
-					new_connection->src_node = (node_seq_id - 1);
-					new_connection->src_type = SOCKTYPE_OUTPUT; 
-					new_connection->src_port = 0;
-					src_node_ptr = GetNodeByID(new_connection->src_node);
-					src_node_ptr->SetPortStatus(new_connection->src_port, SOCKTYPE_OUTPUT, STATE_CONNECTED_ONE, new_connection); 
+						new_connection->src_type = SOCKTYPE_OUTPUT; 
+						new_connection->src_port = 0;
+						src_node_ptr = GetNodeByID(new_connection->src_node);
+						src_node_ptr->SetPortStatus(new_connection->src_port, SOCKTYPE_OUTPUT, STATE_CONNECTED_ONE, new_connection); 
 
-					new_connection->tgt_node = (node_seq_id);
-					new_connection->tgt_type = SOCKTYPE_INPUT; 
-					new_connection->tgt_port = 0;
-					tgt_node_ptr = GetNodeByID(new_connection->tgt_node);
-					tgt_node_ptr->SetPortStatus(new_connection->tgt_port, SOCKTYPE_INPUT,  STATE_CONNECTED_ONE, new_connection); 
-
-					connectionlist.push_back(new_connection);
-					}
-
-		  NewNode->AddInput ();
-			NewNode->AddInput ();
-			NewNode->AddInput ();
-	    NewNode->AddOutput ();
-	    NewNode->AddOutput ();
-	    NewNode->AddOutput ();
-	    NewNode->AddOutput ();
-
-      node_seq_id++;
+						new_connection->tgt_type = SOCKTYPE_INPUT; 
+						new_connection->tgt_port = 0;
+						tgt_node_ptr = GetNodeByID(new_connection->tgt_node);
+						tgt_node_ptr->SetPortStatus(new_connection->tgt_port, SOCKTYPE_INPUT,  STATE_CONNECTED_ONE, new_connection); 
+						connectionlist.push_back(new_connection);
+						}
+				}
+      	node_seq_id++;
+				NewNode->AddOutput();
       break;
     case GDK_3BUTTON_PRESS:
       break;
@@ -473,28 +461,35 @@ CustomWidget::on_key_press_event (GdkEventKey * event)
   std::cerr << "KEYBOARD BUTTON EVENT TYPE: " << event->type << "\n";
   unsigned char inputdata;
 
-  if (event->type == GDK_KEY_PRESS)
-    {
+	switch (event->type) {
+			case GDK_DELETE:
+				std::cerr << "*** DELETE SELECTED ***\n";
+				break;
+			case GDK_KEY_PRESS:
       std::cerr << "Input was: " << event->string << "\n";
       inputdata = 0;
-      if (event->string)
-	{
-	  inputdata = event->string[0];
-	  switch (inputdata)
-	    {
-	    case '+':
-	      if (viewport_scale <= 3)
-		viewport_scale++;
-	      break;
-	    case '-':
-	      if (viewport_scale >= 1)
-		viewport_scale--;
-	      break;
-	    default:
-	      break;
-	    }
-	}
-
+      if (event->string) {
+	  		inputdata = event->string[0];
+	  		switch (inputdata)
+			    {	
+					case 'x':
+						if (selected_node) {
+							std::cerr << "DELETE!!\n";
+							UnlinkAll(selected_node);
+							RemoveNode(selected_node);
+							selected_node = NULL;
+							}
+						break;	
+			    case '+':
+			      if (viewport_scale <= 3) viewport_scale++;
+			      break;
+	   			case '-':
+	      		if (viewport_scale >= 1) viewport_scale--;
+			      break;
+	  		  default:
+	      		break;
+	    		}		
+				}
     }
 
   return true;
@@ -536,25 +531,32 @@ bool
 CustomWidget::UnlinkConnection(GraphConnection *c) 
 {
 
+	if (!c) return false;
+	std::cerr << "UnlinkConnection(" << std::hex << c << ")" << std::endl;
   for (std::vector <GraphConnection *>::iterator it = connectionlist.begin ();
        it != connectionlist.end (); ++it)
       {
           GraphConnection *connectptr = *it;
 					fprintf(stderr, "(%08lx:%08lx)\n", connectptr, c);
 					if (connectptr == c) {
-						std::cerr << "+++ destroying connection +++\n";
+						fprintf(stderr, "+++ destroying connection %08lx+++\n", c);
 						GraphNode *p1=NULL;
 						GraphNode *p2=NULL;
 						p1 = GetNodeByID(c->src_node);
 						p2 = GetNodeByID(c->tgt_node);
+						if (!p1 || !p2) {
+								std::cerr << "+++ FAILURE TO DELETE CONNECTION ...\n";
+								return false;	
+								}
 						p1->SetPortStatus(c->src_port, c->src_type, STATE_UNCONNECTED, NULL);	
 						p2->SetPortStatus(c->tgt_port, c->tgt_type, STATE_UNCONNECTED, NULL);	
 						connectionlist.erase(it);
+						delete connectptr;
 						return true;
 						}
 			}
 
-	std::cerr << "*** connector not found, stale socket status? ***\n";
+	std::cerr << "*** connection not found, stale socket status? ***\n";
 	return false;
 }
 
@@ -568,4 +570,56 @@ CustomWidget::HoverUnlatch()
 	hover_status = STATE_INVALID;
 	hover_latch = false;
 
+}
+
+void
+CustomWidget::UnlinkAll(GraphNode *unlink_node)
+{
+	std::cerr << "UnlinkAll(" << unlink_node->GetID() << ")\n";
+	int num_inputs = unlink_node->NumberOfInputs();
+	int num_outputs = unlink_node->NumberOfOutputs();
+	GraphConnection *kill_connection = NULL;
+	for (int i = 0; i < num_inputs; i++) {
+				GraphConnection *kill_connection = NULL;
+				int node_state = unlink_node->GetPortStatus(i, SOCKTYPE_INPUT); 
+				if (node_state == STATE_CONNECTED_ONE || node_state == STATE_CONNECTED_MULTI) {
+					kill_connection = unlink_node->GetPortConnection(i, SOCKTYPE_INPUT);
+					if (kill_connection){
+								 UnlinkConnection(kill_connection);
+								}
+					}
+				}
+
+	for (int i = 0; i < num_outputs; i++) {
+				GraphConnection *kill_connection = NULL;
+				int node_state = unlink_node->GetPortStatus(i, SOCKTYPE_OUTPUT); 
+				if (node_state == STATE_CONNECTED_ONE || node_state == STATE_CONNECTED_MULTI) {
+					kill_connection = unlink_node->GetPortConnection(i, SOCKTYPE_OUTPUT);
+					if (kill_connection) {
+								UnlinkConnection(kill_connection);
+								}
+						}
+				}
+
+	on_timeout();			 
+}
+
+
+bool
+CustomWidget::RemoveNode(GraphNode *remove_node)
+{
+
+		std::cerr << "+++ RemoveNode(" << remove_node->GetID() << ")" << std::endl;
+	  for (std::vector < GraphNode * >::iterator it = nodelist.begin (); it != nodelist.end (); it++) {
+	      GraphNode *nodeptr = *it;
+				std::cerr << "(" << remove_node->GetID() << ":" << nodeptr->GetID() << ")" << std::endl;
+				if (nodeptr == remove_node) {
+						std::cerr << "*** ERASED ***" << std::endl;
+						nodelist.erase(it);
+						/* FIXME: destroy all sockets */
+						delete nodeptr;
+						return true;
+						}
+				}
+	return false;
 }

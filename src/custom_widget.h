@@ -35,6 +35,8 @@ public:
 	GraphNode* GetNodeByID(int);
 	bool UnlinkConnection(GraphConnection *);
 	void HoverUnlatch();
+	void UnlinkAll(GraphNode*);
+	bool RemoveNode(GraphNode*);
 
 protected:
 	bool on_timeout();

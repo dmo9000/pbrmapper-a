@@ -66,9 +66,9 @@ public:
 	int AddOutput();
 	int NumberOfInputs();
 	int NumberOfOutputs();
-	int GetPortStatus(int, int);
-	bool SetPortStatus(int, int, int, GraphConnection *);
-	GraphConnection* GetPortConnection(int, int);
+	int GetPortStatus(int portnum, int type);
+	bool SetPortStatus(int portnum, int type, int state, GraphConnection *c);
+	GraphConnection* GetPortConnection(int portnum, int type);
 
 protected:
 

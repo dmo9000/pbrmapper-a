@@ -36,7 +36,7 @@ GraphConnection* GraphNode::GetPortConnection(int portnum, int type)
 	return NULL; 
 }
 
-int GraphNode::GetPortStatus(int type, int portnum)
+int GraphNode::GetPortStatus(int portnum, int type)
 {
 	GraphConnector *connector = NULL;
 
