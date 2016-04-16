@@ -11,6 +11,7 @@
 #define STATE_UNCONNECTED 			0	
 #define STATE_CONNECTED_ONE			1	
 #define STATE_CONNECTED_MULTI		2
+#define STATE_UNCHANGED					3
 	
 
 struct _connection_ {
@@ -24,13 +25,14 @@ struct _connection_ {
 										int state = STATE_UNCONNECTED;
 										};
 
+typedef struct _connection_ GraphConnection;
+
 struct _connector_ {
-										int connection_id = -1;	
 										int type = SOCKTYPE_UNDEF;
 										int state = STATE_UNCONNECTED;
+										GraphConnection *connection = NULL;
 									};
 
-typedef struct _connection_ GraphConnection;
 typedef struct _connector_ GraphConnector;
  
 class GraphNode 
@@ -65,7 +67,8 @@ public:
 	int NumberOfInputs();
 	int NumberOfOutputs();
 	int GetPortStatus(int, int);
-	bool SetPortStatus(int, int, int, int);
+	bool SetPortStatus(int, int, int, GraphConnection *);
+	GraphConnection* GetPortConnection(int, int);
 
 protected:
 

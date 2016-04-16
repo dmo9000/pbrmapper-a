@@ -18,7 +18,7 @@ private:
 	int hover_port = -1;
 	int hover_type = SOCKTYPE_UNDEF;  
 	bool hover_latch = false;
-	int hover_status = STATE_UNCONNECTED;
+	int hover_status = STATE_INVALID;
 	double hover_radius = 5.0;
   GraphNode *selected_node = NULL;
 	GraphNode *grabbed_node = NULL;
@@ -33,8 +33,8 @@ public:
   static void register_type ();
 	void enable_timeout();
 	GraphNode* GetNodeByID(int);
-	
-
+	bool UnlinkConnection(GraphConnection *);
+	void HoverUnlatch();
 
 protected:
 	bool on_timeout();

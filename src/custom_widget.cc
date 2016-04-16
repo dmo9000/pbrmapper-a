@@ -359,6 +359,8 @@ CustomWidget::on_button_press_event (GdkEventButton * event)
 //  std::cerr << "Mouse click at x=" << event->
 //    x << " y=" << event->y << " event->type=" << event->type << "\n";
   GraphNode *NewNode = NULL;
+	GraphConnector *unlink_source = NULL;
+	GraphConnection *unlink_connection = NULL;
 
   switch (event->type)
     {
@@ -373,6 +375,14 @@ CustomWidget::on_button_press_event (GdkEventButton * event)
 									case STATE_CONNECTED_ONE:
 								  case STATE_CONNECTED_MULTI:
 										std::cerr << "+++ try to unlink connection +++\n";
+										unlink_connection = hover_node->GetPortConnection(hover_port, hover_type);
+										if (unlink_connection) {
+													std::cerr << "+++ found connection to unlink +++\n";
+													UnlinkConnection(unlink_connection);
+													}
+										HoverUnlatch();
+										on_timeout();
+											
 										break;
 									default:
 										std::cerr << "+++ connector in unknown state +++\n";
@@ -426,13 +436,13 @@ CustomWidget::on_button_press_event (GdkEventButton * event)
 					new_connection->src_type = SOCKTYPE_OUTPUT; 
 					new_connection->src_port = 0;
 					src_node_ptr = GetNodeByID(new_connection->src_node);
-					src_node_ptr->SetPortStatus(new_connection->src_port, SOCKTYPE_OUTPUT, -1, STATE_CONNECTED_ONE); 
+					src_node_ptr->SetPortStatus(new_connection->src_port, SOCKTYPE_OUTPUT, STATE_CONNECTED_ONE, new_connection); 
 
 					new_connection->tgt_node = (node_seq_id);
 					new_connection->tgt_type = SOCKTYPE_INPUT; 
 					new_connection->tgt_port = 0;
 					tgt_node_ptr = GetNodeByID(new_connection->tgt_node);
-					tgt_node_ptr->SetPortStatus(new_connection->tgt_port, SOCKTYPE_INPUT, -1, STATE_CONNECTED_ONE); 
+					tgt_node_ptr->SetPortStatus(new_connection->tgt_port, SOCKTYPE_INPUT,  STATE_CONNECTED_ONE, new_connection); 
 
 					connectionlist.push_back(new_connection);
 					}
@@ -522,3 +532,40 @@ CustomWidget::point_is_within_radius(double x, double y, double cx, double cy, d
 
 }
 
+bool
+CustomWidget::UnlinkConnection(GraphConnection *c) 
+{
+
+  for (std::vector <GraphConnection *>::iterator it = connectionlist.begin ();
+       it != connectionlist.end (); ++it)
+      {
+          GraphConnection *connectptr = *it;
+					fprintf(stderr, "(%08lx:%08lx)\n", connectptr, c);
+					if (connectptr == c) {
+						std::cerr << "+++ destroying connection +++\n";
+						GraphNode *p1=NULL;
+						GraphNode *p2=NULL;
+						p1 = GetNodeByID(c->src_node);
+						p2 = GetNodeByID(c->tgt_node);
+						p1->SetPortStatus(c->src_port, c->src_type, STATE_UNCONNECTED, NULL);	
+						p2->SetPortStatus(c->tgt_port, c->tgt_type, STATE_UNCONNECTED, NULL);	
+						connectionlist.erase(it);
+						return true;
+						}
+			}
+
+	std::cerr << "*** connector not found, stale socket status? ***\n";
+	return false;
+}
+
+
+void
+CustomWidget::HoverUnlatch()
+{
+	hover_node = NULL;
+	hover_port = -1;
+	hover_type = SOCKTYPE_UNDEF;
+	hover_status = STATE_INVALID;
+	hover_latch = false;
+
+}

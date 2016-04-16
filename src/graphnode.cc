@@ -16,6 +16,26 @@ GraphNode::~GraphNode()
 	is_valid = 0;
 }
 
+GraphConnection* GraphNode::GetPortConnection(int portnum, int type)
+{
+	GraphConnector *connector = NULL;
+	fprintf(stderr, "GetPortConnection(%u:%d,%d)\n", node_seq_id, portnum, type);
+	switch (type) {
+			case SOCKTYPE_INPUT:
+				connector = inputs[portnum];
+				break;
+			case SOCKTYPE_OUTPUT:
+				connector = outputs[portnum];
+				break;
+		}
+
+	if (connector && connector->connection) {
+				fprintf(stderr, "connection=%08lx\n", connector->connection);
+				return connector->connection;
+				} 
+	return NULL; 
+}
+
 int GraphNode::GetPortStatus(int type, int portnum)
 {
 	GraphConnector *connector = NULL;
@@ -34,10 +54,11 @@ int GraphNode::GetPortStatus(int type, int portnum)
 	return STATE_INVALID; 
 }
 
-bool GraphNode::SetPortStatus(int portnum, int type, int connection_id, int state)
+bool GraphNode::SetPortStatus(int portnum, int type, int state,
+			 GraphConnection *c)
 {
 	GraphConnector *connector = NULL;
-
+	fprintf(stderr, "SetPortStatus(%u,%d,%d,%u,%08lx)\n", node_seq_id, portnum, type, state, c);
 	switch (type) {
 			case SOCKTYPE_INPUT:
 				connector = inputs[portnum];
@@ -47,8 +68,10 @@ bool GraphNode::SetPortStatus(int portnum, int type, int connection_id, int stat
 				break;
 				}
 	if (connector) {
-				connector->connection_id = connection_id; 
-				connector->state = state;
+				connector->connection = c;
+				if (state != STATE_UNCHANGED) {
+					connector->state = state;
+					}
 				return true;
 				} 
 	return false; 
@@ -152,4 +175,5 @@ int GraphNode::GetID()
 {
 	return node_seq_id;
 }
+
 
