@@ -5,6 +5,18 @@
 #include <gtkmm/drawingarea.h>
 #include "graphnode.h"
 
+#define DRAG_NONE					0	
+#define DRAG_NODE					1
+#define DRAG_CONNECTION 	2
+
+struct _connector_reference_ {
+																GraphNode *node;
+																int portnum;
+																int type;
+															};
+
+typedef struct _connector_reference_ XRef;
+
 class CustomWidget : public Gtk::DrawingArea
 {
 private:
@@ -14,19 +26,19 @@ private:
   static Glib::ObjectBase * wrap_new (GObject* o);
 	std::vector<GraphNode*>nodelist;
 	std::vector<GraphConnection*>connectionlist;
-	GraphNode *hover_node = NULL;
-	int hover_port = -1;
-	int hover_type = SOCKTYPE_UNDEF;  
 	bool hover_latch = false;
 	int hover_status = STATE_INVALID;
 	double hover_radius = 5.0;
   GraphNode *selected_node = NULL;
 	GraphNode *grabbed_node = NULL;
+	XRef hover_xref = { NULL, -1, SOCKTYPE_UNDEF };
+	XRef connect_xref = { NULL, -1, SOCKTYPE_UNDEF };
 	/* cursor location */
 	double cx = 0;
   double cy = 0;			
 	double ocx = 0;
 	double ocy = 0;
+	int dragmode = DRAG_NONE;
 
  
 public:
@@ -37,6 +49,8 @@ public:
 	void HoverUnlatch();
 	void UnlinkAll(GraphNode*);
 	bool RemoveNode(GraphNode*);
+	bool SetXRef(XRef *, GraphNode *, int portnum, int type);
+  bool CopyXRef(XRef *A, XRef *B);
 
 protected:
 	bool on_timeout();
