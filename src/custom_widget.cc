@@ -286,6 +286,25 @@ CustomWidget::on_draw (const Cairo::RefPtr < Cairo::Context > &cr)
         cr->stroke ();
     }
 
+
+		/* finally, draw any active dragged connection */
+
+		
+        if (dragmode == DRAG_CONNECTION && connect_xref.node) {
+          GraphNode *src_node = connect_xref.node;
+          if (src_node) {
+            int sx = src_node->GetPinX (connect_xref.portnum, connect_xref.type);
+            int sy = src_node->GetPinY (connect_xref.portnum, connect_xref.type);
+            cr->set_source_rgba (0.0, 0.0, 0.0, 1.0);
+            cr->set_line_width(2.0);
+            cr->move_to(sx, sy);
+            cr->curve_to (sx + 64, sy - 32, cx - 64, cy + 32, cx, cy);
+            cr->stroke ();
+            on_timeout();
+            }
+        }
+
+
     cr->restore ();
 
     return true;
@@ -328,7 +347,9 @@ CustomWidget::enable_timeout ()
 bool
 CustomWidget::on_motion_notify_event (GdkEventMotion * event)
 {
-
+		GraphNode *src_node = NULL;
+		int sx = 0;
+		int sy = 0;
     cx = event->x * viewport_scale;
     cy = event->y * viewport_scale;
 
@@ -336,6 +357,8 @@ CustomWidget::on_motion_notify_event (GdkEventMotion * event)
     {
     case DRAG_NONE:
         /* normal mouse transit - nothing grabbed, dragged or held */
+				//std::cerr << "... normal transit ...\n"; 
+				on_timeout();	
         break;
     case DRAG_NODE:
         if (grabbed_node)
@@ -344,13 +367,14 @@ CustomWidget::on_motion_notify_event (GdkEventMotion * event)
             grabbed_node->Set_X (event->x - 32);
             grabbed_node->Set_Y (event->y - 32);
         }
+				on_timeout();
         break;
     case DRAG_CONNECTION:
-        /* draw a connection line out from hover_xref */
+				//std::cerr << "--> dragging out connection from connect_xref to x=" << cx << ", y=" << cy << std::endl;
+				on_timeout();	
         break;
     }
 
-    on_timeout ();
     return true;
 }
 
@@ -360,20 +384,66 @@ CustomWidget::on_button_release_event (GdkEventButton * event)
     switch (event->type)
     {
     case GDK_BUTTON_RELEASE:
-//                              std::cerr << "+++ mouse button released +++\n";
-        if (grabbed_node)
-        {
-//                                              std::cerr << "+++ dropping grabbed node id=" << grabbed_node->GetID() << " +++\n";
-            dragmode = DRAG_NONE;
-            grabbed_node = NULL;
-            on_timeout ();
-        }
+            std::cerr << "+++ mouse button released +++\n";
+				switch (dragmode) {
+						case DRAG_NODE: 
+				        if (grabbed_node)
+        				{
+        			    std::cerr << "+++ dropping grabbed node id=" << grabbed_node->GetID() << " +++\n";
+         				  grabbed_node = NULL;
+								}
+           			dragmode = DRAG_NONE;
+								on_timeout();
+								break;
+						case DRAG_CONNECTION:
+								if (connect_xref.node && hover_xref.node) {
+											if (connect_xref.node == hover_xref.node) {
+														std::cerr << "Cannot connect node to itself\n";
+														ClearXRef(&connect_xref);
+														HoverUnlatch();
+														dragmode = DRAG_NONE;
+														on_timeout();
+														return false;
+														}
+											if (connect_xref.type == hover_xref.type) {
+														std::cerr << "Must connect input to output (or vice versa)\n";
+														ClearXRef(&connect_xref);
+														HoverUnlatch();
+														dragmode = DRAG_NONE;
+														on_timeout();
+														return false;
+														}
+											}
+ 
+								if (!hover_xref.node) {
+											std::cerr << "WARNING: hover_ref.node is NULL\n";
+											ClearXRef(&connect_xref);
+											HoverUnlatch();
+											dragmode = DRAG_NONE;
+											on_timeout();
+											return false;
+											}
+								std::cerr << "--- ESTABLISHING CONNECTION --- " << std::hex << hover_xref.node << " " << connect_xref.node << std::endl;
+							
+								if (hover_xref.type == SOCKTYPE_OUTPUT) {
+											EstablishConnection(&hover_xref, &connect_xref);
+											} else {
+											EstablishConnection(&connect_xref, &hover_xref);
+											}
+
+								ClearXRef(&connect_xref);
+								HoverUnlatch();
+								dragmode = DRAG_NONE;
+								on_timeout();
+								break;
+						}
         break;
     default:
         std::cerr <<
                   "+++ unexpected event received in on_button_release_event +++\n";
     }
 
+		on_timeout();
     return true;
 }
 
@@ -403,6 +473,8 @@ CustomWidget::on_button_press_event (GdkEventButton * event)
                 /* store the hover reference as new connection reference */
                 dragmode = DRAG_CONNECTION;
                 CopyXRef (&hover_xref, &connect_xref);
+								//ClearXRef (&hover_xref);
+								HoverUnlatch();	
                 break;
             case STATE_CONNECTED_ONE:
             case STATE_CONNECTED_MULTI:
@@ -442,11 +514,11 @@ CustomWidget::on_button_press_event (GdkEventButton * event)
             if ((event->x >= x && event->x <= (x + sx)) &&
                     ((event->y >= y && event->y <= (y + sy))))
             {
-//                                                              std::cerr << "+++ node selected id=" << nodeptr->GetID() << " +++ \n";
+//                                 std::cerr << "+++ node selected id=" << nodeptr->GetID() << " +++ \n";
 
                 selected_node = nodeptr;
                 grabbed_node = nodeptr;
-                dragmode = DRAG_NONE;
+                dragmode = DRAG_NODE;
                 on_timeout ();
                 return true;
             }
@@ -466,9 +538,9 @@ CustomWidget::on_button_press_event (GdkEventButton * event)
                            (event->y / viewport_scale));
         nodelist.push_back (NewNode);
         selected_node = NewNode;
+				/*
         if (node_seq_id)
         {
-            /* create a new connection between this node and the previous one */
             if (GetNodeByID (node_seq_id - 1))
             {
                 NewNode->AddInput ();
@@ -493,10 +565,18 @@ CustomWidget::on_button_press_event (GdkEventButton * event)
                                              new_connection);
                 connectionlist.push_back (new_connection);
             }
-        }
+					}
+						*/
         node_seq_id++;
-        //             NewNode->AddInput ();
+        NewNode->AddInput ();
+        NewNode->AddInput ();
+        NewNode->AddInput ();
+        NewNode->AddInput ();
         NewNode->AddOutput ();
+        NewNode->AddOutput ();
+        NewNode->AddOutput ();
+        NewNode->AddOutput ();
+
         break;
     case GDK_3BUTTON_PRESS:
         break;
@@ -630,9 +710,12 @@ CustomWidget::UnlinkConnection (GraphConnection * c)
 void
 CustomWidget::HoverUnlatch ()
 {
-    hover_xref.node = NULL;
-    hover_xref.portnum = -1;
-    hover_xref.type = SOCKTYPE_UNDEF;
+			std::cerr << "HoverUnlatch()\n";
+
+			ClearXRef(&hover_xref);
+//    hover_xref.node = NULL;
+//    hover_xref.portnum = -1;
+//    hover_xref.type = SOCKTYPE_UNDEF;
     hover_status = STATE_INVALID;
     hover_latch = false;
 }
@@ -715,7 +798,7 @@ CustomWidget::SetXRef (XRef * xref, GraphNode * node, int portnum, int type)
 }
 
 bool
-CustomWidget::CopyXRef (XRef * a, Xref * b)
+CustomWidget::CopyXRef (XRef * a, XRef * b)
 {
     if (a && b)
     {
@@ -726,4 +809,65 @@ CustomWidget::CopyXRef (XRef * a, Xref * b)
     }
 
     return false;
+}
+
+bool
+CustomWidget::ClearXRef(XRef *a)
+{
+
+	if (a) {
+			a->node = NULL;
+			a->portnum = -1;
+			a->type = SOCKTYPE_UNDEF; 
+			}
+
+}
+
+
+bool 
+CustomWidget::EstablishConnection(XRef *A, XRef *B)
+{
+    GraphConnection *new_connection = new GraphConnection;
+		GraphNode *src_node_ptr = NULL;
+		GraphNode *tgt_node_ptr = NULL;
+
+		/* setup the source side of the connection */
+    new_connection->src_node = A->node->GetID();
+    new_connection->src_type = A->type;
+		new_connection->src_port = A->portnum;
+
+    src_node_ptr = GetNodeByID (new_connection->src_node);
+
+		if (src_node_ptr->GetPortStatus(new_connection->src_port,  new_connection->src_type) != STATE_UNCONNECTED) {
+				std::cerr << "ERROR: that port is already connected to something else\n";	
+				delete new_connection;
+				return false;
+				}
+
+		/* setup the target side of the connection */
+    new_connection->tgt_node = B->node->GetID();
+    new_connection->tgt_type = B->type;
+    new_connection->tgt_port = B->portnum;
+    tgt_node_ptr = GetNodeByID (new_connection->tgt_node);
+
+		if (tgt_node_ptr->GetPortStatus(new_connection->tgt_port,  new_connection->tgt_type) != STATE_UNCONNECTED) {
+				std::cerr <"ERROR: that port is already connected to something else\n";	
+				delete new_connection;
+				return false;
+				}
+
+		/* these need to be locked at the same time, or else, we fail */
+    src_node_ptr->SetPortStatus (new_connection->src_port,
+                                 SOCKTYPE_OUTPUT,
+                                 STATE_CONNECTED_ONE,
+                                 new_connection);
+
+    tgt_node_ptr->SetPortStatus (new_connection->tgt_port,
+                                 SOCKTYPE_INPUT,
+                                 STATE_CONNECTED_ONE,
+                                 new_connection);
+    connectionlist.push_back (new_connection);
+
+		return true;
+
 }

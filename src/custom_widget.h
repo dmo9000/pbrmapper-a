@@ -51,6 +51,8 @@ public:
 	bool RemoveNode(GraphNode*);
 	bool SetXRef(XRef *, GraphNode *, int portnum, int type);
   bool CopyXRef(XRef *A, XRef *B);
+	bool ClearXRef(XRef *a);
+	bool EstablishConnection(XRef *a, XRef *b);
 
 protected:
 	bool on_timeout();
