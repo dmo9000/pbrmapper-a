@@ -485,10 +485,29 @@ CustomWidget::on_button_press_event (GdkEventButton * event)
                 if (unlink_connection)
                 {
                     std::cerr << "+++ found connection to unlink +++\n";
-                    UnlinkConnection (unlink_connection);
+										if (unlink_connection->src_node == hover_xref.node->GetID()) {
+												std::cerr << "UNLINKING FROM SRC END\n";
+												SetXRef(&connect_xref, GetNodeByID(unlink_connection->tgt_node), 
+																				unlink_connection->tgt_port, unlink_connection->tgt_type); 
+                    		UnlinkConnection (unlink_connection);
+												HoverUnlatch();
+												dragmode = DRAG_CONNECTION;
+												on_timeout();
+												return true;
+												} 
+
+										if (unlink_connection->tgt_node == hover_xref.node->GetID()) {
+												std::cerr << "UNLINKING FROM TGT END\n";
+												SetXRef(&connect_xref, GetNodeByID(unlink_connection->src_node), 
+																				unlink_connection->src_port, unlink_connection->src_type); 
+                    		UnlinkConnection (unlink_connection);
+												HoverUnlatch();
+												dragmode = DRAG_CONNECTION;
+												on_timeout();
+												return true;
+												}
                 }
-                HoverUnlatch ();
-                on_timeout ();
+								
                 break;
             default:
                 std::cerr << "+++ connector in unknown state " << hover_status
@@ -570,10 +589,6 @@ CustomWidget::on_button_press_event (GdkEventButton * event)
         node_seq_id++;
         NewNode->AddInput ();
         NewNode->AddInput ();
-        NewNode->AddInput ();
-        NewNode->AddInput ();
-        NewNode->AddOutput ();
-        NewNode->AddOutput ();
         NewNode->AddOutput ();
         NewNode->AddOutput ();
 
