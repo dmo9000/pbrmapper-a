@@ -1,6 +1,7 @@
 #include <iostream>
 #include "graphnode.h"
 
+
 GraphNode::GraphNode(int seq_id, double spawnx, double spawny)
 {
     node_seq_id = seq_id;
@@ -56,7 +57,7 @@ int GraphNode::GetPortStatus(int portnum, int type)
         break;
     }
     if (connector) {
-        std::cerr << "GraphNode[" << node_seq_id << "]::GetPortStatus(" << portnum << ", " << type << ")=" << connector->state << std::endl;
+        //std::cerr << "GraphNode[" << node_seq_id << "]::GetPortStatus(" << portnum << ", " << type << ")=" << connector->state << std::endl;
         return connector->state;
     }
     return STATE_INVALID;
@@ -66,7 +67,7 @@ bool GraphNode::SetPortStatus(int portnum, int type, int state,
                               GraphConnection *c)
 {
     GraphConnector *connector = NULL;
-    fprintf(stderr, "SetPortStatus(%u,%d,%d,%u,%08lx)\n", node_seq_id, portnum, type, state, c);
+//    std::cerr <<  "SetPortStatus(" << std::hex << %u,%d,%d,%u,%08lx)\n", node_seq_id, portnum, type, state, c);
     switch (type) {
     case SOCKTYPE_INPUT:
         connector = inputs[portnum];

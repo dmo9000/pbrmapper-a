@@ -384,7 +384,7 @@ CustomWidget::on_button_release_event (GdkEventButton * event)
     switch (event->type)
     {
     case GDK_BUTTON_RELEASE:
-            std::cerr << "+++ mouse button released +++\n";
+            //std::cerr << "+++ mouse button released +++\n";
 				switch (dragmode) {
 						case DRAG_NODE: 
 				        if (grabbed_node)
@@ -725,12 +725,12 @@ CustomWidget::UnlinkConnection (GraphConnection * c)
 void
 CustomWidget::HoverUnlatch ()
 {
-			std::cerr << "HoverUnlatch()\n";
+		//std::cerr << "HoverUnlatch()\n";
 
-			ClearXRef(&hover_xref);
-//    hover_xref.node = NULL;
-//    hover_xref.portnum = -1;
-//    hover_xref.type = SOCKTYPE_UNDEF;
+		ClearXRef(&hover_xref);
+//  hover_xref.node = NULL;
+//  hover_xref.portnum = -1;
+//  hover_xref.type = SOCKTYPE_UNDEF;
     hover_status = STATE_INVALID;
     hover_latch = false;
 }
@@ -866,7 +866,7 @@ CustomWidget::EstablishConnection(XRef *A, XRef *B)
     tgt_node_ptr = GetNodeByID (new_connection->tgt_node);
 
 		if (tgt_node_ptr->GetPortStatus(new_connection->tgt_port,  new_connection->tgt_type) != STATE_UNCONNECTED) {
-				std::cerr <"ERROR: that port is already connected to something else\n";	
+				std::cerr << "ERROR: that port is already connected to something else\n";	
 				delete new_connection;
 				return false;
 				}

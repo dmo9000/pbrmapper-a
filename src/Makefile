@@ -1,7 +1,8 @@
 all: libcustomwidgetsglade simple 
 
-libcustomwidgetsglade: custom_widget.cc graphnode.cc custom_widget_glade.c custom_widget.h custom_widget_glade.h custom_widget_pure.h
-	g++ graphnode.cc custom_widget.cc custom_widget_glade.c -g -ggdb -fPIC -shared -std=c++11  -o libcustomwidgetsglade.so  `pkg-config gtkmm-3.0 --cflags --libs`
+libcustomwidgetsglade: geglio.c custom_widget.cc graphnode.cc custom_widget_glade.c custom_widget.h custom_widget_glade.h custom_widget_pure.h
+	gcc -c geglio.c -fPIC -pthread -I/usr/include/gegl-0.2 -I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include -I/usr/include/babl-0.1
+	g++ geglio.o graphnode.cc custom_widget.cc custom_widget_glade.c -g -ggdb -fPIC -shared -std=c++11  -o libcustomwidgetsglade.so  `pkg-config gtkmm-3.0 --cflags --libs`
 	( [[ `./config.guess` =~ cygwin$$ ]] && \
 	ln -sf libcustomwidgetsglade.so libcustomwidgetsglade.dll ) || echo
 
@@ -10,7 +11,7 @@ libcustomwidgetsglade: custom_widget.cc graphnode.cc custom_widget_glade.c custo
 #			ln -sf libcustomwidgetsglade.so cygcustomwidgetsglade.dll
 
 simple: simple.cc glade/default_layout.glade libcustomwidgetsglade 
-	g++ simple.cc custom_widget_glade.c -std=c++11 -g -ggdb -o simple `pkg-config gtkmm-3.0 --cflags --libs` -L. -lcustomwidgetsglade
+	g++ simple.cc custom_widget_glade.c -std=c++11 -g -ggdb -o simple `pkg-config gtkmm-3.0 --cflags --libs` `pkg-config gegl-0.2 --libs` -L. -lcustomwidgetsglade
 
 
 clean:
