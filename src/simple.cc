@@ -1,9 +1,9 @@
 #include <gtkmm.h>
 #include <iostream>
 #include <assert.h>
-//#include "clock.h"
 #include "custom_widget.h"
 #include "custom_widget_glade.h"
+#include "geglio.h"
 
 Gtk::Window* pMainWindow = nullptr;
 //Gtk::DrawingArea* pCustomWidget = nullptr;
@@ -21,7 +21,6 @@ void on_button_clicked()
 int main (int argc, char **argv)
 {
   auto app = Gtk::Application::create(argc, argv, "org.gtkmm.example");
-
   custom_widgets_register();
 
   //Load the GtkBuilder file and instantiate its widgets:
@@ -56,6 +55,10 @@ int main (int argc, char **argv)
   refBuilder->get_widget("customwidget1", pCustomWidget);
   pCustomWidget->show_now();
 	pCustomWidget->enable_timeout();
+
+  /* initialise GEGL */
+
+	geglio_init();
 
   if(pMainWindow)
   {
