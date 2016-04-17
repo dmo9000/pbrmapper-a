@@ -1,0 +1,22 @@
+<node type="imagereader">
+	<output type="RGBA">
+</node>
+<node type="imagewriter">
+	<input type="RGBA">
+</node>
+<node type="splitRGB">
+	<input type="RGBA">
+	<output type="R">
+	<output type="G">
+	<output type="B">
+	<output type="A">
+</node>
+<node type="combineRGB">
+	<input type="R">
+	<input type="G">
+	<input type="B">
+	<input type="A">
+	<output type="RGBA">
+</node>
+
+
