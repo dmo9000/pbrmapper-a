@@ -4,4 +4,5 @@ src/simple
 src/*~
 src/custom_widget_example
 src/libcustomwidgetsglade.so
+src/*.o
 

@@ -15,6 +15,7 @@ int geglio_init()
 int geglio_exit()
 {
 
+	fprintf(stderr, "geglio_exit()\n");
 	gegl_exit();
 	return 0;
 
