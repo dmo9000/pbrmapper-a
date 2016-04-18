@@ -8,5 +8,15 @@ int geglio_init()
 	fprintf(stderr, "geglio_init()\n");
 	gegl_init(0, NULL);
 
+	return 0;
+}
+
+
+int geglio_exit()
+{
+
+	gegl_exit();
+	return 0;
 
 }
+

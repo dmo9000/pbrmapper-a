@@ -74,6 +74,7 @@ int main (int argc, char **argv)
   }
 
   delete pMainWindow;
+  geglio_exit();
 
   return 0;
 }
