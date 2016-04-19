@@ -591,7 +591,7 @@ CustomWidget::on_button_press_event (GdkEventButton * event)
             return true;
             break;
         case GDK_2BUTTON_PRESS:
-            /* create: double click - create new node on the canvas */
+/*
             NewNode =
                 new GraphNode (node_seq_id, (event->x / viewport_scale),
                                (event->y / viewport_scale));
@@ -602,6 +602,7 @@ CustomWidget::on_button_press_event (GdkEventButton * event)
             NewNode->AddInput ();
             NewNode->AddOutput ();
             NewNode->AddOutput ();
+*/
 
             break;
         case GDK_3BUTTON_PRESS:
@@ -938,15 +939,37 @@ CustomWidget::LoopDetector(GraphNode *src, GraphNode *tgt)
 
 void CustomWidget::CreateInput()
 {
+
+	GraphNode *NewNode = NULL;
 	std::cerr << "CreateInput()" << std::endl;
+  NewNode = new GraphNode (node_seq_id, (cx / viewport_scale), (cy / viewport_scale));
+  nodelist.push_back (NewNode);
+  selected_node = NewNode;
+  node_seq_id++;
+  NewNode->AddOutput ();
+
 }
 
 void CustomWidget::CreateConduit()
 {
+	GraphNode *NewNode = NULL;
 	std::cerr << "CreateConduit()" << std::endl;
+  NewNode = new GraphNode (node_seq_id, (cx / viewport_scale), (cy / viewport_scale));
+  nodelist.push_back (NewNode);
+  selected_node = NewNode;
+  node_seq_id++;
+  NewNode->AddInput ();
+  NewNode->AddOutput ();
+
 }
 
 void CustomWidget::CreateOutput()
 {
+	GraphNode *NewNode = NULL;
 	std::cerr << "CreateOutput()" << std::endl;
+  NewNode = new GraphNode (node_seq_id, (cx / viewport_scale), (cy / viewport_scale));
+  nodelist.push_back (NewNode);
+  selected_node = NewNode;
+  node_seq_id++;
+  NewNode->AddInput ();
 }
