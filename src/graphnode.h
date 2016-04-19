@@ -2,6 +2,7 @@
 #define GRAPHNODE_H_INCLUDED
 
 #include <vector>
+#include <string>
 
 #define SOCKTYPE_UNDEF					-1
 #define SOCKTYPE_INPUT					0
@@ -13,6 +14,9 @@
 #define STATE_CONNECTED_MULTI		2
 #define STATE_UNCHANGED					3
 	
+#define FMT_8BIT								0
+#define FMT_16BIT								1	
+#define FMT_32BIT								2	
 
 struct _connection_ {
 										int id;
@@ -31,6 +35,7 @@ struct _connector_ {
 										int type = SOCKTYPE_UNDEF;
 										int state = STATE_UNCONNECTED;
 										GraphConnection *connection = NULL;
+										std::string label;
 									};
 
 typedef struct _connector_ GraphConnector;
@@ -62,11 +67,12 @@ public:
 	void Set_Y(int ny);
 	int GetPinX(int index, int type);
 	int GetPinY(int index, int type);
-	int AddInput();
-	int AddOutput();
+	int AddInput(std::string label);
+	int AddOutput(std::string label);
 	int NumberOfInputs();
 	int NumberOfOutputs();
 	int GetPortStatus(int portnum, int type);
+	std::string GetPortLabel(int portnum, int type);
 	bool SetPortStatus(int portnum, int type, int state, GraphConnection *c);
 	GraphConnection* GetPortConnection(int portnum, int type);
 

@@ -48,6 +48,7 @@ private:
 	Gtk::MenuItem Item2;
 	Gtk::MenuItem Item3;
 	Gtk::MenuItem Item4;
+	Pango::FontDescription font;
 	void CreateInput();
 	void CreateConduit();
 	void CreateSplitter();

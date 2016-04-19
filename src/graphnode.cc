@@ -116,23 +116,51 @@ int GraphNode::Get_SY()
     return sy;
 }
 
-int GraphNode::AddInput()
+std::string GraphNode::GetPortLabel(int portnum, int type)
+{
+    GraphConnector *connector = NULL;
+//  std::cerr << "GraphNode[" << node_seq_id << "]::GetPortLabel(" << portnum << ", " << type << ")" << std::endl;
+
+    switch (type) {
+    case SOCKTYPE_INPUT:
+        if (portnum + 1 > inputs.size()) {
+            return "invalid_input";
+        }
+        connector = inputs[portnum];
+        break;
+    case SOCKTYPE_OUTPUT:
+        if (portnum + 1 > outputs.size()) {
+            return "invalid output";
+        }
+        connector = outputs[portnum];
+        break;
+    }
+    if (connector) {
+        //std::cerr << "GraphNode[" << node_seq_id << "]::GetPortStatus(" << portnum << ", " << type << ")=" << connector->state << std::endl;
+        return connector->label;
+    }
+    return "unlabelled";
+}
+
+int GraphNode::AddInput(std::string label)
 {
     GraphConnector *new_connector = NULL;
     new_connector = new GraphConnector;
     new_connector->type = SOCKTYPE_INPUT;
     new_connector->state = STATE_UNCONNECTED;
+		new_connector->label = label;
     inputs.push_back(new_connector);
     Recalculate_Size();
     return -1;
 }
 
-int GraphNode::AddOutput()
+int GraphNode::AddOutput(std::string label)
 {
     GraphConnector *new_connector = NULL;
     new_connector = new GraphConnector;
     new_connector->type = SOCKTYPE_OUTPUT;
     new_connector->state = STATE_UNCONNECTED;
+		new_connector->label = label;
     outputs.push_back(new_connector);
     Recalculate_Size();
     return -1;

@@ -7,8 +7,8 @@
 #include <gtkmm/drawingarea.h>
 #include "graphnode.h"
 
-#define MOUSEBUTTON_LEFT			1	
-#define MOUSEBUTTON_CENTER		2		
+#define MOUSEBUTTON_LEFT			1
+#define MOUSEBUTTON_CENTER		2
 #define MOUSEBUTTON_RIGHT			3
 
 
@@ -126,6 +126,36 @@ CustomWidget::on_draw (const Cairo::RefPtr < Cairo::Context > &cr)
         cr->stroke ();
     }
 
+    /* draw the connections */
+
+    for (std::vector < GraphConnection * >::iterator it =
+                connectionlist.begin (); it != connectionlist.end (); ++it)
+    {
+        GraphConnection *connectptr = *it;
+        GraphNode *src_node = NULL;
+        GraphNode *tgt_node = NULL;
+        //int sx = connectptr->src_node, connectptr->src_type, connectptr->src_port;
+        src_node = GetNodeByID (connectptr->src_node);
+        tgt_node = GetNodeByID (connectptr->tgt_node);
+        int sx = src_node->GetPinX (connectptr->src_port, connectptr->src_type);
+        int sy = src_node->GetPinY (connectptr->src_port, connectptr->src_type);
+        int tx = tgt_node->GetPinX (connectptr->tgt_port, connectptr->tgt_type);
+        int ty = tgt_node->GetPinY (connectptr->tgt_port, connectptr->tgt_type);
+        //std::cerr << "drawing (" << sx << "," << sy << ":" << tx << "," << ty << ")\n";
+        cr->set_line_width (2);
+        cr->set_source_rgba (0.0, 0.0, 0.0, 1.0);
+        cr->move_to (sx, sy);
+        int mx = (sx + tx) / 2;
+        int my = (sy + ty) / 2;
+        //cr->curve_to(sx+64, sy-32, mx, my, mx, my);
+        //cr->move_to(mx, my);
+        //cr->curve_to(mx, my, tx-64, ty+32, tx, ty);
+        //cr->stroke();
+        cr->curve_to (sx + 64, sy - 32, tx - 64, ty + 32, tx, ty);
+        cr->stroke ();
+    }
+
+
     /* iterate through the vector of graphnodes */
 
     for (std::vector < GraphNode * >::iterator it = nodelist.begin ();
@@ -153,7 +183,7 @@ CustomWidget::on_draw (const Cairo::RefPtr < Cairo::Context > &cr)
             cr->stroke ();
         }
 
-        /* get input connector count and draw that many inputs */
+        /* INPUTS - get input connector count and draw that many inputs */
 
         int num_inputs = nodeptr->NumberOfInputs ();
         //std::cerr << "num_inputs: " << num_inputs << "\n";
@@ -198,15 +228,24 @@ CustomWidget::on_draw (const Cairo::RefPtr < Cairo::Context > &cr)
                 }
             }
 
-
             cr->arc (x, y + 16 + (i * 16), hover_radius, 0, 2 * M_PI);
             cr->fill ();
             cr->set_source_rgba (0.0, 0.0, 0.0, 1.0);
             cr->set_line_width (2);
             cr->arc (x, y + 16 + (i * 16), hover_radius, 0, 2 * M_PI);
             cr->stroke ();
+            /* text labels */
+
+            auto layout = create_pango_layout(nodeptr->GetPortLabel(i, SOCKTYPE_INPUT));
+            layout->set_font_description(font);
+            int text_width;
+            int text_height;
+            layout->get_pixel_size(text_width, text_height);
+            cr->move_to(x-text_width-8, y + 8 + (i * 16));
+            cr->set_source_rgba (1.0, 1.0, 1.0, 1.0);
+            layout->show_in_cairo_context(cr);
         }
-        /* get output connector count and draw that many outputs */
+        /* OUTPUTS - get output connector count and draw that many outputs */
 
         int num_outputs = nodeptr->NumberOfOutputs ();
         //std::cerr << "num_outputs: " << num_outputs << "\n";
@@ -226,7 +265,7 @@ CustomWidget::on_draw (const Cairo::RefPtr < Cairo::Context > &cr)
                     hover_latch = true;
                     //std::cerr << "latch\n";
                 }
-                hover_radius = 6.0;
+                hover_radius = 6.5;
                 switch (hover_status)
                 {
                 case STATE_UNCONNECTED:
@@ -258,37 +297,18 @@ CustomWidget::on_draw (const Cairo::RefPtr < Cairo::Context > &cr)
             cr->set_line_width (2);
             cr->arc (x + 64, y + 16 + (i * 16), hover_radius, 0, 2 * M_PI);
             cr->stroke ();
+
+            /* text labels */
+            auto layout = create_pango_layout(nodeptr->GetPortLabel(i, SOCKTYPE_OUTPUT));
+            layout->set_font_description(font);
+            int text_width;
+            int text_height;
+            layout->get_pixel_size(text_width, text_height);
+            cr->move_to(x+72, y + 8 + (i * 16));
+            cr->set_source_rgba (1.0, 1.0, 1.0, 1.0);
+            layout->show_in_cairo_context(cr);
         }
 
-    }
-
-    /* draw the connections */
-
-    for (std::vector < GraphConnection * >::iterator it =
-                connectionlist.begin (); it != connectionlist.end (); ++it)
-    {
-        GraphConnection *connectptr = *it;
-        GraphNode *src_node = NULL;
-        GraphNode *tgt_node = NULL;
-        //int sx = connectptr->src_node, connectptr->src_type, connectptr->src_port;
-        src_node = GetNodeByID (connectptr->src_node);
-        tgt_node = GetNodeByID (connectptr->tgt_node);
-        int sx = src_node->GetPinX (connectptr->src_port, connectptr->src_type);
-        int sy = src_node->GetPinY (connectptr->src_port, connectptr->src_type);
-        int tx = tgt_node->GetPinX (connectptr->tgt_port, connectptr->tgt_type);
-        int ty = tgt_node->GetPinY (connectptr->tgt_port, connectptr->tgt_type);
-        //std::cerr << "drawing (" << sx << "," << sy << ":" << tx << "," << ty << ")\n";
-        cr->set_line_width (2);
-        cr->set_source_rgba (0.0, 0.0, 0.0, 1.0);
-        cr->move_to (sx, sy);
-        int mx = (sx + tx) / 2;
-        int my = (sy + ty) / 2;
-        //cr->curve_to(sx+64, sy-32, mx, my, mx, my);
-        //cr->move_to(mx, my);
-        //cr->curve_to(mx, my, tx-64, ty+32, tx, ty);
-        //cr->stroke();
-        cr->curve_to (sx + 64, sy - 32, tx - 64, ty + 32, tx, ty);
-        cr->stroke ();
     }
 
 
@@ -354,15 +374,18 @@ CustomWidget::enable_timeout ()
     Item4.set_label("New Output");
 
 
-        RightClickMenu.append(Item1);
-        RightClickMenu.append(Item2);
-        RightClickMenu.append(Item3);
-        RightClickMenu.append(Item4);
+    RightClickMenu.append(Item1);
+    RightClickMenu.append(Item2);
+    RightClickMenu.append(Item3);
+    RightClickMenu.append(Item4);
 
-        Item1.signal_activate().connect(sigc::mem_fun(*this,&CustomWidget::CreateInput));
-        Item2.signal_activate().connect(sigc::mem_fun(*this,&CustomWidget::CreateConduit));
-        Item3.signal_activate().connect(sigc::mem_fun(*this,&CustomWidget::CreateSplitter));
-        Item4.signal_activate().connect(sigc::mem_fun(*this,&CustomWidget::CreateOutput));
+    Item1.signal_activate().connect(sigc::mem_fun(*this,&CustomWidget::CreateInput));
+    Item2.signal_activate().connect(sigc::mem_fun(*this,&CustomWidget::CreateConduit));
+    Item3.signal_activate().connect(sigc::mem_fun(*this,&CustomWidget::CreateSplitter));
+    Item4.signal_activate().connect(sigc::mem_fun(*this,&CustomWidget::CreateOutput));
+
+    font.set_family("Sans Serif");
+    font.set_weight(Pango::WEIGHT_NORMAL);
 
     grab_focus ();
 }
@@ -476,18 +499,18 @@ CustomWidget::on_button_press_event (GdkEventButton * event)
     GraphNode *src_node_ptr = NULL;
     GraphNode *tgt_node_ptr = NULL;
 
-		std::cerr << "Mouse BUTTON: -> " << event->button << std::endl;
+    std::cerr << "Mouse BUTTON: -> " << event->button << std::endl;
 
     switch (event->button) {
 
-		case MOUSEBUTTON_RIGHT:
-				std::cerr << "Right Mouse Button: show menu" << std::endl;
+    case MOUSEBUTTON_RIGHT:
+        std::cerr << "Right Mouse Button: show menu" << std::endl;
 
-				RightClickMenu.show_all();
-				RightClickMenu.accelerate(*this);
-				RightClickMenu.popup(event->button, event->time);
-				on_timeout();	
-				break;
+        RightClickMenu.show_all();
+        RightClickMenu.accelerate(*this);
+        RightClickMenu.popup(event->button, event->time);
+        on_timeout();
+        break;
 
     case MOUSEBUTTON_LEFT:
         switch (event->type)
@@ -550,7 +573,7 @@ CustomWidget::on_button_press_event (GdkEventButton * event)
                 return true;
             }
 
-						/* FIXME: this is not z-order aware, it's very dumb right now */
+            /* FIXME: this is not z-order aware, it's very dumb right now */
             /* select: single click - check if click was on canvas or overlapped with node */
             for (std::vector < GraphNode * >::iterator it = nodelist.begin ();
                     it != nodelist.end (); ++it)
@@ -582,10 +605,10 @@ CustomWidget::on_button_press_event (GdkEventButton * event)
             return true;
             break;
         case GDK_2BUTTON_PRESS:
-						/* no action bound right now */
+            /* no action bound right now */
             break;
         case GDK_3BUTTON_PRESS:
-						/* no action bound right now */
+            /* no action bound right now */
             break;
         default:
             break;
@@ -920,49 +943,53 @@ CustomWidget::LoopDetector(GraphNode *src, GraphNode *tgt)
 void CustomWidget::CreateInput()
 {
 
-	GraphNode *NewNode = NULL;
-	std::cerr << "CreateInput()" << std::endl;
-  NewNode = new GraphNode (node_seq_id, (cx / viewport_scale), (cy / viewport_scale));
-  nodelist.push_back (NewNode);
-  selected_node = NewNode;
-  node_seq_id++;
-  NewNode->AddOutput ();
+    GraphNode *NewNode = NULL;
+    std::cerr << "CreateInput()" << std::endl;
+    NewNode = new GraphNode (node_seq_id, (cx / viewport_scale), (cy / viewport_scale));
+    nodelist.push_back (NewNode);
+    selected_node = NewNode;
+    node_seq_id++;
+    NewNode->AddOutput ("Output");
+    on_timeout();
 
 }
 
 void CustomWidget::CreateConduit()
 {
-	GraphNode *NewNode = NULL;
-	std::cerr << "CreateConduit()" << std::endl;
-  NewNode = new GraphNode (node_seq_id, (cx / viewport_scale), (cy / viewport_scale));
-  nodelist.push_back (NewNode);
-  selected_node = NewNode;
-  node_seq_id++;
-  NewNode->AddInput ();
-  NewNode->AddOutput ();
+    GraphNode *NewNode = NULL;
+    std::cerr << "CreateConduit()" << std::endl;
+    NewNode = new GraphNode (node_seq_id, (cx / viewport_scale), (cy / viewport_scale));
+    nodelist.push_back (NewNode);
+    selected_node = NewNode;
+    node_seq_id++;
+    NewNode->AddInput ("Input");
+    NewNode->AddOutput ("Output");
+    on_timeout();
 }
 
 void CustomWidget::CreateSplitter()
 {
-	GraphNode *NewNode = NULL;
-	std::cerr << "CreateSplitter()" << std::endl;
-  NewNode = new GraphNode (node_seq_id, (cx / viewport_scale), (cy / viewport_scale));
-  nodelist.push_back (NewNode);
-  selected_node = NewNode;
-  node_seq_id++;
-  NewNode->AddInput ();
-  NewNode->AddOutput ();
-  NewNode->AddOutput ();
+    GraphNode *NewNode = NULL;
+    std::cerr << "CreateSplitter()" << std::endl;
+    NewNode = new GraphNode (node_seq_id, (cx / viewport_scale), (cy / viewport_scale));
+    nodelist.push_back (NewNode);
+    selected_node = NewNode;
+    node_seq_id++;
+    NewNode->AddInput ("Input");
+    NewNode->AddOutput ("Output A");
+    NewNode->AddOutput ("Output B");
+    on_timeout();
 }
 
 
 void CustomWidget::CreateOutput()
 {
-	GraphNode *NewNode = NULL;
-	std::cerr << "CreateOutput()" << std::endl;
-  NewNode = new GraphNode (node_seq_id, (cx / viewport_scale), (cy / viewport_scale));
-  nodelist.push_back (NewNode);
-  selected_node = NewNode;
-  node_seq_id++;
-  NewNode->AddInput ();
+    GraphNode *NewNode = NULL;
+    std::cerr << "CreateOutput()" << std::endl;
+    NewNode = new GraphNode (node_seq_id, (cx / viewport_scale), (cy / viewport_scale));
+    nodelist.push_back (NewNode);
+    selected_node = NewNode;
+    node_seq_id++;
+    NewNode->AddInput ("Input");
+    on_timeout();
 }
