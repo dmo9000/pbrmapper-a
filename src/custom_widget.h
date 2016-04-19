@@ -9,6 +9,10 @@
 #define DRAG_NODE					1
 #define DRAG_CONNECTION 	2
 
+#define NODE_INPUT				0
+#define NODE_CONDUIT			1
+#define NODE_OUTPUT				2
+
 struct _connector_reference_ {
 																GraphNode *node;
 																int portnum;
@@ -40,8 +44,12 @@ private:
 	double ocy = 0;
 	int dragmode = DRAG_NONE;
   Gtk::Menu	RightClickMenu;
-	
-
+	Gtk::MenuItem	Item1;
+	Gtk::MenuItem Item2;
+	Gtk::MenuItem Item3;
+	void CreateInput();
+	void CreateConduit();
+	void CreateOutput();
  
 public:
   static void register_type ();

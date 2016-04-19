@@ -345,6 +345,21 @@ CustomWidget::enable_timeout ()
                                            mem_fun (*this,
                                                    &CustomWidget::
                                                    on_motion_notify_event));
+
+
+
+    Item1.set_label("New Input");
+        Item2.set_label("New Conduit");
+        Item3.set_label("New Output");
+
+        RightClickMenu.append(Item1);
+        RightClickMenu.append(Item2);
+        RightClickMenu.append(Item3);
+
+        Item1.signal_activate().connect(sigc::mem_fun(*this,&CustomWidget::CreateInput));
+        Item2.signal_activate().connect(sigc::mem_fun(*this,&CustomWidget::CreateConduit));
+        Item3.signal_activate().connect(sigc::mem_fun(*this,&CustomWidget::CreateOutput));
+
     grab_focus ();
 }
 
@@ -463,6 +478,25 @@ CustomWidget::on_button_press_event (GdkEventButton * event)
 
 		case MOUSEBUTTON_RIGHT:
 				std::cerr << "Right Mouse Button: show menu" << std::endl;
+
+/*
+				Item1.set_label("New Input");
+				Item2.set_label("New Conduit");
+				Item3.set_label("New Output");
+
+				RightClickMenu.append(Item1);
+				RightClickMenu.append(Item2);
+				RightClickMenu.append(Item3);
+
+				Item1.signal_activate().connect(sigc::mem_fun(*this,&CustomWidget::CreateInput));	
+				Item2.signal_activate().connect(sigc::mem_fun(*this,&CustomWidget::CreateConduit));	
+				Item3.signal_activate().connect(sigc::mem_fun(*this,&CustomWidget::CreateOutput));	
+*/
+				RightClickMenu.show_all();
+				RightClickMenu.accelerate(*this);
+				RightClickMenu.popup(event->button, event->time);
+				
+				break;
 
     case MOUSEBUTTON_LEFT:
         switch (event->type)
@@ -902,3 +936,17 @@ CustomWidget::LoopDetector(GraphNode *src, GraphNode *tgt)
     return false;
 }
 
+void CustomWidget::CreateInput()
+{
+	std::cerr << "CreateInput()" << std::endl;
+}
+
+void CustomWidget::CreateConduit()
+{
+	std::cerr << "CreateConduit()" << std::endl;
+}
+
+void CustomWidget::CreateOutput()
+{
+	std::cerr << "CreateOutput()" << std::endl;
+}
