@@ -398,16 +398,6 @@ CustomWidget::on_button_release_event (GdkEventButton * event)
 						case DRAG_CONNECTION:
 								/* CLEANUP: the following check is now carried out by the LoopDetector() method */
 								if (connect_xref.node && hover_xref.node) {
-											/*
-											if (connect_xref.node == hover_xref.node) {
-														std::cerr << "Cannot connect node to itself\n";
-														ClearXRef(&connect_xref);
-														HoverUnlatch();
-														dragmode = DRAG_NONE;
-														on_timeout();
-														return false;
-														}
-											*/
 											if (connect_xref.type == hover_xref.type) {
 														std::cerr << "Must connect input to output (or vice versa)\n";
 														ClearXRef(&connect_xref);
@@ -907,10 +897,24 @@ CustomWidget::LoopDetector(GraphNode *src, GraphNode *tgt)
 {
 
   /* we are going to do some crazy recursion here */
-  std::cerr << "LoopDetector(" << std::hex << src << ", " << tgt << ")" << std::endl;
+  std::cerr << "LoopDetector(" << std::hex << src->GetID() << ", " << tgt->GetID() << ")" << std::endl;
   if (src == tgt) {
       return true;
       }
+
+	for (int i = 0; i < tgt->NumberOfOutputs(); i++) {
+			if (tgt->GetPortStatus(i, SOCKTYPE_OUTPUT) == STATE_CONNECTED_ONE) {
+					GraphConnection *connection = tgt->GetPortConnection(i, SOCKTYPE_OUTPUT);
+					if (connection) {
+							GraphNode *next_node = GetNodeByID(connection->tgt_node);
+							if (next_node) {
+								std::cerr << "---> Found an active connection to node " << connection->tgt_node << std::endl;
+								return LoopDetector(src, next_node);
+								}
+
+						} 
+					}
+			}
 
 	return false;
 }
