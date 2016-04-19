@@ -13,6 +13,13 @@ case $CONFIG_GUESS in
 	;;
 	*)
 	echo "Sorry, this script is only required for Microsoft Windows running a Cygwin environment."
+	exit 1
   ;;
 esac
+
+GCC_TARGET=`gcc -v 2>&1 | grep "Target:" | awk '{ print $2; }'` 
+GXX_TARGET=`g++ -v 2>&1 | grep "Target:" | awk '{ print $2; }'` 
+
+echo "GCC Target: "${GCC_TARGET}
+echo "GXX Target: "${GXX_TARGET}
 

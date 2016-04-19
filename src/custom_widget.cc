@@ -349,16 +349,20 @@ CustomWidget::enable_timeout ()
 
 
     Item1.set_label("New Input");
-        Item2.set_label("New Conduit");
-        Item3.set_label("New Output");
+    Item2.set_label("New Conduit");
+    Item3.set_label("New Splitter");
+    Item4.set_label("New Output");
+
 
         RightClickMenu.append(Item1);
         RightClickMenu.append(Item2);
         RightClickMenu.append(Item3);
+        RightClickMenu.append(Item4);
 
         Item1.signal_activate().connect(sigc::mem_fun(*this,&CustomWidget::CreateInput));
         Item2.signal_activate().connect(sigc::mem_fun(*this,&CustomWidget::CreateConduit));
-        Item3.signal_activate().connect(sigc::mem_fun(*this,&CustomWidget::CreateOutput));
+        Item3.signal_activate().connect(sigc::mem_fun(*this,&CustomWidget::CreateSplitter));
+        Item4.signal_activate().connect(sigc::mem_fun(*this,&CustomWidget::CreateOutput));
 
     grab_focus ();
 }
@@ -479,19 +483,6 @@ CustomWidget::on_button_press_event (GdkEventButton * event)
 		case MOUSEBUTTON_RIGHT:
 				std::cerr << "Right Mouse Button: show menu" << std::endl;
 
-/*
-				Item1.set_label("New Input");
-				Item2.set_label("New Conduit");
-				Item3.set_label("New Output");
-
-				RightClickMenu.append(Item1);
-				RightClickMenu.append(Item2);
-				RightClickMenu.append(Item3);
-
-				Item1.signal_activate().connect(sigc::mem_fun(*this,&CustomWidget::CreateInput));	
-				Item2.signal_activate().connect(sigc::mem_fun(*this,&CustomWidget::CreateConduit));	
-				Item3.signal_activate().connect(sigc::mem_fun(*this,&CustomWidget::CreateOutput));	
-*/
 				RightClickMenu.show_all();
 				RightClickMenu.accelerate(*this);
 				RightClickMenu.popup(event->button, event->time);
@@ -559,7 +550,7 @@ CustomWidget::on_button_press_event (GdkEventButton * event)
                 return true;
             }
 
-
+						/* FIXME: this is not z-order aware, it's very dumb right now */
             /* select: single click - check if click was on canvas or overlapped with node */
             for (std::vector < GraphNode * >::iterator it = nodelist.begin ();
                     it != nodelist.end (); ++it)
@@ -591,21 +582,10 @@ CustomWidget::on_button_press_event (GdkEventButton * event)
             return true;
             break;
         case GDK_2BUTTON_PRESS:
-/*
-            NewNode =
-                new GraphNode (node_seq_id, (event->x / viewport_scale),
-                               (event->y / viewport_scale));
-            nodelist.push_back (NewNode);
-            selected_node = NewNode;
-            node_seq_id++;
-            NewNode->AddInput ();
-            NewNode->AddInput ();
-            NewNode->AddOutput ();
-            NewNode->AddOutput ();
-*/
-
+						/* no action bound right now */
             break;
         case GDK_3BUTTON_PRESS:
+						/* no action bound right now */
             break;
         default:
             break;
@@ -960,8 +940,21 @@ void CustomWidget::CreateConduit()
   node_seq_id++;
   NewNode->AddInput ();
   NewNode->AddOutput ();
-
 }
+
+void CustomWidget::CreateSplitter()
+{
+	GraphNode *NewNode = NULL;
+	std::cerr << "CreateSplitter()" << std::endl;
+  NewNode = new GraphNode (node_seq_id, (cx / viewport_scale), (cy / viewport_scale));
+  nodelist.push_back (NewNode);
+  selected_node = NewNode;
+  node_seq_id++;
+  NewNode->AddInput ();
+  NewNode->AddOutput ();
+  NewNode->AddOutput ();
+}
+
 
 void CustomWidget::CreateOutput()
 {

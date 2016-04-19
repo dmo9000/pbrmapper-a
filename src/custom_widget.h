@@ -47,8 +47,10 @@ private:
 	Gtk::MenuItem	Item1;
 	Gtk::MenuItem Item2;
 	Gtk::MenuItem Item3;
+	Gtk::MenuItem Item4;
 	void CreateInput();
 	void CreateConduit();
+	void CreateSplitter();
 	void CreateOutput();
  
 public:
