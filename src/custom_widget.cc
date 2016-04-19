@@ -909,7 +909,7 @@ CustomWidget::LoopDetector(GraphNode *src, GraphNode *tgt)
 							GraphNode *next_node = GetNodeByID(connection->tgt_node);
 							if (next_node) {
 								std::cerr << "---> Found an active connection to node " << connection->tgt_node << std::endl;
-								return LoopDetector(src, next_node);
+								if (LoopDetector(src, next_node)) return true;
 								}
 
 						} 
