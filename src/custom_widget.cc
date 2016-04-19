@@ -396,7 +396,9 @@ CustomWidget::on_button_release_event (GdkEventButton * event)
 								on_timeout();
 								break;
 						case DRAG_CONNECTION:
+								/* CLEANUP: the following check is now carried out by the LoopDetector() method */
 								if (connect_xref.node && hover_xref.node) {
+											/*
 											if (connect_xref.node == hover_xref.node) {
 														std::cerr << "Cannot connect node to itself\n";
 														ClearXRef(&connect_xref);
@@ -405,6 +407,7 @@ CustomWidget::on_button_release_event (GdkEventButton * event)
 														on_timeout();
 														return false;
 														}
+											*/
 											if (connect_xref.type == hover_xref.type) {
 														std::cerr << "Must connect input to output (or vice versa)\n";
 														ClearXRef(&connect_xref);
@@ -846,6 +849,17 @@ CustomWidget::EstablishConnection(XRef *A, XRef *B)
 		GraphNode *src_node_ptr = NULL;
 		GraphNode *tgt_node_ptr = NULL;
 
+
+		if (!A->node || !B->node) {
+				std::cerr << "ERROR: EstablishConnection() - one or more nodes passed in were NULL" << std::endl;
+				return false;
+				}
+
+		if (LoopDetector(A->node, B->node)) {
+				std::cerr << "ERROR: EstablishConnection() - loop was detected" << std::endl;
+				return false;
+				}
+
 		/* setup the source side of the connection */
     new_connection->src_node = A->node->GetID();
     new_connection->src_type = A->type;
@@ -871,6 +885,7 @@ CustomWidget::EstablishConnection(XRef *A, XRef *B)
 				return false;
 				}
 
+		/* FIXME: check the return status here, and fail if they fail */
 		/* these need to be locked at the same time, or else, we fail */
     src_node_ptr->SetPortStatus (new_connection->src_port,
                                  SOCKTYPE_OUTPUT,
@@ -886,3 +901,17 @@ CustomWidget::EstablishConnection(XRef *A, XRef *B)
 		return true;
 
 }
+
+bool 
+CustomWidget::LoopDetector(GraphNode *src, GraphNode *tgt)
+{
+
+  /* we are going to do some crazy recursion here */
+  std::cerr << "LoopDetector(" << std::hex << src << ", " << tgt << ")" << std::endl;
+  if (src == tgt) {
+      return true;
+      }
+
+	return false;
+}
+

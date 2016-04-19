@@ -53,6 +53,7 @@ public:
   bool CopyXRef(XRef *A, XRef *B);
 	bool ClearXRef(XRef *a);
 	bool EstablishConnection(XRef *a, XRef *b);
+	bool LoopDetector(GraphNode *src, GraphNode *tgt);
 
 protected:
 	bool on_timeout();

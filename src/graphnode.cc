@@ -187,4 +187,3 @@ int GraphNode::GetID()
     return node_seq_id;
 }
 
-
