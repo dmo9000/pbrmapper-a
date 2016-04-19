@@ -39,6 +39,8 @@ private:
 	double ocx = 0;
 	double ocy = 0;
 	int dragmode = DRAG_NONE;
+  Gtk::Menu	RightClickMenu;
+	
 
  
 public:

@@ -1,2 +1,6 @@
 http://www.gtkmm.org/en/documentation.html/
 https://developer.gnome.org/gtkmm-tutorial/stable/gtkmm-tutorial.html
+
+Notes on pop up menus on Cairo:
+
+http://www.lucidarme.me/?p=4807
