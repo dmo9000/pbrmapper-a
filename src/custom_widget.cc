@@ -495,7 +495,7 @@ CustomWidget::on_button_press_event (GdkEventButton * event)
 				RightClickMenu.show_all();
 				RightClickMenu.accelerate(*this);
 				RightClickMenu.popup(event->button, event->time);
-				
+				on_timeout();	
 				break;
 
     case MOUSEBUTTON_LEFT:
