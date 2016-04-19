@@ -7,9 +7,9 @@
 #include <gtkmm/drawingarea.h>
 #include "graphnode.h"
 
-#define MOUSEBUTTON_LEFT		1	
-#define MOUSEBUTTON_RIGHT		2		
-#define MOUSEBUTTON_CENTER	3
+#define MOUSEBUTTON_LEFT			1	
+#define MOUSEBUTTON_CENTER		2		
+#define MOUSEBUTTON_RIGHT			3
 
 
 #define NODE_SIZE 64
@@ -460,6 +460,9 @@ CustomWidget::on_button_press_event (GdkEventButton * event)
 		std::cerr << "Mouse BUTTON: -> " << event->button << std::endl;
 
     switch (event->button) {
+
+		case MOUSEBUTTON_RIGHT:
+				std::cerr << "Right Mouse Button: show menu" << std::endl;
 
     case MOUSEBUTTON_LEFT:
         switch (event->type)
