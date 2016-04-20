@@ -18,6 +18,13 @@ void on_button_clicked()
     pMainWindow->hide(); //hide() will cause main::run() to end.
 }
 
+static
+void on_saveas_clicked()
+{
+	std::cerr << "+++ File->Save As ... selected\n" << std::endl;
+}
+
+
 int main (int argc, char **argv)
 {
   auto app = Gtk::Application::create(argc, argv, "org.gtkmm.example");
@@ -62,13 +69,13 @@ int main (int argc, char **argv)
 
   if(pMainWindow)
   {
-    //Get the GtkBuilder-instantiated Button, and connect a signal handler:
+
+		/* Connect File menu callbacks */
     Gtk::ImageMenuItem* pButton = nullptr;
     refBuilder->get_widget("imagemenuitem5", pButton);
-    if(pButton)
-    {
-      pButton->signal_activate().connect( sigc::ptr_fun(on_button_clicked) );
-    }
+    if(pButton) pButton->signal_activate().connect( sigc::ptr_fun(on_button_clicked));
+    refBuilder->get_widget("imagemenuitem4", pButton);
+    if(pButton) pButton->signal_activate().connect( sigc::ptr_fun(on_saveas_clicked));
 
     app->run(*pMainWindow);
   }
