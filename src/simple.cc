@@ -72,10 +72,12 @@ int main (int argc, char **argv)
 
 		/* Connect File menu callbacks */
     Gtk::ImageMenuItem* pButton = nullptr;
-    refBuilder->get_widget("imagemenuitem5", pButton);
-    if(pButton) pButton->signal_activate().connect( sigc::ptr_fun(on_button_clicked));
+    refBuilder->get_widget("imagemenuitem3", pButton);
+    if(pButton) pButton->signal_activate().connect( sigc::ptr_fun(on_saveas_clicked));
     refBuilder->get_widget("imagemenuitem4", pButton);
     if(pButton) pButton->signal_activate().connect( sigc::ptr_fun(on_saveas_clicked));
+    refBuilder->get_widget("imagemenuitem5", pButton);
+    if(pButton) pButton->signal_activate().connect( sigc::ptr_fun(on_button_clicked));
 
     app->run(*pMainWindow);
   }
