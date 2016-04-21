@@ -7,6 +7,8 @@
 #include <libxml/encoding.h>
 #include <libxml/xmlwriter.h>
 
+#define MY_ENCODING "ISO-8859-1"
+
 Gtk::Window* pMainWindow = nullptr;
 //Gtk::DrawingArea* pCustomWidget = nullptr;
 CustomWidget *pCustomWidget = nullptr;
@@ -23,6 +25,8 @@ void on_button_clicked()
 static
 void on_saveas_clicked()
 {
+
+	int rc = 0;
 	std::cerr << "+++ File->Save As ... selected\n" << std::endl;
   xmlTextWriterPtr writer;
   writer = xmlNewTextWriterFilename("testfile.xml", 0);
@@ -31,6 +35,22 @@ void on_saveas_clicked()
 				<< std::endl;
       return;
     }
+
+	rc = xmlTextWriterStartDocument(writer, NULL, MY_ENCODING, NULL);
+  if (rc < 0) {
+    std::cerr << "testXmlwriterFilename: Error at xmlTextWriterStartDocument\n" << std::endl;
+    return;
+    }
+
+   /* Start an element named "EXAMPLE". Since thist is the first
+ *      * element, this will be the root element of the document. */
+  rc = xmlTextWriterStartElement(writer, BAD_CAST "EXAMPLE");
+    if (rc < 0) {
+        printf
+            ("testXmlwriterFilename: Error at xmlTextWriterStartElement\n");
+        return;
+    }
+
 	xmlTextWriterEndDocument(writer);
   xmlFreeTextWriter(writer);
 }
