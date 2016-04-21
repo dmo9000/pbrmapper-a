@@ -6,8 +6,8 @@ LIB_OBJ_CPP=graphnode.o custom_widget.o custom_widget_glade.o
 MAIN_SRC_C=custom_widget_glade.c
 MAIN_OBJ_C=custom_widget_glade.o
 
-MAIN_SRC_CPP=simple.cc
-MAIN_OBJ_CPP=simple.o
+MAIN_SRC_CPP=simple.cc xmlio.cc
+MAIN_OBJ_CPP=simple.o xmlio.o
 
 CC=gcc
 CXX=g++

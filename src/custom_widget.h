@@ -68,8 +68,8 @@ public:
 	bool EstablishConnection(XRef *a, XRef *b);
 	bool LoopDetector(GraphNode *src, GraphNode *tgt);
 	int  GetGraphNodeCount();
-	//int  GetConnectionCount();
-	//GraphConnection* GetConnectionRef(int);	
+	int  GetGraphConnectionCount();
+	GraphConnection* GetConnectionRef(int);	
 
 protected:
 	bool on_timeout();

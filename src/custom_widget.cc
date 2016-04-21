@@ -1006,3 +1006,27 @@ int  CustomWidget::GetGraphNodeCount()
     return (nodelist.size());
 
 }
+
+int  CustomWidget::GetGraphConnectionCount()
+{
+    return (connectionlist.size());
+}
+
+GraphConnection* CustomWidget::GetConnectionRef(int id)
+{
+    GraphConnection *connectptr = NULL;
+
+    for (std::vector < GraphConnection * >::iterator it =
+                connectionlist.begin (); it != connectionlist.end (); ++it)
+    {
+        GraphConnection *connectptr = *it;
+        if (connectptr) {
+            if (connectptr->id == id) {
+                return connectptr;
+            }
+        }
+    }
+    return NULL;
+}
+
+
