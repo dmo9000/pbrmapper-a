@@ -18,6 +18,13 @@
 #define FMT_16BIT								1	
 #define FMT_32BIT								2	
 
+struct _coordinate_ {
+                  double x = 0.0;
+                  double y = 0.0;
+                  };
+
+typedef struct _coordinate_ GraphVector;
+
 struct _connection_ {
 										int id;
 										int src_node  = -1;
@@ -35,18 +42,12 @@ struct _connector_ {
 										int type = SOCKTYPE_UNDEF;
 										int state = STATE_UNCONNECTED;
 										GraphConnection *connection = NULL;
+										GraphVector location;									/* NOT YET USED */
 										std::string label;
 									};
 
 typedef struct _connector_ GraphConnector;
 
-struct _coordinate_ {
-									double x = 0.0; 
-									double y = 0.0;
-									};
-
-typedef struct _coordinate_ GraphVector;
- 
 class GraphNode 
 {
  
@@ -65,8 +66,7 @@ public:
 	GraphNode (int seq_id, double spawnx, double spawny);
   ~GraphNode();
 	int GetID();
-	int GetPinX(int index, int type);
-	int GetPinY(int index, int type);
+	GraphVector *GetPinXY(int portnum, int type);
 	int AddInput(std::string label);
 	int AddOutput(std::string label);
 	int NumberOfInputs();

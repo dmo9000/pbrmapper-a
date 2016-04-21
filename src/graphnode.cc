@@ -5,8 +5,8 @@
 GraphNode::GraphNode(int seq_id, double spawnx, double spawny)
 {
     node_seq_id = seq_id;
-  	SetLocation(spawnx, spawny); 
-		SetSize(64, 64);
+    SetLocation(spawnx, spawny);
+    SetSize(64, 64);
     is_valid = 1;
     std::cerr << "GraphNode(" << node_seq_id << ":" << location.x << ":" << location.y << ") constructor\n";
 }
@@ -130,7 +130,7 @@ int GraphNode::AddInput(std::string label)
     new_connector = new GraphConnector;
     new_connector->type = SOCKTYPE_INPUT;
     new_connector->state = STATE_UNCONNECTED;
-		new_connector->label = label;
+    new_connector->label = label;
     inputs.push_back(new_connector);
     Recalculate_Size();
     return -1;
@@ -142,7 +142,7 @@ int GraphNode::AddOutput(std::string label)
     new_connector = new GraphConnector;
     new_connector->type = SOCKTYPE_OUTPUT;
     new_connector->state = STATE_UNCONNECTED;
-		new_connector->label = label;
+    new_connector->label = label;
     outputs.push_back(new_connector);
     Recalculate_Size();
     return -1;
@@ -158,26 +158,26 @@ int GraphNode::NumberOfOutputs()
     return outputs.size();
 }
 
-int GraphNode::GetPinX(int index, int type)
+GraphVector *GraphNode::GetPinXY(int portnum, int type)
 {
+    GraphVector localvec;
+
     switch (type) {
     case SOCKTYPE_INPUT:
-        return location.x;
+        localvec.x = location.x;
         break;
     case SOCKTYPE_OUTPUT:
-        return location.x + 64;
+        localvec.x = location.x + 64;
         break;
     default:
-        return -1;
+        /* will appear in the middle */
+        localvec.x = location.x + 32;
         break;
     }
-    return -1;
+    localvec.y = location.y + 8 + ((portnum) * 16) + 8;
+    return &localvec;
 }
 
-int GraphNode::GetPinY(int index, int type)
-{
-    return location.y + 8 + ((index) * 16) + 8;
-}
 
 int GraphNode::Recalculate_Size()
 {
@@ -199,27 +199,27 @@ int GraphNode::GetID()
 
 GraphVector *GraphNode::GetLocation()
 {
-	return &location;
+    return &location;
 }
 
 GraphVector *GraphNode::GetSize()
 {
-	return &size;
+    return &size;
 }
 
 bool GraphNode::SetLocation(double nx, double ny)
 {
-		location.x = nx;
-		location.y = ny;
-		return true;
+    location.x = nx;
+    location.y = ny;
+    return true;
 }
 
 
 bool GraphNode::SetSize(double nx, double ny)
 {
-		size.x = nx;
-		size.y = ny;
-		return true;
+    size.x = nx;
+    size.y = ny;
+    return true;
 }
 
 

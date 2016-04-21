@@ -134,23 +134,26 @@ CustomWidget::on_draw (const Cairo::RefPtr < Cairo::Context > &cr)
         GraphConnection *connectptr = *it;
         GraphNode *src_node = NULL;
         GraphNode *tgt_node = NULL;
-        //int sx = connectptr->src_node, connectptr->src_type, connectptr->src_port;
+        GraphVector *src_vec = NULL;
+        GraphVector *tgt_vec = NULL;
         src_node = GetNodeByID (connectptr->src_node);
         tgt_node = GetNodeByID (connectptr->tgt_node);
-        int sx = src_node->GetPinX (connectptr->src_port, connectptr->src_type);
-        int sy = src_node->GetPinY (connectptr->src_port, connectptr->src_type);
-        int tx = tgt_node->GetPinX (connectptr->tgt_port, connectptr->tgt_type);
-        int ty = tgt_node->GetPinY (connectptr->tgt_port, connectptr->tgt_type);
-        //std::cerr << "drawing (" << sx << "," << sy << ":" << tx << "," << ty << ")\n";
+
+        /* FIXME: a good reason NOT to return a pointer to subroutine local storage, ever */
+
+        src_vec = src_node->GetPinXY(connectptr->src_port, connectptr->src_type);
+        int sx = src_vec->x;
+        int sy = src_vec->y;
+        tgt_vec = tgt_node->GetPinXY(connectptr->tgt_port, connectptr->tgt_type);
+        int tx = tgt_vec->x;
+        int ty = tgt_vec->y;
+
+        //std::cerr << std::dec << "drawing (" << sx << "," << sy << ":" << tx << "," << ty << ")\n";
         cr->set_line_width (2);
         cr->set_source_rgba (0.0, 0.0, 0.0, 1.0);
         cr->move_to (sx, sy);
         int mx = (sx + tx) / 2;
         int my = (sy + ty) / 2;
-        //cr->curve_to(sx+64, sy-32, mx, my, mx, my);
-        //cr->move_to(mx, my);
-        //cr->curve_to(mx, my, tx-64, ty+32, tx, ty);
-        //cr->stroke();
         cr->curve_to (sx + 64, sy - 32, tx - 64, ty + 32, tx, ty);
         cr->stroke ();
     }
@@ -162,17 +165,14 @@ CustomWidget::on_draw (const Cairo::RefPtr < Cairo::Context > &cr)
             it != nodelist.end (); ++it)
     {
         GraphNode *nodeptr = *it;
-				GraphVector *node_coord = NULL, *node_size = NULL;
-				node_coord = nodeptr->GetLocation();
-				node_size = nodeptr->GetSize();
+        GraphVector *node_coord = NULL, *node_size = NULL;
+        node_coord = nodeptr->GetLocation();
+        node_size = nodeptr->GetSize();
 
-				double x = node_coord->x;
-				double y = node_coord->y;
-
-        //double sx = nodeptr->Get_SX ();
-        //double sy = nodeptr->Get_SY ();
-       	double sx = node_size->x;
-				double sy = node_size->y; 
+        double x = node_coord->x;
+        double y = node_coord->y;
+        double sx = node_size->x;
+        double sy = node_size->y;
 
         //std::cerr << "Drawing: " << x << ":" << y << "\n";
         cr->set_source_rgba (1.0, 1.0, 1.0, 1.0);
@@ -325,8 +325,9 @@ CustomWidget::on_draw (const Cairo::RefPtr < Cairo::Context > &cr)
     if (dragmode == DRAG_CONNECTION && connect_xref.node) {
         GraphNode *src_node = connect_xref.node;
         if (src_node) {
-            int sx = src_node->GetPinX (connect_xref.portnum, connect_xref.type);
-            int sy = src_node->GetPinY (connect_xref.portnum, connect_xref.type);
+            GraphVector *src_vec = src_node->GetPinXY(connect_xref.portnum, connect_xref.type);
+            int sx = src_vec->x;
+            int sy = src_vec->y;
             cr->set_source_rgba (0.0, 0.0, 0.0, 1.0);
             cr->set_line_width(2.0);
             cr->move_to(sx, sy);
@@ -348,7 +349,6 @@ CustomWidget::on_timeout ()
 {
 
     //std::cerr << "CustomWidget::on_timeout()\n";
-    // force our program to redraw the entire clock.
     auto win = get_window ();
     if (win)
     {
@@ -367,7 +367,6 @@ CustomWidget::enable_timeout ()
     add_events (Gdk::BUTTON_PRESS_MASK);
     add_events (Gdk::BUTTON_RELEASE_MASK);
     add_events (Gdk::POINTER_MOTION_MASK | Gdk::ENTER_NOTIFY_MASK);
-//  signal_enter_notify_event().connect(sigc::mem_fun(*this,&CustomWidget::MotionNotify));
     signal_motion_notify_event ().connect (sigc::
                                            mem_fun (*this,
                                                    &CustomWidget::
@@ -418,9 +417,7 @@ CustomWidget::on_motion_notify_event (GdkEventMotion * event)
         if (grabbed_node)
         {
             //std::cerr << "+++ motion notify (x=" << event->x << ",y=" << event->y << "+++\n";
-            //grabbed_node->Set_X (event->x - 32);
-            //grabbed_node->Set_Y (event->y - 32);
-           	grabbed_node->SetLocation(event->x - 32, (event->y - 32)); 
+            grabbed_node->SetLocation(event->x - 32, (event->y - 32));
         }
         on_timeout();
         break;
@@ -587,18 +584,14 @@ CustomWidget::on_button_press_event (GdkEventButton * event)
                     it != nodelist.end (); ++it)
             {
                 GraphNode *nodeptr = *it;
-								GraphVector *node_coord = NULL, *node_size = NULL;
-								node_coord = nodeptr->GetLocation();
-								node_size = nodeptr->GetSize();
+                GraphVector *node_coord = NULL, *node_size = NULL;
+                node_coord = nodeptr->GetLocation();
+                node_size = nodeptr->GetSize();
 
                 double x = node_coord->x;
-                double y = node_coord->y; 
-								double sx = node_size->x;
-								double sy = node_size->y;
-								/*	
-                double sx = nodeptr->Get_SX ();
-                double sy = nodeptr->Get_SY ();
-								*/
+                double y = node_coord->y;
+                double sx = node_size->x;
+                double sy = node_size->y;
 
                 if ((event->x >= x && event->x <= (x + sx)) &&
                         ((event->y >= y && event->y <= (y + sy))))
@@ -758,9 +751,6 @@ CustomWidget::HoverUnlatch ()
     //std::cerr << "HoverUnlatch()\n";
 
     ClearXRef(&hover_xref);
-//  hover_xref.node = NULL;
-//  hover_xref.portnum = -1;
-//  hover_xref.type = SOCKTYPE_UNDEF;
     hover_status = STATE_INVALID;
     hover_latch = false;
 }
@@ -1013,6 +1003,6 @@ void CustomWidget::CreateOutput()
 int  CustomWidget::GetGraphNodeCount()
 {
 
-	  return (nodelist.size()); 
+    return (nodelist.size());
 
 }

@@ -6,3 +6,4 @@ src/custom_widget_example
 src/libcustomwidgetsglade.so
 src/libcustomwidgetsglade.dll
 src/*.o
+src/testfile.xml
