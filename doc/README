@@ -1,6 +1,12 @@
-http://www.gtkmm.org/en/documentation.html/
-https://developer.gnome.org/gtkmm-tutorial/stable/gtkmm-tutorial.html
+GTKMM Notes:
+
+	http://www.gtkmm.org/en/documentation.html/
+	https://developer.gnome.org/gtkmm-tutorial/stable/gtkmm-tutorial.html
 
 Notes on pop up menus on Cairo:
 
-http://www.lucidarme.me/?p=4807
+	http://www.lucidarme.me/?p=4807
+
+libxml2 notes:
+
+	http://www.xmlsoft.org/examples/testWriter.c
