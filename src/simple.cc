@@ -284,6 +284,28 @@ void on_saveas_clicked()
         return;
     }
 
+    /* create the GraphConnections subtree */
+
+    rc = xmlTextWriterStartElement(writer, BAD_CAST "GraphConnections");
+    if (rc < 0) {
+        fprintf (stderr, "failure writing GraphConnections\n");
+        return;
+    }
+
+
+    /* close of the GraphConnections tree */
+
+    rc = xmlTextWriterEndElement(writer);
+    if (rc < 0) {
+        printf("testXmlwriterDoc: Error at xmlTextWriterEndElement\n");
+        return;
+    }
+
+
+
+
+
+
     rc = xmlTextWriterEndDocument(writer);
     if (rc < 0) {
         fprintf (stderr, "failure at xmlTextWriterEndDocument\n");

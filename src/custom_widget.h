@@ -37,7 +37,7 @@ private:
 	GraphNode *grabbed_node = NULL;
 	XRef hover_xref = { NULL, -1, SOCKTYPE_UNDEF };
 	XRef connect_xref = { NULL, -1, SOCKTYPE_UNDEF };
-	/* cursor location */
+	/* FIXME: cursor location - replace with GraphVector */
 	double cx = 0;
   double cy = 0;			
 	double ocx = 0;
@@ -68,6 +68,8 @@ public:
 	bool EstablishConnection(XRef *a, XRef *b);
 	bool LoopDetector(GraphNode *src, GraphNode *tgt);
 	int  GetGraphNodeCount();
+	//int  GetConnectionCount();
+	//GraphConnection* GetConnectionRef(int);	
 
 protected:
 	bool on_timeout();
