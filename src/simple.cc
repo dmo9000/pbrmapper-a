@@ -91,6 +91,7 @@ void on_saveas_clicked()
     xmlBufferPtr buf;
     xmlChar *tmp;
     FILE *fp;
+    char buffer[256];
 
     std::cerr << "+++ File->Save As ... selected\n" << std::endl;
     writer = xmlNewTextWriterFilename("testfile.xml", 0);
@@ -122,8 +123,6 @@ void on_saveas_clicked()
         return;
     }
 
-
-
     /* Write a comment as child of Workspace.
     *      * Please observe, that the input to the xmlTextWriter functions
     *           * HAS to be in UTF-8, even if the output XML is encoded
@@ -136,23 +135,39 @@ void on_saveas_clicked()
     }
     if (tmp != NULL) xmlFree(tmp);
 
+    /* GraphNodes tree */
+    rc = xmlTextWriterStartElement(writer, BAD_CAST "GraphNodes");
+    if (rc < 0) {
+        fprintf (stderr, "failure writing GraphNode\n");
+        return;
+    }
+
+    memset(&buffer, 0, 256);
+    snprintf((char*) &buffer, 255, "%u", pCustomWidget->GetGraphNodeCount());
+    rc = xmlTextWriterWriteAttribute(writer, BAD_CAST "nodecount", BAD_CAST buffer);
+    if (rc < 0) {
+        fprintf (stderr, "failure writing GraphNode attributes\n");
+        return;
+    }
+
     for (int i = 0 ; i < pCustomWidget->GetGraphNodeCount(); i++) {
-				GraphNode *nodeptr = NULL;
-				GraphVector *location = NULL;
-				GraphVector *size = NULL;
-				
-        char buffer[256];
+        GraphNode *nodeptr = NULL;
+        GraphVector *location = NULL;
+        GraphVector *size = NULL;
+
         fprintf(stderr, "writing node %u\n", i);
         fflush(NULL);
 
-				nodeptr = pCustomWidget->GetNodeByID(i);
-				if (!nodeptr) {
-						fprintf (stderr, "couldn't get nodeptr from CustomWidget\n");
-						return;
-						}
+        nodeptr = pCustomWidget->GetNodeByID(i);
+        if (!nodeptr) {
+            fprintf (stderr, "couldn't get nodeptr from CustomWidget\n");
+            return;
+        }
 
-				location = nodeptr->GetLocation();
-				size = nodeptr->GetSize();
+        location = nodeptr->GetLocation();
+        size = nodeptr->GetSize();
+
+        /* write graphnode id, location and size on the canvas */
 
         rc = xmlTextWriterStartElement(writer, BAD_CAST "GraphNode");
         if (rc < 0) {
@@ -161,8 +176,7 @@ void on_saveas_clicked()
         }
 
         memset(&buffer, 0, 256);
-        //itoa(i, (char *) &buffer, 10);
-	snprintf((char*) &buffer, 255, "%u", i);
+        snprintf((char*) &buffer, 255, "%u", i);
         rc = xmlTextWriterWriteAttribute(writer, BAD_CAST "id", BAD_CAST buffer);
         if (rc < 0) {
             fprintf (stderr, "failure writing GraphNode attributes\n");
@@ -170,7 +184,7 @@ void on_saveas_clicked()
         }
 
         memset(&buffer, 0, 256);
-				snprintf((char *) &buffer, 255, "%0.7f,%0.7f", location->x, location->y);
+        snprintf((char *) &buffer, 255, "%0.7f,%0.7f", location->x, location->y);
         rc = xmlTextWriterWriteAttribute(writer, BAD_CAST "location", BAD_CAST buffer);
         if (rc < 0) {
             fprintf (stderr, "failure writing GraphNode attributes\n");
@@ -178,13 +192,71 @@ void on_saveas_clicked()
         }
 
         memset(&buffer, 0, 256);
-				snprintf((char *) &buffer, 255, "%0.7f,%0.7f", size->x, size->y);
+        snprintf((char *) &buffer, 255, "%0.7f,%0.7f", size->x, size->y);
         rc = xmlTextWriterWriteAttribute(writer, BAD_CAST "size", BAD_CAST buffer);
         if (rc < 0) {
             fprintf (stderr, "failure writing GraphNode attributes\n");
             return;
         }
 
+        /* write input/output count attributes */
+
+        memset(&buffer, 0, 256);
+        snprintf((char *) &buffer, 255, "%u", nodeptr->NumberOfInputs());
+        rc = xmlTextWriterWriteAttribute(writer, BAD_CAST "inputs", BAD_CAST buffer);
+        if (rc < 0) {
+            fprintf (stderr, "failure writing GraphNode attributes\n");
+            return;
+        }
+
+        memset(&buffer, 0, 256);
+        snprintf((char *) &buffer, 255, "%u", nodeptr->NumberOfOutputs());
+        rc = xmlTextWriterWriteAttribute(writer, BAD_CAST "outputs", BAD_CAST buffer);
+        if (rc < 0) {
+            fprintf (stderr, "failure writing GraphNode attributes\n");
+            return;
+        }
+
+        /* write per-node inputs */
+
+        for (int i = 0; i <  nodeptr->NumberOfInputs(); i++) {
+            rc = xmlTextWriterStartElement(writer, BAD_CAST "input");
+            if (rc < 0) {
+                fprintf (stderr, "failure writing input\n");
+                return;
+            }
+
+            std::string label = nodeptr->GetPortLabel(i, SOCKTYPE_INPUT);
+            memset(&buffer, 0, 256);
+            snprintf((char *) &buffer, 255, "%s", label.c_str());
+            rc = xmlTextWriterWriteAttribute(writer, BAD_CAST "label", BAD_CAST buffer);
+            if (rc < 0) {
+                fprintf (stderr, "failure writing input label\n");
+                return;
+            }
+
+
+            rc = xmlTextWriterEndElement(writer);
+            if (rc < 0) {
+                printf("testXmlwriterDoc: Error at xmlTextWriterEndElement\n");
+                return;
+            }
+        }
+
+        /* write per-node outputs */
+
+        for (int i = 0; i <  nodeptr->NumberOfOutputs(); i++) {
+            rc = xmlTextWriterStartElement(writer, BAD_CAST "output");
+            if (rc < 0) {
+                fprintf (stderr, "failure writing input\n");
+                return;
+            }
+            rc = xmlTextWriterEndElement(writer);
+            if (rc < 0) {
+                printf("testXmlwriterDoc: Error at xmlTextWriterEndElement\n");
+                return;
+            }
+        }
 
         rc = xmlTextWriterEndElement(writer);
         if (rc < 0) {
@@ -192,6 +264,14 @@ void on_saveas_clicked()
             return;
         }
 
+    }
+
+    /* close of the GraphNodes tree */
+
+    rc = xmlTextWriterEndElement(writer);
+    if (rc < 0) {
+        printf("testXmlwriterDoc: Error at xmlTextWriterEndElement\n");
+        return;
     }
 
     rc = xmlTextWriterEndDocument(writer);
@@ -203,286 +283,65 @@ void on_saveas_clicked()
     xmlFreeTextWriter(writer);
     return;
 
-
-
-    /* Start an element named "ORDER" as child of Workspace.
-    rc = xmlTextWriterStartElement(writer, BAD_CAST "ORDER");
-    if (rc < 0) {
-        printf
-            ("testXmlwriterFilename: Error at xmlTextWriterStartElement\n");
-        return;
-    }
-    */
-
-    /* Add an attribute with name "version" and value "1.0" to ORDER. */
-    /*
-    rc = xmlTextWriterWriteAttribute(writer, BAD_CAST "version",
-                                 BAD_CAST "1.0");
-    if (rc < 0) {
-    printf
-        ("testXmlwriterFilename: Error at xmlTextWriterWriteAttribute\n");
-    return;
-    }
-    */
-
-    /* Add an attribute with name "xml:lang" and value "de" to ORDER. */
-    rc = xmlTextWriterWriteAttribute(writer, BAD_CAST "xml:lang",
-                                     BAD_CAST "de");
-    if (rc < 0) {
-        printf
-        ("testXmlwriterFilename: Error at xmlTextWriterWriteAttribute\n");
-        return;
-    }
-
-    /* Write a comment as child of ORDER */
-    tmp = ConvertInput("<äöü>", MY_ENCODING);
-    rc = xmlTextWriterWriteFormatComment(writer,
-                                         "This is another comment with special chars: %s",
-                                         tmp);
-    if (rc < 0) {
-        printf
-        ("testXmlwriterFilename: Error at xmlTextWriterWriteFormatComment\n");
-        return;
-    }
-    if (tmp != NULL) xmlFree(tmp);
-
-    /* Start an element named "HEADER" as child of ORDER. */
-    rc = xmlTextWriterStartElement(writer, BAD_CAST "HEADER");
-    if (rc < 0) {
-        printf
-        ("testXmlwriterFilename: Error at xmlTextWriterStartElement\n");
-        return;
-    }
-
-    /* Write an element named "X_ORDER_ID" as child of HEADER. */
-    rc = xmlTextWriterWriteFormatElement(writer, BAD_CAST "X_ORDER_ID",
-                                         "%010d", 53535);
-    if (rc < 0) {
-        printf
-        ("testXmlwriterFilename: Error at xmlTextWriterWriteFormatElement\n");
-        return;
-    }
-
-    /* Write an element named "CUSTOMER_ID" as child of HEADER. */
-    rc = xmlTextWriterWriteFormatElement(writer, BAD_CAST "CUSTOMER_ID",
-                                         "%d", 1010);
-    if (rc < 0) {
-        printf
-        ("testXmlwriterFilename: Error at xmlTextWriterWriteFormatElement\n");
-        return;
-    }
-
-    /* Write an element named "NAME_1" as child of HEADER. */
-    tmp = ConvertInput("Müller", MY_ENCODING);
-    rc = xmlTextWriterWriteElement(writer, BAD_CAST "NAME_1", tmp);
-    if (rc < 0) {
-        printf
-        ("testXmlwriterFilename: Error at xmlTextWriterWriteElement\n");
-        return;
-    }
-    if (tmp != NULL) xmlFree(tmp);
-
-    /* Write an element named "NAME_2" as child of HEADER. */
-    tmp = ConvertInput("Jörg", MY_ENCODING);
-    rc = xmlTextWriterWriteElement(writer, BAD_CAST "NAME_2", tmp);
-    if (rc < 0) {
-        printf
-        ("testXmlwriterFilename: Error at xmlTextWriterWriteElement\n");
-        return;
-    }
-    if (tmp != NULL) xmlFree(tmp);
-
-    /* Close the element named HEADER. */
-    rc = xmlTextWriterEndElement(writer);
-    if (rc < 0) {
-        printf
-        ("testXmlwriterFilename: Error at xmlTextWriterEndElement\n");
-        return;
-    }
-
-    /* Start an element named "ENTRIES" as child of ORDER. */
-    rc = xmlTextWriterStartElement(writer, BAD_CAST "ENTRIES");
-    if (rc < 0) {
-        printf
-        ("testXmlwriterFilename: Error at xmlTextWriterStartElement\n");
-        return;
-    }
-
-    /* Start an element named "ENTRY" as child of ENTRIES. */
-    rc = xmlTextWriterStartElement(writer, BAD_CAST "ENTRY");
-    if (rc < 0) {
-        printf
-        ("testXmlwriterFilename: Error at xmlTextWriterStartElement\n");
-        return;
-    }
-
-    /* Write an element named "ARTICLE" as child of ENTRY. */
-    rc = xmlTextWriterWriteElement(writer, BAD_CAST "ARTICLE",
-                                   BAD_CAST "<Test>");
-    if (rc < 0) {
-        printf
-        ("testXmlwriterFilename: Error at xmlTextWriterWriteElement\n");
-        return;
-    }
-
-    /* Write an element named "ENTRY_NO" as child of ENTRY. */
-    rc = xmlTextWriterWriteFormatElement(writer, BAD_CAST "ENTRY_NO", "%d",
-                                         10);
-    if (rc < 0) {
-        printf
-        ("testXmlwriterFilename: Error at xmlTextWriterWriteFormatElement\n");
-        return;
-    }
-
-    /* Close the element named ENTRY. */
-    rc = xmlTextWriterEndElement(writer);
-    if (rc < 0) {
-        printf
-        ("testXmlwriterFilename: Error at xmlTextWriterEndElement\n");
-        return;
-    }
-
-    /* Start an element named "ENTRY" as child of ENTRIES. */
-    rc = xmlTextWriterStartElement(writer, BAD_CAST "ENTRY");
-    if (rc < 0) {
-        printf
-        ("testXmlwriterFilename: Error at xmlTextWriterStartElement\n");
-        return;
-    }
-
-    /* Write an element named "ARTICLE" as child of ENTRY. */
-    rc = xmlTextWriterWriteElement(writer, BAD_CAST "ARTICLE",
-                                   BAD_CAST "<Test 2>");
-    if (rc < 0) {
-        printf
-        ("testXmlwriterFilename: Error at xmlTextWriterWriteElement\n");
-        return;
-    }
-
-    /* Write an element named "ENTRY_NO" as child of ENTRY. */
-    rc = xmlTextWriterWriteFormatElement(writer, BAD_CAST "ENTRY_NO", "%d",
-                                         20);
-    if (rc < 0) {
-        printf
-        ("testXmlwriterFilename: Error at xmlTextWriterWriteFormatElement\n");
-        return;
-    }
-
-    /* Close the element named ENTRY. */
-    rc = xmlTextWriterEndElement(writer);
-    if (rc < 0) {
-        printf
-        ("testXmlwriterFilename: Error at xmlTextWriterEndElement\n");
-        return;
-    }
-
-    /* Close the element named ENTRIES. */
-    rc = xmlTextWriterEndElement(writer);
-    if (rc < 0) {
-        printf
-        ("testXmlwriterFilename: Error at xmlTextWriterEndElement\n");
-        return;
-    }
-
-    /* Start an element named "FOOTER" as child of ORDER. */
-    rc = xmlTextWriterStartElement(writer, BAD_CAST "FOOTER");
-    if (rc < 0) {
-        printf
-        ("testXmlwriterFilename: Error at xmlTextWriterStartElement\n");
-        return;
-    }
-
-    /* Write an element named "TEXT" as child of FOOTER. */
-    rc = xmlTextWriterWriteElement(writer, BAD_CAST "TEXT",
-                                   BAD_CAST "This is a text.");
-    if (rc < 0) {
-        printf
-        ("testXmlwriterFilename: Error at xmlTextWriterWriteElement\n");
-        return;
-    }
-
-    /* Close the element named FOOTER. */
-    rc = xmlTextWriterEndElement(writer);
-    if (rc < 0) {
-        printf
-        ("testXmlwriterFilename: Error at xmlTextWriterEndElement\n");
-        return;
-    }
-
-    /* Here we could close the elements ORDER and Workspace using the
-    *      * function xmlTextWriterEndElement, but since we do not want to
-    *           * write any other elements, we simply call xmlTextWriterEndDocument,
-    *                * which will do all the work. */
-    rc = xmlTextWriterEndDocument(writer);
-    if (rc < 0) {
-        printf
-        ("testXmlwriterFilename: Error at xmlTextWriterEndDocument\n");
-        return;
-    }
-
-    xmlFreeTextWriter(writer);
-}
-
-
-int main (int argc, char **argv)
-{
-    auto app = Gtk::Application::create(argc, argv, "org.gtkmm.example");
-    custom_widgets_register();
-
-    //Load the GtkBuilder file and instantiate its widgets:
-    auto refBuilder = Gtk::Builder::create();
-    try
+    int main (int argc, char **argv)
     {
-        refBuilder->add_from_file("glade/default_layout.glade");
+        auto app = Gtk::Application::create(argc, argv, "org.gtkmm.example");
+        custom_widgets_register();
+
+        //Load the GtkBuilder file and instantiate its widgets:
+        auto refBuilder = Gtk::Builder::create();
+        try
+        {
+            refBuilder->add_from_file("glade/default_layout.glade");
+        }
+        catch(const Glib::FileError& ex)
+        {
+            std::cerr << "FileError: " << ex.what() << std::endl;
+            return 1;
+        }
+        catch(const Glib::MarkupError& ex)
+        {
+            std::cerr << "MarkupError: " << ex.what() << std::endl;
+            return 1;
+        }
+        catch(const Gtk::BuilderError& ex)
+        {
+            std::cerr << "BuilderError: " << ex.what() << std::endl;
+            return 1;
+        }
+
+        //Get the GtkBuilder-instantiated Dialog:
+        refBuilder->get_widget("applicationwindow1", pMainWindow);
+        pMainWindow->set_title("Substance Instainer");
+        refBuilder->get_widget("statusbar1", pStatusBar);
+        pStatusBar->push("Welcome to Substance Instainer!");
+        refBuilder->get_widget("viewport1", pViewPort);
+
+        refBuilder->get_widget("customwidget1", pCustomWidget);
+        pCustomWidget->show_now();
+        pCustomWidget->enable_timeout();
+
+        /* initialise GEGL */
+
+        geglio_init();
+
+        if(pMainWindow)
+        {
+
+            /* Connect File menu callbacks */
+            Gtk::ImageMenuItem* pButton = nullptr;
+            refBuilder->get_widget("imagemenuitem3", pButton);
+            if(pButton) pButton->signal_activate().connect( sigc::ptr_fun(on_saveas_clicked));
+            refBuilder->get_widget("imagemenuitem4", pButton);
+            if(pButton) pButton->signal_activate().connect( sigc::ptr_fun(on_saveas_clicked));
+            refBuilder->get_widget("imagemenuitem5", pButton);
+            if(pButton) pButton->signal_activate().connect( sigc::ptr_fun(on_button_clicked));
+
+            app->run(*pMainWindow);
+        }
+
+        delete pMainWindow;
+        geglio_exit();
+
+        return 0;
     }
-    catch(const Glib::FileError& ex)
-    {
-        std::cerr << "FileError: " << ex.what() << std::endl;
-        return 1;
-    }
-    catch(const Glib::MarkupError& ex)
-    {
-        std::cerr << "MarkupError: " << ex.what() << std::endl;
-        return 1;
-    }
-    catch(const Gtk::BuilderError& ex)
-    {
-        std::cerr << "BuilderError: " << ex.what() << std::endl;
-        return 1;
-    }
-
-    //Get the GtkBuilder-instantiated Dialog:
-    refBuilder->get_widget("applicationwindow1", pMainWindow);
-    pMainWindow->set_title("Substance Instainer");
-    refBuilder->get_widget("statusbar1", pStatusBar);
-    pStatusBar->push("Welcome to Substance Instainer!");
-    refBuilder->get_widget("viewport1", pViewPort);
-
-    refBuilder->get_widget("customwidget1", pCustomWidget);
-    pCustomWidget->show_now();
-    pCustomWidget->enable_timeout();
-
-    /* initialise GEGL */
-
-    geglio_init();
-
-    if(pMainWindow)
-    {
-
-        /* Connect File menu callbacks */
-        Gtk::ImageMenuItem* pButton = nullptr;
-        refBuilder->get_widget("imagemenuitem3", pButton);
-        if(pButton) pButton->signal_activate().connect( sigc::ptr_fun(on_saveas_clicked));
-        refBuilder->get_widget("imagemenuitem4", pButton);
-        if(pButton) pButton->signal_activate().connect( sigc::ptr_fun(on_saveas_clicked));
-        refBuilder->get_widget("imagemenuitem5", pButton);
-        if(pButton) pButton->signal_activate().connect( sigc::ptr_fun(on_button_clicked));
-
-        app->run(*pMainWindow);
-    }
-
-    delete pMainWindow;
-    geglio_exit();
-
-    return 0;
-}
