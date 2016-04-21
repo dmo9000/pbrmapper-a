@@ -19,10 +19,10 @@ LIB_LDFLAGS:= $(shell pkg-config glib-2.0 gegl-0.2 gtkmm-3.0 --libs)
 all: libcustomwidgetsglade.so custom_widget_glade.o simple 
 
 geglio.o: geglio.c
-	$(CC) -c $^ $(LIB_CFLAGS)
+	$(CC) -c $^ $(LIB_CFLAGS) -fPIC -g -ggdb
 
 custom_widget_glade.o: custom_widget_glade.c
-	$(CXX) -c $^ -o $@ `pkg-config gtkmm-3.0 --cflags` -std=c++11 -fPIC -ggdb
+	$(CXX) -c $^ -o $@ `pkg-config gtkmm-3.0 --cflags` -std=c++11 -fPIC -g -ggdb
  
 %.o:	%.cc
 	$(CXX) -c $^ -o $@ $(LIB_CPPFLAGS) -std=c++11 -fPIC -g -ggdb 

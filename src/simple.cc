@@ -161,7 +161,8 @@ void on_saveas_clicked()
         }
 
         memset(&buffer, 0, 256);
-        itoa(i, (char *) &buffer, 10);
+        //itoa(i, (char *) &buffer, 10);
+	snprintf((char*) &buffer, 255, "%u", i);
         rc = xmlTextWriterWriteAttribute(writer, BAD_CAST "id", BAD_CAST buffer);
         if (rc < 0) {
             fprintf (stderr, "failure writing GraphNode attributes\n");
