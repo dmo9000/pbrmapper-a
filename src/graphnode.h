@@ -39,6 +39,13 @@ struct _connector_ {
 									};
 
 typedef struct _connector_ GraphConnector;
+
+struct _coordinate_ {
+									double x = 0.0; 
+									double y = 0.0;
+									};
+
+typedef struct _coordinate_ GraphCoordinate;
  
 class GraphNode 
 {
@@ -54,6 +61,7 @@ private:
   std::vector<GraphConnector*> inputs;
   std::vector<GraphConnector*> outputs;
 	int Recalculate_Size();
+	GraphCoordinate location;
   
 public:
 	GraphNode (int seq_id, double spawnx, double spawny);

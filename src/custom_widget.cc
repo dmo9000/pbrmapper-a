@@ -993,3 +993,10 @@ void CustomWidget::CreateOutput()
     NewNode->AddInput ("Input");
     on_timeout();
 }
+
+int  CustomWidget::GetGraphNodeCount()
+{
+
+	  return (nodelist.size()); 
+
+}
