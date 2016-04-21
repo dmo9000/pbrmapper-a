@@ -7,7 +7,7 @@ libcustomwidgetsglade: geglio.c custom_widget.cc graphnode.cc custom_widget_glad
 	ln -sf libcustomwidgetsglade.so libcustomwidgetsglade.dll ) || echo
 
 simple: simple.cc glade/default_layout.glade libcustomwidgetsglade 
-	g++ simple.cc custom_widget_glade.c -std=c++11 -g -ggdb -o simple `pkg-config gtkmm-3.0 --cflags --libs` `pkg-config gegl-0.2 --libs` `pkg-config glib-2.0 --cflags` -L. -lcustomwidgetsglade 
+	g++ simple.cc custom_widget_glade.c -std=c++11 -g -ggdb -o simple `pkg-config gtkmm-3.0 --cflags --libs` `pkg-config gegl-0.2 --libs` `pkg-config glib-2.0 --cflags` -L. -lcustomwidgetsglade `pkg-config --cflags --libs libxml-2.0` 
 
 
 clean:

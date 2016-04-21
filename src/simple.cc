@@ -4,6 +4,8 @@
 #include "custom_widget.h"
 #include "custom_widget_glade.h"
 #include "geglio.h"
+#include <libxml/encoding.h>
+#include <libxml/xmlwriter.h>
 
 Gtk::Window* pMainWindow = nullptr;
 //Gtk::DrawingArea* pCustomWidget = nullptr;
@@ -22,6 +24,15 @@ static
 void on_saveas_clicked()
 {
 	std::cerr << "+++ File->Save As ... selected\n" << std::endl;
+  xmlTextWriterPtr writer;
+  writer = xmlNewTextWriterFilename("testfile.xml", 0);
+  if (writer == NULL) {
+      std::cerr << "testXmlwriterFilename: Error creating the xml writer" 
+				<< std::endl;
+      return;
+    }
+	xmlTextWriterEndDocument(writer);
+  xmlFreeTextWriter(writer);
 }
 
 
