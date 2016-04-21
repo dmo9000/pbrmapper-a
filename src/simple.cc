@@ -137,9 +137,22 @@ void on_saveas_clicked()
     if (tmp != NULL) xmlFree(tmp);
 
     for (int i = 0 ; i < pCustomWidget->GetGraphNodeCount(); i++) {
+				GraphNode *nodeptr = NULL;
+				GraphVector *location = NULL;
+				GraphVector *size = NULL;
+				
         char buffer[256];
         fprintf(stderr, "writing node %u\n", i);
         fflush(NULL);
+
+				nodeptr = pCustomWidget->GetNodeByID(i);
+				if (!nodeptr) {
+						fprintf (stderr, "couldn't get nodeptr from CustomWidget\n");
+						return;
+						}
+
+				location = nodeptr->GetLocation();
+				size = nodeptr->GetSize();
 
         rc = xmlTextWriterStartElement(writer, BAD_CAST "GraphNode");
         if (rc < 0) {
@@ -154,6 +167,24 @@ void on_saveas_clicked()
             fprintf (stderr, "failure writing GraphNode attributes\n");
             return;
         }
+
+        memset(&buffer, 0, 256);
+				snprintf((char *) &buffer, 255, "%0.7f,%0.7f", location->x, location->y);
+        rc = xmlTextWriterWriteAttribute(writer, BAD_CAST "location", BAD_CAST buffer);
+        if (rc < 0) {
+            fprintf (stderr, "failure writing GraphNode attributes\n");
+            return;
+        }
+
+        memset(&buffer, 0, 256);
+				snprintf((char *) &buffer, 255, "%0.7f,%0.7f", size->x, size->y);
+        rc = xmlTextWriterWriteAttribute(writer, BAD_CAST "size", BAD_CAST buffer);
+        if (rc < 0) {
+            fprintf (stderr, "failure writing GraphNode attributes\n");
+            return;
+        }
+
+
         rc = xmlTextWriterEndElement(writer);
         if (rc < 0) {
             printf("testXmlwriterDoc: Error at xmlTextWriterEndElement\n");

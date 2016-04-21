@@ -45,7 +45,7 @@ struct _coordinate_ {
 									double y = 0.0;
 									};
 
-typedef struct _coordinate_ GraphCoordinate;
+typedef struct _coordinate_ GraphVector;
  
 class GraphNode 
 {
@@ -56,23 +56,19 @@ private:
  	bool is_dirty;
 	int sx = 64;
 	int sy = 64;
-	double x = 0;
-	double y = 0;
   std::vector<GraphConnector*> inputs;
   std::vector<GraphConnector*> outputs;
 	int Recalculate_Size();
-	GraphCoordinate location;
+	GraphVector location;
+	GraphVector size;
+
   
 public:
 	GraphNode (int seq_id, double spawnx, double spawny);
   ~GraphNode();
 	int GetID();
-	int Get_X();
-	int Get_Y();
 	int Get_SX();
 	int Get_SY();
-	void Set_X(int nx);
-	void Set_Y(int ny);
 	int GetPinX(int index, int type);
 	int GetPinY(int index, int type);
 	int AddInput(std::string label);
@@ -83,6 +79,10 @@ public:
 	std::string GetPortLabel(int portnum, int type);
 	bool SetPortStatus(int portnum, int type, int state, GraphConnection *c);
 	GraphConnection* GetPortConnection(int portnum, int type);
+	GraphVector *GetLocation();
+	GraphVector *GetSize();
+	bool SetLocation(double nx, double ny);
+	//int SetSize(double x, double y);
 
 protected:
 

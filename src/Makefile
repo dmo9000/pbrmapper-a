@@ -40,5 +40,5 @@ simple: $(MAIN_SRC_CPP) glade/default_layout.glade libcustomwidgetsglade.so
 
 
 clean:
-	rm -rf *.o *.so *.dll simple simple.exe *~ autom4te.cache 
+	rm -rf *.o *.so *.dll simple simple.exe *~ autom4te.cache testfile.xml 
 	find . -name "*~" -print -exec rm -f {} \;

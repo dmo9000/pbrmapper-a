@@ -162,8 +162,12 @@ CustomWidget::on_draw (const Cairo::RefPtr < Cairo::Context > &cr)
             it != nodelist.end (); ++it)
     {
         GraphNode *nodeptr = *it;
-        double x = nodeptr->Get_X ();
-        double y = nodeptr->Get_Y ();
+				GraphVector *node_coord = NULL;
+				node_coord = nodeptr->GetLocation();
+
+				double x = node_coord->x;
+				double y = node_coord->y;
+
         double sx = nodeptr->Get_SX ();
         double sy = nodeptr->Get_SY ();
 
@@ -411,8 +415,9 @@ CustomWidget::on_motion_notify_event (GdkEventMotion * event)
         if (grabbed_node)
         {
             //std::cerr << "+++ motion notify (x=" << event->x << ",y=" << event->y << "+++\n";
-            grabbed_node->Set_X (event->x - 32);
-            grabbed_node->Set_Y (event->y - 32);
+            //grabbed_node->Set_X (event->x - 32);
+            //grabbed_node->Set_Y (event->y - 32);
+           	grabbed_node->SetLocation(event->x - 32, (event->y - 32)); 
         }
         on_timeout();
         break;
@@ -579,15 +584,17 @@ CustomWidget::on_button_press_event (GdkEventButton * event)
                     it != nodelist.end (); ++it)
             {
                 GraphNode *nodeptr = *it;
-                double x = nodeptr->Get_X ();
-                double y = nodeptr->Get_Y ();
+								GraphVector *node_coord = NULL;
+								node_coord = nodeptr->GetLocation();
+                double x = node_coord->x;
+                double y = node_coord->y; 
                 double sx = nodeptr->Get_SX ();
                 double sy = nodeptr->Get_SY ();
 
                 if ((event->x >= x && event->x <= (x + sx)) &&
                         ((event->y >= y && event->y <= (y + sy))))
                 {
-//                                 std::cerr << "+++ node selected id=" << nodeptr->GetID() << " +++ \n";
+//                  std::cerr << "+++ node selected id=" << nodeptr->GetID() << " +++ \n";
 
                     selected_node = nodeptr;
                     grabbed_node = nodeptr;

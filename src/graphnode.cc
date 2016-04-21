@@ -5,10 +5,9 @@
 GraphNode::GraphNode(int seq_id, double spawnx, double spawny)
 {
     node_seq_id = seq_id;
-    x = spawnx;
-    y = spawny;
+  	SetLocation(spawnx, spawny); 
     is_valid = 1;
-    std::cerr << "GraphNode(" << node_seq_id << ":" << x << ":" << y << ") constructor\n";
+    std::cerr << "GraphNode(" << node_seq_id << ":" << location.x << ":" << location.y << ") constructor\n";
 }
 
 GraphNode::~GraphNode()
@@ -86,6 +85,7 @@ bool GraphNode::SetPortStatus(int portnum, int type, int state,
     return false;
 }
 
+/*
 void GraphNode::Set_X(int nx)
 {
     x = nx;
@@ -98,13 +98,14 @@ void GraphNode::Set_Y(int ny)
 
 int GraphNode::Get_X()
 {
-    return x;
+    return location.x;
 }
 
 int GraphNode::Get_Y()
 {
-    return y;
+    return location.y;
 }
+*/
 
 int GraphNode::Get_SX()
 {
@@ -180,10 +181,10 @@ int GraphNode::GetPinX(int index, int type)
 {
     switch (type) {
     case SOCKTYPE_INPUT:
-        return x;
+        return location.x;
         break;
     case SOCKTYPE_OUTPUT:
-        return x + 64;
+        return location.x + 64;
         break;
     default:
         return -1;
@@ -194,7 +195,7 @@ int GraphNode::GetPinX(int index, int type)
 
 int GraphNode::GetPinY(int index, int type)
 {
-    return y + 8 + ((index) * 16) + 8;
+    return location.y + 8 + ((index) * 16) + 8;
 }
 
 int GraphNode::Recalculate_Size()
@@ -214,4 +215,23 @@ int GraphNode::GetID()
 {
     return node_seq_id;
 }
+
+GraphVector *GraphNode::GetLocation()
+{
+	return &location;
+}
+
+GraphVector *GraphNode::GetSize()
+{
+	return &size;
+}
+
+bool GraphNode::SetLocation(double nx, double ny)
+{
+		location.x = nx;
+		location.y = ny;
+		//x = nx;
+		//y = ny;
+}
+
 
