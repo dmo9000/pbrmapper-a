@@ -6,6 +6,7 @@ GraphNode::GraphNode(int seq_id, double spawnx, double spawny)
 {
     node_seq_id = seq_id;
   	SetLocation(spawnx, spawny); 
+		SetSize(64, 64);
     is_valid = 1;
     std::cerr << "GraphNode(" << node_seq_id << ":" << location.x << ":" << location.y << ") constructor\n";
 }
@@ -86,27 +87,6 @@ bool GraphNode::SetPortStatus(int portnum, int type, int state,
 }
 
 /*
-void GraphNode::Set_X(int nx)
-{
-    x = nx;
-}
-
-void GraphNode::Set_Y(int ny)
-{
-    y = ny;
-}
-
-int GraphNode::Get_X()
-{
-    return location.x;
-}
-
-int GraphNode::Get_Y()
-{
-    return location.y;
-}
-*/
-
 int GraphNode::Get_SX()
 {
     return sx;
@@ -116,6 +96,7 @@ int GraphNode::Get_SY()
 {
     return sy;
 }
+*/
 
 std::string GraphNode::GetPortLabel(int portnum, int type)
 {
@@ -205,9 +186,9 @@ int GraphNode::Recalculate_Size()
     /* make sure enough vertical size for all inputs / outputs */
     max_inputs = (inputs.size() > outputs.size () ? inputs.size() : outputs.size());
     min_inputs = (max_inputs > 3 ? max_inputs : 3);
-    if (sy != (((min_inputs-1) * 16) + 32)) {
-        sy = (((min_inputs-1) * 16) + 32);
-        std::cerr << "graphnode(" << node_seq_id << "): new size x=" << sx << ", y=" << sy << "\n";
+    if (size.y != (((min_inputs-1) * 16) + 32)) {
+        size.y = (((min_inputs-1) * 16) + 32);
+        std::cerr << "graphnode(" << node_seq_id << "): new size x=" << size.x << ", y=" << size.y << "\n";
     }
 }
 
@@ -230,8 +211,16 @@ bool GraphNode::SetLocation(double nx, double ny)
 {
 		location.x = nx;
 		location.y = ny;
-		//x = nx;
-		//y = ny;
+		return true;
 }
+
+
+bool GraphNode::SetSize(double nx, double ny)
+{
+		size.x = nx;
+		size.y = ny;
+		return true;
+}
+
 
 

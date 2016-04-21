@@ -54,8 +54,6 @@ private:
 	int node_seq_id = 0;
   int is_valid = 0;
  	bool is_dirty;
-	int sx = 64;
-	int sy = 64;
   std::vector<GraphConnector*> inputs;
   std::vector<GraphConnector*> outputs;
 	int Recalculate_Size();
@@ -67,8 +65,6 @@ public:
 	GraphNode (int seq_id, double spawnx, double spawny);
   ~GraphNode();
 	int GetID();
-	int Get_SX();
-	int Get_SY();
 	int GetPinX(int index, int type);
 	int GetPinY(int index, int type);
 	int AddInput(std::string label);
@@ -82,7 +78,7 @@ public:
 	GraphVector *GetLocation();
 	GraphVector *GetSize();
 	bool SetLocation(double nx, double ny);
-	//int SetSize(double x, double y);
+	bool SetSize(double x, double y);
 
 protected:
 

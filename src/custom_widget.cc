@@ -162,14 +162,17 @@ CustomWidget::on_draw (const Cairo::RefPtr < Cairo::Context > &cr)
             it != nodelist.end (); ++it)
     {
         GraphNode *nodeptr = *it;
-				GraphVector *node_coord = NULL;
+				GraphVector *node_coord = NULL, *node_size = NULL;
 				node_coord = nodeptr->GetLocation();
+				node_size = nodeptr->GetSize();
 
 				double x = node_coord->x;
 				double y = node_coord->y;
 
-        double sx = nodeptr->Get_SX ();
-        double sy = nodeptr->Get_SY ();
+        //double sx = nodeptr->Get_SX ();
+        //double sy = nodeptr->Get_SY ();
+       	double sx = node_size->x;
+				double sy = node_size->y; 
 
         //std::cerr << "Drawing: " << x << ":" << y << "\n";
         cr->set_source_rgba (1.0, 1.0, 1.0, 1.0);
@@ -584,12 +587,18 @@ CustomWidget::on_button_press_event (GdkEventButton * event)
                     it != nodelist.end (); ++it)
             {
                 GraphNode *nodeptr = *it;
-								GraphVector *node_coord = NULL;
+								GraphVector *node_coord = NULL, *node_size = NULL;
 								node_coord = nodeptr->GetLocation();
+								node_size = nodeptr->GetSize();
+
                 double x = node_coord->x;
                 double y = node_coord->y; 
+								double sx = node_size->x;
+								double sy = node_size->y;
+								/*	
                 double sx = nodeptr->Get_SX ();
                 double sy = nodeptr->Get_SY ();
+								*/
 
                 if ((event->x >= x && event->x <= (x + sx)) &&
                         ((event->y >= y && event->y <= (y + sy))))
