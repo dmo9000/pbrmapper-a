@@ -689,6 +689,23 @@ CustomWidget::GetNodeByID (int id)
     return NULL;
 }
 
+GraphNode *
+CustomWidget::GetNodeBySlot(int slotnum)
+{
+
+	 int slot = 0;
+	 for (std::vector < GraphNode * >::iterator it = nodelist.begin ();
+            it != nodelist.end (); ++it)
+    {
+        GraphNode *nodeptr = *it;
+				if (slot == slotnum) return nodeptr;
+				slot++;
+		}
+	return NULL;
+
+}
+
+
 /* FIXME: I think this is a bit general to belong here, and should go in a free-range function */
 bool
 CustomWidget::point_is_within_radius (double x, double y, double cx,
@@ -886,7 +903,7 @@ CustomWidget::EstablishConnection(XRef *A, XRef *B)
     src_node_ptr = GetNodeByID (new_connection->src_node);
 
     if (src_node_ptr->GetPortStatus(new_connection->src_port,  new_connection->src_type) != STATE_UNCONNECTED) {
-        std::cerr << "ERROR: that port is already connected to something else\n";
+        std::cerr << "ERROR: src port is already connected to something else\n";
         delete new_connection;
         return false;
     }
@@ -898,7 +915,7 @@ CustomWidget::EstablishConnection(XRef *A, XRef *B)
     tgt_node_ptr = GetNodeByID (new_connection->tgt_node);
 
     if (tgt_node_ptr->GetPortStatus(new_connection->tgt_port,  new_connection->tgt_type) != STATE_UNCONNECTED) {
-        std::cerr << "ERROR: that port is already connected to something else\n";
+        std::cerr << "ERROR: tgt port is already connected to something else\n";
         delete new_connection;
         return false;
     }
@@ -1027,6 +1044,22 @@ int  CustomWidget::GetGraphNodeCount()
 int  CustomWidget::GetGraphConnectionCount()
 {
     return (connectionlist.size());
+}
+
+GraphConnection* CustomWidget::GetGraphConnectionBySlot(int slotnum)
+{
+    GraphConnection *connectptr = NULL;
+		int slot = 0;
+
+    for (std::vector < GraphConnection * >::iterator it =
+                connectionlist.begin (); it != connectionlist.end (); ++it)
+    {
+        				GraphConnection *connectptr = *it;
+								if (slot == slotnum) return connectptr;
+								slot++;
+		}
+
+	return NULL;
 }
 
 GraphConnection* CustomWidget::GetGraphConnectionRef(int id)

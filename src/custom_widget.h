@@ -55,6 +55,7 @@ public:
   static void register_type ();
 	void enable_timeout();
 	GraphNode* GetNodeByID(int);
+	GraphNode* GetNodeBySlot(int);
 	bool UnlinkConnection(GraphConnection *);
 	void HoverUnlatch();
 	void UnlinkAll(GraphNode*);
@@ -67,6 +68,7 @@ public:
 	int  GetGraphNodeCount();
 	int  GetGraphConnectionCount();
 	GraphConnection* GetGraphConnectionRef(int);	
+	GraphConnection* GetGraphConnectionBySlot(int);	
 	void CreateCustom(int id, double nx, double ny, double nsx, double nsy, int inputs, int outputs);
 	void CreateInput();
 	void CreateConduit();

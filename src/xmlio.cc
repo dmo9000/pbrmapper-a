@@ -152,15 +152,18 @@ void XML_Save()
         return;
     }
 
+		fprintf(stderr, "+++ writing %u nodes to XML\n", pCustomWidget->GetGraphNodeCount());
+
     for (int i = 0 ; i < pCustomWidget->GetGraphNodeCount(); i++) {
         GraphNode *nodeptr = NULL;
         GraphVector *location = NULL;
         GraphVector *size = NULL;
+				
 
         fprintf(stderr, "writing node %u\n", i);
         fflush(NULL);
 
-        nodeptr = pCustomWidget->GetNodeByID(i);
+        nodeptr = pCustomWidget->GetNodeBySlot(i);
         if (!nodeptr) {
             fprintf (stderr, "couldn't get nodeptr from CustomWidget\n");
             return;
@@ -178,7 +181,7 @@ void XML_Save()
         }
 
         memset(&buffer, 0, 256);
-        snprintf((char*) &buffer, 255, "%u", i);
+        snprintf((char*) &buffer, 255, "%u", nodeptr->GetID());
         rc = xmlTextWriterWriteAttribute(writer, BAD_CAST "id", BAD_CAST buffer);
         if (rc < 0) {
             fprintf (stderr, "failure writing GraphNode attributes\n");
@@ -302,7 +305,7 @@ void XML_Save()
     }
 
     for (int i = 0; i < pCustomWidget->GetGraphConnectionCount(); i++) {
-        GraphConnection *connectptr = pCustomWidget->GetGraphConnectionRef(i);
+        GraphConnection *connectptr = pCustomWidget->GetGraphConnectionBySlot(i);
         if (connectptr) {
             fprintf(stderr, "got connection data for id %u\n", i);
 
@@ -483,6 +486,7 @@ int XML_Load()
 		xmlChar *connectioncount = get_attribute_value(cur, (char *) "connectioncount");
 		int incoming_connection_count = atoi((char *) connectioncount);
 		fprintf(stderr, "[connectioncount=%u]\n", incoming_connection_count); 
+		fflush(NULL);
 		
 		xmlFree (connectioncount);
 
@@ -521,6 +525,7 @@ xmlNodePtr get_element_by_index(xmlXPathObjectPtr xpo, int index)
     xmlNsPtr ns;
 		ns = (xmlNsPtr) xpo->nodesetval->nodeTab[index];
 		cur = (xmlNodePtr)ns;
+		fprintf(stderr, "cur=%08x\n", cur);
 		return cur;
 }
 
