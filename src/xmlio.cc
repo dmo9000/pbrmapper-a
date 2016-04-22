@@ -323,34 +323,10 @@ void XML_Save()
             rc = xmlTextWriterWriteAttribute(writer, BAD_CAST "tgt_node", BAD_CAST buffer);
 
             memset(&buffer, 0, 256);
-
-            switch (connectptr->src_type) {
-            case SOCKTYPE_INPUT:
-                snprintf((char *) &buffer, 255, "SOCKTYPE_INPUT");
-                break;
-            case SOCKTYPE_OUTPUT:
-                snprintf((char *) &buffer, 255, "SOCKTYPE_OUTPUT");
-                break;
-            default:
-                snprintf((char *) &buffer, 255, "SOCKTYPE_UNDEF");
-                break;
-            }
-
+            snprintf((char *) &buffer, 255, "%u", connectptr->src_type);
             rc = xmlTextWriterWriteAttribute(writer, BAD_CAST "src_type", BAD_CAST buffer);
             memset(&buffer, 0, 256);
-
-            switch (connectptr->tgt_type) {
-            case SOCKTYPE_INPUT:
-                snprintf((char *) &buffer, 255, "SOCKTYPE_INPUT");
-                break;
-            case SOCKTYPE_OUTPUT:
-                snprintf((char *) &buffer, 255, "SOCKTYPE_OUTPUT");
-                break;
-            default:
-                snprintf((char *) &buffer, 255, "SOCKTYPE_UNDEF");
-                break;
-            }
-
+            snprintf((char *) &buffer, 255, "%u", connectptr->tgt_type);
             rc = xmlTextWriterWriteAttribute(writer, BAD_CAST "tgt_type", BAD_CAST buffer);
 
             memset(&buffer, 0, 256);
@@ -505,9 +481,30 @@ int XML_Load()
 
 		cur = get_element_by_index(xpathObj, 0);	
 		xmlChar *connectioncount = get_attribute_value(cur, (char *) "connectioncount");
-		fprintf(stderr, "[connectioncount=%s]\n", nodecount); 
-		xmlFree (connectioncount);
+		int incoming_connection_count = atoi((char *) connectioncount);
+		fprintf(stderr, "[connectioncount=%u]\n", incoming_connection_count); 
 		
+		xmlFree (connectioncount);
+
+    xpathObj = xmlXPathEvalExpression(BAD_CAST "/Workspace/GraphConnections/GraphConnection", xpathCtx);
+
+		for (int i = 0; i < incoming_connection_count; i++) {
+			cur = get_element_by_index(xpathObj, i);	
+				XRef a, b;
+				xmlChar *attr_id = get_attribute_value(cur, (char *) "id");
+				xmlChar *attr_srcnode = get_attribute_value(cur, (char *) "src_node");
+				xmlChar *attr_srcport = get_attribute_value(cur, (char *) "src_port");
+				xmlChar *attr_srctype = get_attribute_value(cur, (char *) "src_type");
+				xmlChar *attr_tgtnode = get_attribute_value(cur, (char *) "tgt_node");
+				xmlChar *attr_tgtport = get_attribute_value(cur, (char *) "tgt_port");
+				xmlChar *attr_tgttype = get_attribute_value(cur, (char *) "tgt_type");
+				pCustomWidget->SetXRef(&a, pCustomWidget->GetNodeByID(atoi((char *) attr_srcnode)), atoi((char*) attr_srcport), atoi((char*) attr_srctype));
+				pCustomWidget->SetXRef(&b, pCustomWidget->GetNodeByID(atoi((char *) attr_tgtnode)), atoi((char*) attr_tgtport), atoi((char*) attr_tgttype));
+				pCustomWidget->EstablishConnection(&a, &b);
+
+			fprintf(stderr, "id=%s,src_node=%s,src_port=%s,tgt_node=%s,tgt_port=%s,src_type=%s,tgt_type=%s\n", attr_id, 
+														attr_srcnode, attr_srcport, attr_tgtnode, attr_tgtport,attr_srctype,attr_tgttype);
+			}
 
 
     xmlXPathFreeObject(xpathObj);
@@ -529,6 +526,7 @@ xmlNodePtr get_element_by_index(xmlXPathObjectPtr xpo, int index)
 
 xmlChar *get_attribute_value(xmlNodePtr cur, char *name)
 {
+	if (!cur || !name) return NULL;
   for(xmlAttrPtr attr = cur->properties; NULL != attr; attr = attr->next)
       {
         xmlChar* value = xmlNodeListGetString(cur->doc, attr->children, 1);
