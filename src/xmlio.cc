@@ -395,6 +395,8 @@ int XML_Load()
   	xmlDocPtr doc;
 	  xmlXPathContextPtr xpathCtx; 
 	  xmlXPathObjectPtr xpathObj; 
+	 	xmlXPathObjectPtr xpathObjInputs; 
+	 	xmlXPathObjectPtr xpathObjOutputs; 
     xmlNodePtr cur;
 	  xmlNsPtr ns;
 
@@ -435,10 +437,61 @@ int XML_Load()
     xpathObj = xmlXPathEvalExpression(BAD_CAST "/Workspace/GraphNodes/GraphNode", xpathCtx);
 
 		for (int i = 0; i < incoming_nodes_count; i++) {
+				GraphNode *nodeptr = NULL;
+				char query_buf[256];
 				cur = get_element_by_index(xpathObj, i);	
-				xmlChar *id = get_attribute_value(cur, (char *) "id");
-				fprintf(stderr, "-- id = %s\n", id); 
-				xmlFree(id);
+				xmlChar *attr_id = get_attribute_value(cur, (char *) "id");
+				xmlChar *attr_x = get_attribute_value(cur, (char *) "x");
+				xmlChar *attr_y = get_attribute_value(cur, (char *) "y");
+				xmlChar *attr_sx = get_attribute_value(cur, (char *) "sx");
+				xmlChar *attr_sy = get_attribute_value(cur, (char *) "sy");
+				xmlChar *attr_in = get_attribute_value(cur, (char *) "inputs");
+				xmlChar *attr_out = get_attribute_value(cur, (char *) "outputs");
+				int gn_id = atoi((char *) attr_id);
+				double gn_x	=  strtod((char *) attr_x, NULL);
+				double gn_y	=  strtod((char *) attr_y, NULL);
+				double gn_sx	=  strtod((char *) attr_sx, NULL);
+				double gn_sy	=  strtod((char *) attr_sy, NULL);
+				int gn_in	=  atoi((char *) attr_in);
+				int gn_out =  atoi((char *) attr_out);
+				//fprintf(stderr, "new_node(id=%s, x=%s, y=%s, sx=%s, sy=%s, in=%s, out=%s)\n", attr_id, attr_x, attr_y, attr_sx, attr_sy, attr_in, attr_out);
+				 fprintf(stderr, "new_node(id=%u, x=%f, y=%f, sx=%f, sy=%f, in=%u, out=%u)\n", gn_id, gn_x, gn_y, gn_sx, gn_sy, gn_in, gn_out);
+	
+				pCustomWidget->CreateCustom(gn_id, gn_x, gn_y, gn_sx, gn_sy, gn_in, gn_out);
+				nodeptr = pCustomWidget->GetNodeByID(gn_id);
+
+				memset(&query_buf, 0, 256);
+				snprintf((char *) &query_buf, 255, "/Workspace/GraphNodes/GraphNode[@id='%u']/input", gn_id);
+
+    		xpathObjInputs = xmlXPathEvalExpression(BAD_CAST &query_buf, xpathCtx);
+				for (int j = 0 ; j < gn_in ; j++) {
+						xmlNodePtr cur_input;
+						cur_input = get_element_by_index(xpathObjInputs, j); 
+						xmlChar *input_label = get_attribute_value(cur_input, (char *) "label");
+						nodeptr->AddInput((char *) input_label);
+						xmlFree(input_label);
+						}
+
+				memset(&query_buf, 0, 256);
+				snprintf((char *) &query_buf, 255, "/Workspace/GraphNodes/GraphNode[@id='%u']/output", gn_id);
+
+    		xpathObjOutputs = xmlXPathEvalExpression(BAD_CAST &query_buf, xpathCtx);
+				for (int k = 0 ; k < gn_out ; k++) {
+						xmlNodePtr cur_output;
+						cur_output = get_element_by_index(xpathObjOutputs, k); 
+						xmlChar *output_label = get_attribute_value(cur_output, (char *) "label");
+						fprintf(stderr, "output label->[%s]\n", (char*) output_label);
+						nodeptr->AddOutput((char *) output_label);
+						xmlFree(output_label);
+						}
+
+				xmlFree(attr_id);
+				xmlFree(attr_x);
+				xmlFree(attr_y);
+				xmlFree(attr_sx);
+				xmlFree(attr_sy);
+				xmlFree(attr_in);
+				xmlFree(attr_out);
 				}
 
 		/* LOAD CONNECTIONS */
@@ -449,7 +502,6 @@ int XML_Load()
         xmlFreeDoc(doc); 
         return(-1);
     }
-
 
 		cur = get_element_by_index(xpathObj, 0);	
 		xmlChar *connectioncount = get_attribute_value(cur, (char *) "connectioncount");

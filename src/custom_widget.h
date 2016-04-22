@@ -50,10 +50,6 @@ private:
 	Gtk::MenuItem Item3;
 	Gtk::MenuItem Item4;
 	Pango::FontDescription font;
-	void CreateInput();
-	void CreateConduit();
-	void CreateSplitter();
-	void CreateOutput();
  
 public:
   static void register_type ();
@@ -71,6 +67,11 @@ public:
 	int  GetGraphNodeCount();
 	int  GetGraphConnectionCount();
 	GraphConnection* GetGraphConnectionRef(int);	
+	void CreateCustom(int id, double nx, double ny, double nsx, double nsy, int inputs, int outputs);
+	void CreateInput();
+	void CreateConduit();
+	void CreateSplitter();
+	void CreateOutput();
 
 protected:
 	bool on_timeout();

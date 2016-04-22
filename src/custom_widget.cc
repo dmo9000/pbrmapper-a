@@ -944,12 +944,23 @@ CustomWidget::LoopDetector(GraphNode *src, GraphNode *tgt)
                     std::cerr << "---> Found an active connection to node " << connection->tgt_node << std::endl;
                     if (LoopDetector(src, next_node)) return true;
                 }
-
             }
         }
     }
 
     return false;
+}
+
+void CustomWidget::CreateCustom(int id, double nx, double ny, double nsx, double nsy, int inputs, int outputs)
+{
+		GraphNode *NewNode = NULL;
+		fprintf(stderr, "CustomWidget::CreateCustom(%u, %f, %f, %f, %f, %u, %u)\n", id, nx, ny, nsx, nsy, inputs, outputs);
+		NewNode = new GraphNode(id, nx, ny);
+		NewNode->SetSize(nsx, nsy);
+    nodelist.push_back (NewNode);
+    selected_node = NewNode;
+    node_seq_id++;
+		on_timeout();
 }
 
 void CustomWidget::CreateInput()
