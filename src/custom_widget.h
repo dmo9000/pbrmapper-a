@@ -50,6 +50,7 @@ private:
 	Gtk::MenuItem Item3;
 	Gtk::MenuItem Item4;
 	Pango::FontDescription font;
+  int get_next_free_graphnode_id();
  
 public:
   static void register_type ();

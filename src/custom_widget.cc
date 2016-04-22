@@ -441,7 +441,7 @@ CustomWidget::on_button_release_event (GdkEventButton * event)
         case DRAG_NODE:
             if (grabbed_node)
             {
-                std::cerr << "+++ dropping grabbed node id=" << grabbed_node->GetID() << " +++\n";
+                //std::cerr << "+++ dropping grabbed node id=" << grabbed_node->GetID() << " +++\n";
                 grabbed_node = NULL;
             }
             dragmode = DRAG_NONE;
@@ -505,7 +505,7 @@ CustomWidget::on_button_press_event (GdkEventButton * event)
     GraphNode *src_node_ptr = NULL;
     GraphNode *tgt_node_ptr = NULL;
 
-    std::cerr << "Mouse BUTTON: -> " << event->button << std::endl;
+  //  std::cerr << "Mouse BUTTON: -> " << event->button << std::endl;
 
     switch (event->button) {
 
@@ -597,7 +597,7 @@ CustomWidget::on_button_press_event (GdkEventButton * event)
                 if ((event->x >= x && event->x <= (x + sx)) &&
                         ((event->y >= y && event->y <= (y + sy))))
                 {
-//                  std::cerr << "+++ node selected id=" << nodeptr->GetID() << " +++ \n";
+                  std::cerr << "+++ node selected id=" << std::dec << nodeptr->GetID() << " +++ \n";
 
                     selected_node = nodeptr;
                     grabbed_node = nodeptr;
@@ -976,7 +976,7 @@ void CustomWidget::CreateCustom(int id, double nx, double ny, double nsx, double
 		NewNode->SetSize(nsx, nsy);
     nodelist.push_back (NewNode);
     selected_node = NewNode;
-    node_seq_id++;
+    node_seq_id ++;
 		on_timeout();
 }
 
@@ -985,10 +985,9 @@ void CustomWidget::CreateInput()
 
     GraphNode *NewNode = NULL;
     std::cerr << "CreateInput()" << std::endl;
-    NewNode = new GraphNode (node_seq_id, (cx / viewport_scale), (cy / viewport_scale));
+    NewNode = new GraphNode (get_next_free_graphnode_id(), (cx / viewport_scale), (cy / viewport_scale));
     nodelist.push_back (NewNode);
     selected_node = NewNode;
-    node_seq_id++;
     NewNode->AddOutput ("Output");
     on_timeout();
 
@@ -998,10 +997,9 @@ void CustomWidget::CreateConduit()
 {
     GraphNode *NewNode = NULL;
     std::cerr << "CreateConduit()" << std::endl;
-    NewNode = new GraphNode (node_seq_id, (cx / viewport_scale), (cy / viewport_scale));
+    NewNode = new GraphNode (get_next_free_graphnode_id(), (cx / viewport_scale), (cy / viewport_scale));
     nodelist.push_back (NewNode);
     selected_node = NewNode;
-    node_seq_id++;
     NewNode->AddInput ("Input");
     NewNode->AddOutput ("Output");
     on_timeout();
@@ -1011,10 +1009,9 @@ void CustomWidget::CreateSplitter()
 {
     GraphNode *NewNode = NULL;
     std::cerr << "CreateSplitter()" << std::endl;
-    NewNode = new GraphNode (node_seq_id, (cx / viewport_scale), (cy / viewport_scale));
+    NewNode = new GraphNode (get_next_free_graphnode_id(), (cx / viewport_scale), (cy / viewport_scale));
     nodelist.push_back (NewNode);
     selected_node = NewNode;
-    node_seq_id++;
     NewNode->AddInput ("Input");
     NewNode->AddOutput ("Output A");
     NewNode->AddOutput ("Output B");
@@ -1026,10 +1023,9 @@ void CustomWidget::CreateOutput()
 {
     GraphNode *NewNode = NULL;
     std::cerr << "CreateOutput()" << std::endl;
-    NewNode = new GraphNode (node_seq_id, (cx / viewport_scale), (cy / viewport_scale));
+    NewNode = new GraphNode (get_next_free_graphnode_id(), (cx / viewport_scale), (cy / viewport_scale));
     nodelist.push_back (NewNode);
     selected_node = NewNode;
-    node_seq_id++;
     NewNode->AddInput ("Input");
     on_timeout();
 }
@@ -1080,4 +1076,16 @@ GraphConnection* CustomWidget::GetGraphConnectionRef(int id)
     return NULL;
 }
 
-
+int CustomWidget::get_next_free_graphnode_id()
+{
+	int max_id = 0;
+	for (int i = 0 ; i < nodelist.size(); i++ ) {
+			GraphNode *nodeptr = GetNodeBySlot(i);
+			if (nodeptr) {
+					if (nodeptr->GetID() > max_id) {
+						max_id = nodeptr->GetID();
+						}
+					}
+			}
+	return(max_id+1);
+}
