@@ -468,6 +468,7 @@ CustomWidget::on_button_release_event (GdkEventButton * event)
                 on_timeout();
                 return false;
             }
+
             std::cerr << "--- ESTABLISHING CONNECTION --- " << std::hex << hover_xref.node << " " << connect_xref.node << std::endl;
 
             if (hover_xref.type == SOCKTYPE_OUTPUT) {
@@ -913,6 +914,11 @@ CustomWidget::EstablishConnection(XRef *A, XRef *B)
                                  SOCKTYPE_INPUT,
                                  STATE_CONNECTED_ONE,
                                  new_connection);
+
+
+    new_connection->id = connection_seq_id;
+    connection_seq_id++;
+
     connectionlist.push_back (new_connection);
 
     return true;
@@ -1012,7 +1018,7 @@ int  CustomWidget::GetGraphConnectionCount()
     return (connectionlist.size());
 }
 
-GraphConnection* CustomWidget::GetConnectionRef(int id)
+GraphConnection* CustomWidget::GetGraphConnectionRef(int id)
 {
     GraphConnection *connectptr = NULL;
 
@@ -1020,6 +1026,7 @@ GraphConnection* CustomWidget::GetConnectionRef(int id)
                 connectionlist.begin (); it != connectionlist.end (); ++it)
     {
         GraphConnection *connectptr = *it;
+        //fprintf(stderr, "(%u:%u)\n", id, connectptr->id);
         if (connectptr) {
             if (connectptr->id == id) {
                 return connectptr;

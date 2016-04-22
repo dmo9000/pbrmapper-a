@@ -24,6 +24,7 @@ typedef struct _connector_reference_ XRef;
 class CustomWidget : public Gtk::DrawingArea
 {
 private:
+	int connection_seq_id = 0;
   static GType gtype;
   CustomWidget (GtkDrawingArea *gobj);
   CustomWidget ();
@@ -69,7 +70,7 @@ public:
 	bool LoopDetector(GraphNode *src, GraphNode *tgt);
 	int  GetGraphNodeCount();
 	int  GetGraphConnectionCount();
-	GraphConnection* GetConnectionRef(int);	
+	GraphConnection* GetGraphConnectionRef(int);	
 
 protected:
 	bool on_timeout();

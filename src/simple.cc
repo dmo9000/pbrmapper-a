@@ -9,13 +9,11 @@
 #include <libxml/xmlwriter.h>
 
 #define MY_ENCODING "ISO-8859-1"
-
 Gtk::Window* pMainWindow = nullptr;
 //Gtk::DrawingArea* pCustomWidget = nullptr;
 CustomWidget *pCustomWidget = NULL;
 Gtk::Statusbar* pStatusBar = nullptr;
 Gtk::Viewport *pViewPort = nullptr;
-
 
 static
 void on_button_clicked()
@@ -27,10 +25,7 @@ void on_button_clicked()
 static
 void on_saveas_clicked()
 {
-
     XMLSave();
-
-
 }
 
 int main (int argc, char **argv)
@@ -59,25 +54,18 @@ int main (int argc, char **argv)
         std::cerr << "BuilderError: " << ex.what() << std::endl;
         return 1;
     }
-
     //Get the GtkBuilder-instantiated Dialog:
     refBuilder->get_widget("applicationwindow1", pMainWindow);
     pMainWindow->set_title("Substance Instainer");
     refBuilder->get_widget("statusbar1", pStatusBar);
     pStatusBar->push("Welcome to Substance Instainer!");
     refBuilder->get_widget("viewport1", pViewPort);
-
     refBuilder->get_widget("customwidget1", pCustomWidget);
     pCustomWidget->show_now();
     pCustomWidget->enable_timeout();
-
     /* initialise GEGL */
-
     geglio_init();
-
-    if(pMainWindow)
-    {
-
+    if(pMainWindow) {
         /* Connect File menu callbacks */
         Gtk::ImageMenuItem* pButton = nullptr;
         refBuilder->get_widget("imagemenuitem3", pButton);
@@ -86,7 +74,6 @@ int main (int argc, char **argv)
         if(pButton) pButton->signal_activate().connect( sigc::ptr_fun(on_saveas_clicked));
         refBuilder->get_widget("imagemenuitem5", pButton);
         if(pButton) pButton->signal_activate().connect( sigc::ptr_fun(on_button_clicked));
-
         app->run(*pMainWindow);
     }
 

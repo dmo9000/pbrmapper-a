@@ -26,7 +26,7 @@ struct _coordinate_ {
 typedef struct _coordinate_ GraphVector;
 
 struct _connection_ {
-										int id;
+										int id = 0;
 										int src_node  = -1;
 										int src_type	= SOCKTYPE_UNDEF;
 										int src_port  = -1;

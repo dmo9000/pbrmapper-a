@@ -86,18 +86,6 @@ bool GraphNode::SetPortStatus(int portnum, int type, int state,
     return false;
 }
 
-/*
-int GraphNode::Get_SX()
-{
-    return sx;
-}
-
-int GraphNode::Get_SY()
-{
-    return sy;
-}
-*/
-
 std::string GraphNode::GetPortLabel(int portnum, int type)
 {
     GraphConnector *connector = NULL;

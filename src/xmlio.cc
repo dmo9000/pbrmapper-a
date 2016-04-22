@@ -284,6 +284,84 @@ void XMLSave()
         return;
     }
 
+    memset(&buffer, 0, 256);
+    snprintf((char *) &buffer, 255, "%u", pCustomWidget->GetGraphConnectionCount());
+    rc = xmlTextWriterWriteAttribute(writer, BAD_CAST "connectioncount", BAD_CAST buffer);
+    if (rc < 0) {
+        fprintf (stderr, "failure writing GraphConnections attribute\n");
+        return;
+    }
+
+    for (int i = 0; i < pCustomWidget->GetGraphConnectionCount(); i++) {
+        GraphConnection *connectptr = pCustomWidget->GetGraphConnectionRef(i);
+        if (connectptr) {
+            fprintf(stderr, "got connection data for id %u\n", i);
+
+            rc = xmlTextWriterStartElement(writer, BAD_CAST "GraphConnection");
+            if (rc < 0) {
+                fprintf (stderr, "failure writing input\n");
+                return;
+            }
+
+            memset(&buffer, 0, 256);
+            snprintf((char *) &buffer, 255, "%u", connectptr->id);
+            rc = xmlTextWriterWriteAttribute(writer, BAD_CAST "id", BAD_CAST buffer);
+            memset(&buffer, 0, 256);
+            snprintf((char *) &buffer, 255, "%u", connectptr->src_node);
+            rc = xmlTextWriterWriteAttribute(writer, BAD_CAST "src_node", BAD_CAST buffer);
+            memset(&buffer, 0, 256);
+            snprintf((char *) &buffer, 255, "%u", connectptr->tgt_node);
+            rc = xmlTextWriterWriteAttribute(writer, BAD_CAST "tgt_node", BAD_CAST buffer);
+
+            memset(&buffer, 0, 256);
+
+            switch (connectptr->src_type) {
+            case SOCKTYPE_INPUT:
+                snprintf((char *) &buffer, 255, "SOCKTYPE_INPUT");
+                break;
+            case SOCKTYPE_OUTPUT:
+                snprintf((char *) &buffer, 255, "SOCKTYPE_OUTPUT");
+                break;
+            default:
+                snprintf((char *) &buffer, 255, "SOCKTYPE_UNDEF");
+                break;
+            }
+
+            rc = xmlTextWriterWriteAttribute(writer, BAD_CAST "src_type", BAD_CAST buffer);
+            memset(&buffer, 0, 256);
+
+            switch (connectptr->tgt_type) {
+            case SOCKTYPE_INPUT:
+                snprintf((char *) &buffer, 255, "SOCKTYPE_INPUT");
+                break;
+            case SOCKTYPE_OUTPUT:
+                snprintf((char *) &buffer, 255, "SOCKTYPE_OUTPUT");
+                break;
+            default:
+                snprintf((char *) &buffer, 255, "SOCKTYPE_UNDEF");
+                break;
+            }
+
+            rc = xmlTextWriterWriteAttribute(writer, BAD_CAST "tgt_type", BAD_CAST buffer);
+
+            memset(&buffer, 0, 256);
+            snprintf((char *) &buffer, 255, "%u", connectptr->src_port);
+            rc = xmlTextWriterWriteAttribute(writer, BAD_CAST "src_port", BAD_CAST buffer);
+            memset(&buffer, 0, 256);
+            snprintf((char *) &buffer, 255, "%u", connectptr->tgt_port);
+            rc = xmlTextWriterWriteAttribute(writer, BAD_CAST "tgt_port", BAD_CAST buffer);
+
+            rc = xmlTextWriterEndElement(writer);
+            if (rc < 0) {
+                printf("testXmlwriterDoc: Error at xmlTextWriterEndElement\n");
+                return;
+            }
+
+        } else {
+            fprintf(stderr, "no connection data for id %u\n", i);
+        }
+    }
+
 
     /* close of the GraphConnections tree */
 
