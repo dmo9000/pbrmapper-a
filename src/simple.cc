@@ -23,9 +23,17 @@ void on_button_clicked()
 }
 
 static
+void on_open_clicked()
+{
+		fprintf(stderr, "on_open_clicked()\n");
+	  XML_Load();
+		fflush(NULL);
+}
+
+static
 void on_saveas_clicked()
 {
-    XMLSave();
+    XML_Save();
 }
 
 int main (int argc, char **argv)
@@ -68,6 +76,8 @@ int main (int argc, char **argv)
     if(pMainWindow) {
         /* Connect File menu callbacks */
         Gtk::ImageMenuItem* pButton = nullptr;
+        refBuilder->get_widget("imagemenuitem2", pButton);
+        if(pButton) pButton->signal_activate().connect( sigc::ptr_fun(on_open_clicked));
         refBuilder->get_widget("imagemenuitem3", pButton);
         if(pButton) pButton->signal_activate().connect( sigc::ptr_fun(on_saveas_clicked));
         refBuilder->get_widget("imagemenuitem4", pButton);

@@ -7,8 +7,18 @@
 #include "xmlio.h"
 #include <libxml/encoding.h>
 #include <libxml/xmlwriter.h>
+#include <libxml/tree.h>
+#include <libxml/parser.h>
+#include <libxml/xpath.h>
+#include <libxml/xpathInternals.h>
+#include <string.h>
 
 #define MY_ENCODING "ISO-8859-1"
+
+void print_xpath_nodes(xmlNodeSetPtr, FILE*);
+void getReference (xmlDocPtr doc, xmlNodePtr cur);
+xmlChar *get_attribute_value(xmlNodePtr cur, char *name);
+xmlNodePtr get_element_by_index(xmlXPathObjectPtr xpo, int index);
 
 //Gtk::Window* pMainWindow = nullptr;
 extern CustomWidget *pCustomWidget;
@@ -74,7 +84,7 @@ ConvertInput(const char *in, const char *encoding)
     return out;
 }
 
-void XMLSave()
+void XML_Save()
 {
 
 
@@ -176,20 +186,19 @@ void XMLSave()
         }
 
         memset(&buffer, 0, 256);
-        snprintf((char *) &buffer, 255, "%0.7f,%0.7f", location->x, location->y);
-        rc = xmlTextWriterWriteAttribute(writer, BAD_CAST "location", BAD_CAST buffer);
-        if (rc < 0) {
-            fprintf (stderr, "failure writing GraphNode attributes\n");
-            return;
-        }
+        snprintf((char *) &buffer, 255, "%0.7f", location->x);
+        xmlTextWriterWriteAttribute(writer, BAD_CAST "x", BAD_CAST buffer);
+        memset(&buffer, 0, 256);
+        snprintf((char *) &buffer, 255, "%0.7f", location->y);
+        xmlTextWriterWriteAttribute(writer, BAD_CAST "y", BAD_CAST buffer);
 
         memset(&buffer, 0, 256);
-        snprintf((char *) &buffer, 255, "%0.7f,%0.7f", size->x, size->y);
-        rc = xmlTextWriterWriteAttribute(writer, BAD_CAST "size", BAD_CAST buffer);
-        if (rc < 0) {
-            fprintf (stderr, "failure writing GraphNode attributes\n");
-            return;
-        }
+        snprintf((char *) &buffer, 255, "%0.7f", size->x);
+        xmlTextWriterWriteAttribute(writer, BAD_CAST "sx", BAD_CAST buffer);
+        memset(&buffer, 0, 256);
+        snprintf((char *) &buffer, 255, "%0.7f", size->y);
+        xmlTextWriterWriteAttribute(writer, BAD_CAST "sy", BAD_CAST buffer);
+
 
         /* write input/output count attributes */
 
@@ -362,7 +371,6 @@ void XMLSave()
         }
     }
 
-
     /* close of the GraphConnections tree */
 
     rc = xmlTextWriterEndElement(writer);
@@ -382,3 +390,171 @@ void XMLSave()
     return;
 }
 
+int XML_Load()
+{
+  	xmlDocPtr doc;
+	  xmlXPathContextPtr xpathCtx; 
+	  xmlXPathObjectPtr xpathObj; 
+    xmlNodePtr cur;
+	  xmlNsPtr ns;
+
+		xmlInitParser();
+		fprintf(stderr, "Loading testfile.xml ...\n");
+		doc = xmlParseFile("testfile.xml");
+	  if (doc == NULL) {
+			fprintf(stderr, "Error: unable to parse file \"testfile.xml\"\n");
+			return(-1);
+   		}
+
+    /* Create xpath evaluation context */
+    xpathCtx = xmlXPathNewContext(doc);
+    if(xpathCtx == NULL) {
+        fprintf(stderr,"Error: unable to create new XPath context\n");
+        xmlFreeDoc(doc); 
+        return(-1);
+    }
+
+    /* Evaluate xpath expression */
+    xpathObj = xmlXPathEvalExpression(BAD_CAST "/Workspace/GraphNodes", xpathCtx);
+    if(xpathObj == NULL) {
+        fprintf(stderr,"Error: unable to evaluate xpath expression \"%s\"\n", "/Workspace/GraphNodes");
+        xmlXPathFreeContext(xpathCtx); 
+        xmlFreeDoc(doc); 
+        return(-1);
+    }
+
+		/* LOAD GRAPHNODES */
+		int incoming_nodes_count = 0;
+		/* get reference to first result */
+		cur = get_element_by_index(xpathObj, 0);	
+		xmlChar *nodecount = get_attribute_value(cur, (char *) "nodecount");
+		fprintf(stderr, "[nodecount=%s]\n", nodecount); 
+		incoming_nodes_count = atoi((char *) nodecount);
+		xmlFree (nodecount);
+
+    xpathObj = xmlXPathEvalExpression(BAD_CAST "/Workspace/GraphNodes/GraphNode", xpathCtx);
+
+		for (int i = 0; i < incoming_nodes_count; i++) {
+				cur = get_element_by_index(xpathObj, i);	
+				xmlChar *id = get_attribute_value(cur, (char *) "id");
+				fprintf(stderr, "-- id = %s\n", id); 
+				xmlFree(id);
+				}
+
+		/* LOAD CONNECTIONS */
+    xpathObj = xmlXPathEvalExpression(BAD_CAST "/Workspace/GraphConnections", xpathCtx);
+    if(xpathObj == NULL) {
+        fprintf(stderr,"Error: unable to evaluate xpath expression \"%s\"\n", "/Workspace/GraphConnections/GraphConnection");
+        xmlXPathFreeContext(xpathCtx); 
+        xmlFreeDoc(doc); 
+        return(-1);
+    }
+
+
+		cur = get_element_by_index(xpathObj, 0);	
+		xmlChar *connectioncount = get_attribute_value(cur, (char *) "connectioncount");
+		fprintf(stderr, "[connectioncount=%s]\n", nodecount); 
+		xmlFree (connectioncount);
+		
+
+
+    xmlXPathFreeObject(xpathObj);
+    xmlXPathFreeContext(xpathCtx); 
+    xmlFreeDoc(doc); 
+		fflush(NULL);
+		xmlCleanupParser();
+}
+
+
+xmlNodePtr get_element_by_index(xmlXPathObjectPtr xpo, int index) 
+{
+	  xmlNodePtr cur;
+    xmlNsPtr ns;
+		ns = (xmlNsPtr) xpo->nodesetval->nodeTab[index];
+		cur = (xmlNodePtr)ns;
+		return cur;
+}
+
+xmlChar *get_attribute_value(xmlNodePtr cur, char *name)
+{
+  for(xmlAttrPtr attr = cur->properties; NULL != attr; attr = attr->next)
+      {
+        xmlChar* value = xmlNodeListGetString(cur->doc, attr->children, 1);
+    //    fprintf(stderr, "attribute_value=%s\n", value);
+				if (strncmp((char*) attr->name, name, strlen(name)) == 0) {
+    //    		fprintf(stderr, "attribute_name=%s\n", attr->name);
+     //   		fprintf(stderr, "attribute_value=%s\n", value);
+						/* caller must free */
+						return value;
+						}
+        xmlFree(value);
+    }
+	return NULL;
+}
+
+void
+getReference (xmlDocPtr doc, xmlNodePtr cur) {
+
+	xmlChar *uri;
+	cur = cur->xmlChildrenNode;
+	while (cur != NULL) {
+			fprintf(stderr, "cur != NULL: %s\n", cur->name);
+	    //if ((!xmlStrcmp(cur->name, (const xmlChar *)"reference"))) {
+		    uri = xmlGetProp(cur, BAD_CAST "nodecount");
+		    fprintf(stderr, "nodecount: %s\n", uri);
+		    xmlFree(uri);
+	    //}
+	    cur = cur->next;
+	}
+	return;
+}
+
+
+/**
+ *  * print_xpath_nodes:
+ *   * @nodes:		the nodes set.
+ *    * @output:		the output file handle.
+ *     *
+ *      * Prints the @nodes content to @output.
+ *       */
+void
+print_xpath_nodes(xmlNodeSetPtr nodes, FILE* output) {
+    xmlNodePtr cur;
+    int size;
+    int i;
+    assert(output);
+    size = (nodes) ? nodes->nodeNr : 0;
+    
+    fprintf(output, "Result (%d nodes):\n", size);
+    for(i = 0; i < size; ++i) {
+	    assert(nodes->nodeTab[i]);
+	
+	if(nodes->nodeTab[i]->type == XML_NAMESPACE_DECL) {
+	    xmlNsPtr ns;
+	    ns = (xmlNsPtr)nodes->nodeTab[i];
+	    cur = (xmlNodePtr)ns->next;
+	    if(cur->ns) { 
+	        fprintf(output, "= namespace \"%s\"=\"%s\" for node %s:%s\n", ns->prefix, ns->href, cur->ns->href, cur->name);
+	    } else {
+	        fprintf(output, "= namespace \"%s\"=\"%s\" for node %s\n", ns->prefix, ns->href, cur->name);
+	    }
+	} else if(nodes->nodeTab[i]->type == XML_ELEMENT_NODE) {
+	    cur = nodes->nodeTab[i];   	    
+	    if(cur->ns) { 
+    	        fprintf(output, "= element node \"%s:%s\"\n", cur->ns->href, cur->name);
+	    } else {
+    	        fprintf(output, "= element node \"%s\"\n", cur->name);
+							if (cur->children) {
+										char *foo = NULL;
+										fprintf(stderr, "-> node has children\n");
+										cur = cur->children;
+										foo = (char *) xmlGetProp(cur, BAD_CAST "nodecount");
+										fprintf(stderr, "-> foo = %s\n", foo);	
+										}
+	    }
+	} else {
+	    cur = nodes->nodeTab[i];    
+	    fprintf(output, "= node \"%s\": type %d\n", cur->name, cur->type);
+	    }
+    }  
+}
