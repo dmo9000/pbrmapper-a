@@ -26,10 +26,10 @@
   </GraphNode>
  </GraphNodes>
  <GraphConnections connectioncount="5">
-  <GraphConnection id="0" src_node="2" tgt_node="3" src_type="1" tgt_type="0" src_port="0" tgt_port="0"/>
-  <GraphConnection id="1" src_node="1" tgt_node="2" src_type="1" tgt_type="0" src_port="0" tgt_port="0"/>
-  <GraphConnection id="2" src_node="2" tgt_node="5" src_type="1" tgt_type="0" src_port="1" tgt_port="0"/>
-  <GraphConnection id="3" src_node="5" tgt_node="6" src_type="1" tgt_type="0" src_port="1" tgt_port="0"/>
-  <GraphConnection id="4" src_node="5" tgt_node="4" src_type="1" tgt_type="0" src_port="0" tgt_port="0"/>
+  <GraphConnection id="5" src_node="2" tgt_node="3" src_type="1" tgt_type="0" src_port="0" tgt_port="0"/>
+  <GraphConnection id="6" src_node="1" tgt_node="2" src_type="1" tgt_type="0" src_port="0" tgt_port="0"/>
+  <GraphConnection id="7" src_node="2" tgt_node="5" src_type="1" tgt_type="0" src_port="1" tgt_port="0"/>
+  <GraphConnection id="8" src_node="5" tgt_node="6" src_type="1" tgt_type="0" src_port="1" tgt_port="0"/>
+  <GraphConnection id="9" src_node="5" tgt_node="4" src_type="1" tgt_type="0" src_port="0" tgt_port="0"/>
  </GraphConnections>
 </Workspace>

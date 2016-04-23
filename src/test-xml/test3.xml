@@ -2,18 +2,18 @@
 <Workspace name="">
  <!--this file format is currently subject to change-->
  <GraphNodes nodecount="4">
-  <GraphNode id="1" x="118.0000000" y="109.0000000" sx="64.0000000" sy="64.0000000" inputs="0" outputs="1">
+  <GraphNode id="1" x="137.0000000" y="121.0000000" sx="64.0000000" sy="64.0000000" inputs="0" outputs="1">
    <output label="Output"/>
   </GraphNode>
-  <GraphNode id="2" x="365.0000000" y="193.0000000" sx="64.0000000" sy="64.0000000" inputs="1" outputs="2">
+  <GraphNode id="2" x="334.0000000" y="215.0000000" sx="64.0000000" sy="64.0000000" inputs="1" outputs="2">
    <input label="Input"/>
    <output label="Output A"/>
    <output label="Output B"/>
   </GraphNode>
-  <GraphNode id="3" x="642.0000000" y="115.0000000" sx="64.0000000" sy="64.0000000" inputs="1" outputs="0">
+  <GraphNode id="3" x="553.0000000" y="141.0000000" sx="64.0000000" sy="64.0000000" inputs="1" outputs="0">
    <input label="Input"/>
   </GraphNode>
-  <GraphNode id="4" x="651.0000000" y="254.0000000" sx="64.0000000" sy="64.0000000" inputs="1" outputs="0">
+  <GraphNode id="4" x="549.0000000" y="364.0000000" sx="64.0000000" sy="64.0000000" inputs="1" outputs="0">
    <input label="Input"/>
   </GraphNode>
  </GraphNodes>
