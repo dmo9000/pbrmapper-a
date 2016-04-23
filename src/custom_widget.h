@@ -81,6 +81,7 @@ public:
 	bool GetBackingStoreEnabled();
 	bool SetBackingStoreEnabled(bool a);
 	std::string GetFilename();
+  void ClearCanvas();
 
 protected:
 	bool on_timeout();

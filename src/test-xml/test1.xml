@@ -2,7 +2,7 @@
 <Workspace name="">
  <!--this file format is currently subject to change-->
  <GraphNodes nodecount="6">
-  <GraphNode id="1" x="227.0000000" y="133.0000000" sx="64.0000000" sy="64.0000000" inputs="0" outputs="1">
+  <GraphNode id="1" x="138.0000000" y="388.0000000" sx="64.0000000" sy="64.0000000" inputs="0" outputs="1">
    <output label="Output"/>
   </GraphNode>
   <GraphNode id="2" x="398.0000000" y="243.0000000" sx="64.0000000" sy="64.0000000" inputs="1" outputs="2">

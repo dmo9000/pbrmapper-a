@@ -15,6 +15,7 @@ CustomWidget *pCustomWidget = NULL;
 Gtk::Statusbar* pStatusBar = nullptr;
 Gtk::Viewport *pViewPort = nullptr;
 
+static void on_new_clicked();
 static void on_open_clicked();
 static void on_save_clicked();
 static void on_saveas_clicked();
@@ -28,9 +29,19 @@ void on_button_clicked()
 }
 
 static
+void on_new_clicked()
+{
+		fprintf(stderr, "on_new_clicked()\n");
+		fflush(NULL);
+		pCustomWidget->ClearCanvas();
+}
+
+static
 void on_open_clicked()
 {
 		fprintf(stderr, "on_open_clicked()\n");
+		fflush(NULL);
+		pCustomWidget->ClearCanvas();
 		pCustomWidget->run_file_chooser();
 	  if (XML_Load(pCustomWidget->GetFilename())) {
 			pCustomWidget->SetBackingStoreEnabled(true);
@@ -104,6 +115,8 @@ int main (int argc, char **argv)
     if(pMainWindow) {
         /* Connect File menu callbacks */
         Gtk::ImageMenuItem* pButton = nullptr;
+        refBuilder->get_widget("imagemenuitem1", pButton);
+        if(pButton) pButton->signal_activate().connect( sigc::ptr_fun(on_new_clicked));
         refBuilder->get_widget("imagemenuitem2", pButton);
         if(pButton) pButton->signal_activate().connect( sigc::ptr_fun(on_open_clicked));
         refBuilder->get_widget("imagemenuitem3", pButton);

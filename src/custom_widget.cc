@@ -1092,18 +1092,18 @@ int CustomWidget::get_next_free_graphnode_id()
 
 bool CustomWidget::GetBackingStoreEnabled()
 {
-		return backingstore_enabled;
+    return backingstore_enabled;
 }
 
 
 bool CustomWidget::SetBackingStoreEnabled(bool a)
 {
-		backingstore_enabled = a;
+    backingstore_enabled = a;
 }
 
 std::string CustomWidget::GetFilename()
 {
-	return ondisk_filename;
+    return ondisk_filename;
 }
 
 
@@ -1112,7 +1112,7 @@ bool CustomWidget::run_file_chooser()
     char *retptr = NULL;
     Gtk::FileChooserDialog dialog("Please choose a folder",
                                   Gtk::FILE_CHOOSER_ACTION_SAVE);
-//  dialog.set_transient_for(*this);
+		//  dialog.set_transient_for(*this);
 
     /*   Add response buttons the the dialog: */
     dialog.add_button("_Cancel", Gtk::RESPONSE_CANCEL);
@@ -1123,29 +1123,30 @@ bool CustomWidget::run_file_chooser()
     switch(result)
     {
     case(Gtk::RESPONSE_OK):
-    {
         std::cout << "Filname selected: " << dialog.get_filename()
                   << std::endl;
         ondisk_filename = dialog.get_filename();
-				SetBackingStoreEnabled(true);
+        SetBackingStoreEnabled(true);
         return true;
         break;
-    }
     case(Gtk::RESPONSE_CANCEL):
-    {
         std::cout << "Cancel clicked." << std::endl;
         break;
-    }
     default:
-    {
         std::cout << "Unexpected button clicked." << std::endl;
         break;
     }
-    }
 
-				SetBackingStoreEnabled(false);
+    SetBackingStoreEnabled(false);
 
     return false;
 }
 
-
+void CustomWidget::ClearCanvas()
+{
+		std::cerr << "ClearCanvas()" << std::endl;
+		connectionlist.clear();
+		on_timeout();
+		nodelist.clear();
+		on_timeout();
+}
