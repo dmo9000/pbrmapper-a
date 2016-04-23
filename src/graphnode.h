@@ -18,6 +18,8 @@
 #define FMT_16BIT								1	
 #define FMT_32BIT								2	
 
+#include <gegl.h>
+
 struct _coordinate_ {
                   double x = 0.0;
                   double y = 0.0;
@@ -60,7 +62,9 @@ private:
 	int Recalculate_Size();
 	GraphVector location;
 	GraphVector size;
-
+	GraphVector Image_Size;
+	int img_format = FMT_8BIT;
+	GeglNode *gegl_root = NULL;
   
 public:
 	GraphNode (int seq_id, double spawnx, double spawny);

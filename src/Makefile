@@ -22,7 +22,7 @@ geglio.o: geglio.c
 	$(CC) -c $^ $(LIB_CFLAGS) -fPIC -g -ggdb
 
 custom_widget_glade.o: custom_widget_glade.c
-	$(CXX) -c $^ -o $@ `pkg-config gtkmm-3.0 --cflags` -std=c++11 -fPIC -g -ggdb
+	$(CXX) -c $^ -o $@ `pkg-config gtkmm-3.0 gegl-0.2 --cflags` -std=c++11 -fPIC -g -ggdb
  
 %.o:	%.cc
 	$(CXX) -c $^ -o $@ $(LIB_CPPFLAGS) -std=c++11 -fPIC -g -ggdb 
@@ -36,7 +36,7 @@ libcustomwidgetsglade.so: $(LIB_OBJ_C) $(LIB_OBJ_CPP)
 	ln -sf libcustomwidgetsglade.so libcustomwidgetsglade.dll ) || echo
 
 simple: $(MAIN_SRC_CPP) glade/default_layout.glade libcustomwidgetsglade.so 
-	g++ $(MAIN_SRC_CPP) custom_widget_glade.c -std=c++11 -g -ggdb -o simple `pkg-config gtkmm-3.0 --cflags --libs` `pkg-config gegl-0.2 --libs` `pkg-config glib-2.0 --cflags` -L. -lcustomwidgetsglade `pkg-config --cflags --libs libxml-2.0` 
+	g++ $(MAIN_SRC_CPP) custom_widget_glade.c -std=c++11 -g -ggdb -o simple `pkg-config gtkmm-3.0 gegl-0.2 --cflags --libs`  `pkg-config glib-2.0 --cflags` -L. -lcustomwidgetsglade `pkg-config --cflags --libs libxml-2.0` 
 
 
 clean:
