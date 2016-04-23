@@ -15,6 +15,11 @@ CustomWidget *pCustomWidget = NULL;
 Gtk::Statusbar* pStatusBar = nullptr;
 Gtk::Viewport *pViewPort = nullptr;
 
+static void on_open_clicked();
+static void on_save_clicked();
+static void on_saveas_clicked();
+
+
 static
 void on_button_clicked()
 {
@@ -26,21 +31,44 @@ static
 void on_open_clicked()
 {
 		fprintf(stderr, "on_open_clicked()\n");
-	  XML_Load();
+		pCustomWidget->run_file_chooser();
+	  if (XML_Load(pCustomWidget->GetFilename())) {
+			pCustomWidget->SetBackingStoreEnabled(true);
+			}
+
 		fflush(NULL);
+}
+
+static
+void on_save_clicked()
+{
+
+	if (!pCustomWidget->GetBackingStoreEnabled()) {
+			on_saveas_clicked();	
+			return;
+	}
+
+  if (XML_Save(pCustomWidget->GetFilename())) {
+			pCustomWidget->SetBackingStoreEnabled(true);
+			}
+
 }
 
 static
 void on_saveas_clicked()
 {
-    XML_Save();
+		pCustomWidget->SetBackingStoreEnabled(false);
+		if (pCustomWidget->run_file_chooser()) {
+		    if (XML_Save(pCustomWidget->GetFilename())) {
+					pCustomWidget->SetBackingStoreEnabled(true);
+					}
+				}
 }
 
 int main (int argc, char **argv)
 {
     auto app = Gtk::Application::create(argc, argv, "org.gtkmm.example");
     custom_widgets_register();
-
     //Load the GtkBuilder file and instantiate its widgets:
     auto refBuilder = Gtk::Builder::create();
     try
@@ -79,7 +107,7 @@ int main (int argc, char **argv)
         refBuilder->get_widget("imagemenuitem2", pButton);
         if(pButton) pButton->signal_activate().connect( sigc::ptr_fun(on_open_clicked));
         refBuilder->get_widget("imagemenuitem3", pButton);
-        if(pButton) pButton->signal_activate().connect( sigc::ptr_fun(on_saveas_clicked));
+        if(pButton) pButton->signal_activate().connect( sigc::ptr_fun(on_save_clicked));
         refBuilder->get_widget("imagemenuitem4", pButton);
         if(pButton) pButton->signal_activate().connect( sigc::ptr_fun(on_saveas_clicked));
         refBuilder->get_widget("imagemenuitem5", pButton);

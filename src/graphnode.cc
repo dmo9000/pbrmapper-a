@@ -31,7 +31,7 @@ GraphConnection* GraphNode::GetPortConnection(int portnum, int type)
     }
 
     if (connector && connector->connection) {
-        fprintf(stderr, "connection=%08lx\n", connector->connection);
+        //fprintf(stderr, "connection=%08lx\n", connector->connection);
         return connector->connection;
     }
     return NULL;

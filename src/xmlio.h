@@ -1,4 +1,4 @@
 
-void XML_Save();
-int XML_Load();
+bool XML_Save(std::string filename);
+bool XML_Load(std::string filename);
 

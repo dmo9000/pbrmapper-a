@@ -84,7 +84,7 @@ ConvertInput(const char *in, const char *encoding)
     return out;
 }
 
-void XML_Save()
+bool XML_Save(std::string filename)
 {
 
 
@@ -96,18 +96,18 @@ void XML_Save()
     char buffer[256];
 
     std::cerr << "+++ File->Save As ... selected\n" << std::endl;
-    writer = xmlNewTextWriterFilename("testfile.xml", 0);
+    writer = xmlNewTextWriterFilename(filename.c_str(), 0);
     if (writer == NULL) {
         std::cerr << "testXmlwriterFilename: Error creating the xml writer"
                   << std::endl;
-        return;
+        return false;
     }
 
     xmlTextWriterSetIndent(writer, 3);
     rc = xmlTextWriterStartDocument(writer, NULL, MY_ENCODING, NULL);
     if (rc < 0) {
         std::cerr << "testXmlwriterFilename: Error at xmlTextWriterStartDocument\n" << std::endl;
-        return;
+        return false;
     }
 
     /* Start an element named "Workspace". Since thist is the first
@@ -116,13 +116,13 @@ void XML_Save()
     if (rc < 0) {
         printf
         ("testXmlwriterFilename: Error at xmlTextWriterStartElement\n");
-        return;
+        return false;
     }
 
     rc = xmlTextWriterWriteAttribute(writer, BAD_CAST "name", BAD_CAST "");
     if (rc < 0) {
         printf ("testXmlwriterFilename: Error at xmlTextWriterWriteAttribute\n");
-        return;
+        return false;
     }
 
     /* Write a comment as child of Workspace.
@@ -133,7 +133,7 @@ void XML_Save()
     rc = xmlTextWriterWriteComment(writer, tmp);
     if (rc < 0) {
         printf ("failure writing comment\n");
-        return;
+        return false;
     }
     if (tmp != NULL) xmlFree(tmp);
 
@@ -141,7 +141,7 @@ void XML_Save()
     rc = xmlTextWriterStartElement(writer, BAD_CAST "GraphNodes");
     if (rc < 0) {
         fprintf (stderr, "failure writing GraphNode\n");
-        return;
+        return false;
     }
 
     memset(&buffer, 0, 256);
@@ -149,7 +149,7 @@ void XML_Save()
     rc = xmlTextWriterWriteAttribute(writer, BAD_CAST "nodecount", BAD_CAST buffer);
     if (rc < 0) {
         fprintf (stderr, "failure writing GraphNode attributes\n");
-        return;
+        return false;
     }
 
 		fprintf(stderr, "+++ writing %u nodes to XML\n", pCustomWidget->GetGraphNodeCount());
@@ -158,15 +158,13 @@ void XML_Save()
         GraphNode *nodeptr = NULL;
         GraphVector *location = NULL;
         GraphVector *size = NULL;
-				
-
         fprintf(stderr, "writing node %u\n", i);
         fflush(NULL);
 
         nodeptr = pCustomWidget->GetNodeBySlot(i);
         if (!nodeptr) {
             fprintf (stderr, "couldn't get nodeptr from CustomWidget\n");
-            return;
+            return false;
         }
 
         location = nodeptr->GetLocation();
@@ -177,7 +175,7 @@ void XML_Save()
         rc = xmlTextWriterStartElement(writer, BAD_CAST "GraphNode");
         if (rc < 0) {
             fprintf (stderr, "failure writing GraphNode\n");
-            return;
+            return false;
         }
 
         memset(&buffer, 0, 256);
@@ -185,7 +183,7 @@ void XML_Save()
         rc = xmlTextWriterWriteAttribute(writer, BAD_CAST "id", BAD_CAST buffer);
         if (rc < 0) {
             fprintf (stderr, "failure writing GraphNode attributes\n");
-            return;
+            return false;
         }
 
         memset(&buffer, 0, 256);
@@ -210,7 +208,7 @@ void XML_Save()
         rc = xmlTextWriterWriteAttribute(writer, BAD_CAST "inputs", BAD_CAST buffer);
         if (rc < 0) {
             fprintf (stderr, "failure writing GraphNode attributes\n");
-            return;
+            return false;
         }
 
         memset(&buffer, 0, 256);
@@ -218,7 +216,7 @@ void XML_Save()
         rc = xmlTextWriterWriteAttribute(writer, BAD_CAST "outputs", BAD_CAST buffer);
         if (rc < 0) {
             fprintf (stderr, "failure writing GraphNode attributes\n");
-            return;
+            return false;
         }
 
         /* write per-node inputs */
@@ -227,7 +225,7 @@ void XML_Save()
             rc = xmlTextWriterStartElement(writer, BAD_CAST "input");
             if (rc < 0) {
                 fprintf (stderr, "failure writing input\n");
-                return;
+                return false;
             }
 
             std::string label = nodeptr->GetPortLabel(i, SOCKTYPE_INPUT);
@@ -236,14 +234,14 @@ void XML_Save()
             rc = xmlTextWriterWriteAttribute(writer, BAD_CAST "label", BAD_CAST buffer);
             if (rc < 0) {
                 fprintf (stderr, "failure writing input label\n");
-                return;
+                return false;
             }
 
 
             rc = xmlTextWriterEndElement(writer);
             if (rc < 0) {
                 printf("testXmlwriterDoc: Error at xmlTextWriterEndElement\n");
-                return;
+                return false;
             }
         }
 
@@ -253,7 +251,7 @@ void XML_Save()
             rc = xmlTextWriterStartElement(writer, BAD_CAST "output");
             if (rc < 0) {
                 fprintf (stderr, "failure writing input\n");
-                return;
+                return false;
             }
 
             std::string label = nodeptr->GetPortLabel(i, SOCKTYPE_OUTPUT);
@@ -262,20 +260,20 @@ void XML_Save()
             rc = xmlTextWriterWriteAttribute(writer, BAD_CAST "label", BAD_CAST buffer);
             if (rc < 0) {
                 fprintf (stderr, "failure writing output label\n");
-                return;
+                return false;
             }
 
             rc = xmlTextWriterEndElement(writer);
             if (rc < 0) {
                 printf("testXmlwriterDoc: Error at xmlTextWriterEndElement\n");
-                return;
+                return false;
             }
         }
 
         rc = xmlTextWriterEndElement(writer);
         if (rc < 0) {
             printf("testXmlwriterDoc: Error at xmlTextWriterEndElement\n");
-            return;
+            return false;
         }
 
     }
@@ -285,7 +283,7 @@ void XML_Save()
     rc = xmlTextWriterEndElement(writer);
     if (rc < 0) {
         printf("testXmlwriterDoc: Error at xmlTextWriterEndElement\n");
-        return;
+        return false;
     }
 
     /* create the GraphConnections subtree */
@@ -293,7 +291,7 @@ void XML_Save()
     rc = xmlTextWriterStartElement(writer, BAD_CAST "GraphConnections");
     if (rc < 0) {
         fprintf (stderr, "failure writing GraphConnections\n");
-        return;
+        return false;
     }
 
     memset(&buffer, 0, 256);
@@ -301,7 +299,7 @@ void XML_Save()
     rc = xmlTextWriterWriteAttribute(writer, BAD_CAST "connectioncount", BAD_CAST buffer);
     if (rc < 0) {
         fprintf (stderr, "failure writing GraphConnections attribute\n");
-        return;
+        return false;
     }
 
     for (int i = 0; i < pCustomWidget->GetGraphConnectionCount(); i++) {
@@ -312,7 +310,7 @@ void XML_Save()
             rc = xmlTextWriterStartElement(writer, BAD_CAST "GraphConnection");
             if (rc < 0) {
                 fprintf (stderr, "failure writing input\n");
-                return;
+                return false;
             }
 
             memset(&buffer, 0, 256);
@@ -342,7 +340,7 @@ void XML_Save()
             rc = xmlTextWriterEndElement(writer);
             if (rc < 0) {
                 printf("testXmlwriterDoc: Error at xmlTextWriterEndElement\n");
-                return;
+                return false;
             }
 
         } else {
@@ -355,21 +353,21 @@ void XML_Save()
     rc = xmlTextWriterEndElement(writer);
     if (rc < 0) {
         printf("testXmlwriterDoc: Error at xmlTextWriterEndElement\n");
-        return;
+        return false;
     }
 
 
     rc = xmlTextWriterEndDocument(writer);
     if (rc < 0) {
         fprintf (stderr, "failure at xmlTextWriterEndDocument\n");
-        return;
+        return false;
     }
 
     xmlFreeTextWriter(writer);
-    return;
+    return true;
 }
 
-int XML_Load()
+bool XML_Load(std::string filename)
 {
   	xmlDocPtr doc;
 	  xmlXPathContextPtr xpathCtx; 
@@ -380,11 +378,11 @@ int XML_Load()
 	  xmlNsPtr ns;
 
 		xmlInitParser();
-		fprintf(stderr, "Loading testfile.xml ...\n");
-		doc = xmlParseFile("testfile.xml");
+		fprintf(stderr, "Loading %s ...\n", filename.c_str());
+		doc = xmlParseFile(filename.c_str());
 	  if (doc == NULL) {
-			fprintf(stderr, "Error: unable to parse file \"testfile.xml\"\n");
-			return(-1);
+			fprintf(stderr, "Error: unable to parse file \"%s\"\n", filename.c_str());
+			return false;
    		}
 
     /* Create xpath evaluation context */
@@ -392,7 +390,7 @@ int XML_Load()
     if(xpathCtx == NULL) {
         fprintf(stderr,"Error: unable to create new XPath context\n");
         xmlFreeDoc(doc); 
-        return(-1);
+        return false;
     }
 
     /* Evaluate xpath expression */
@@ -401,7 +399,7 @@ int XML_Load()
         fprintf(stderr,"Error: unable to evaluate xpath expression \"%s\"\n", "/Workspace/GraphNodes");
         xmlXPathFreeContext(xpathCtx); 
         xmlFreeDoc(doc); 
-        return(-1);
+        return false;;
     }
 
 		/* LOAD GRAPHNODES */
@@ -479,7 +477,7 @@ int XML_Load()
         fprintf(stderr,"Error: unable to evaluate xpath expression \"%s\"\n", "/Workspace/GraphConnections/GraphConnection");
         xmlXPathFreeContext(xpathCtx); 
         xmlFreeDoc(doc); 
-        return(-1);
+        return false;
     }
 
 		cur = get_element_by_index(xpathObj, 0);	
@@ -510,12 +508,12 @@ int XML_Load()
 														attr_srcnode, attr_srcport, attr_tgtnode, attr_tgtport,attr_srctype,attr_tgttype);
 			}
 
-
     xmlXPathFreeObject(xpathObj);
     xmlXPathFreeContext(xpathCtx); 
     xmlFreeDoc(doc); 
 		fflush(NULL);
 		xmlCleanupParser();
+		return (true);
 }
 
 
@@ -525,7 +523,6 @@ xmlNodePtr get_element_by_index(xmlXPathObjectPtr xpo, int index)
     xmlNsPtr ns;
 		ns = (xmlNsPtr) xpo->nodesetval->nodeTab[index];
 		cur = (xmlNodePtr)ns;
-		fprintf(stderr, "cur=%08x\n", cur);
 		return cur;
 }
 

@@ -505,7 +505,7 @@ CustomWidget::on_button_press_event (GdkEventButton * event)
     GraphNode *src_node_ptr = NULL;
     GraphNode *tgt_node_ptr = NULL;
 
-  //  std::cerr << "Mouse BUTTON: -> " << event->button << std::endl;
+    //  std::cerr << "Mouse BUTTON: -> " << event->button << std::endl;
 
     switch (event->button) {
 
@@ -597,7 +597,7 @@ CustomWidget::on_button_press_event (GdkEventButton * event)
                 if ((event->x >= x && event->x <= (x + sx)) &&
                         ((event->y >= y && event->y <= (y + sy))))
                 {
-                  std::cerr << "+++ node selected id=" << std::dec << nodeptr->GetID() << " +++ \n";
+                    std::cerr << "+++ node selected id=" << std::dec << nodeptr->GetID() << " +++ \n";
 
                     selected_node = nodeptr;
                     grabbed_node = nodeptr;
@@ -693,15 +693,15 @@ GraphNode *
 CustomWidget::GetNodeBySlot(int slotnum)
 {
 
-	 int slot = 0;
-	 for (std::vector < GraphNode * >::iterator it = nodelist.begin ();
+    int slot = 0;
+    for (std::vector < GraphNode * >::iterator it = nodelist.begin ();
             it != nodelist.end (); ++it)
     {
         GraphNode *nodeptr = *it;
-				if (slot == slotnum) return nodeptr;
-				slot++;
-		}
-	return NULL;
+        if (slot == slotnum) return nodeptr;
+        slot++;
+    }
+    return NULL;
 
 }
 
@@ -970,14 +970,14 @@ CustomWidget::LoopDetector(GraphNode *src, GraphNode *tgt)
 
 void CustomWidget::CreateCustom(int id, double nx, double ny, double nsx, double nsy, int inputs, int outputs)
 {
-		GraphNode *NewNode = NULL;
-		fprintf(stderr, "CustomWidget::CreateCustom(%u, %f, %f, %f, %f, %u, %u)\n", id, nx, ny, nsx, nsy, inputs, outputs);
-		NewNode = new GraphNode(id, nx, ny);
-		NewNode->SetSize(nsx, nsy);
+    GraphNode *NewNode = NULL;
+    fprintf(stderr, "CustomWidget::CreateCustom(%u, %f, %f, %f, %f, %u, %u)\n", id, nx, ny, nsx, nsy, inputs, outputs);
+    NewNode = new GraphNode(id, nx, ny);
+    NewNode->SetSize(nsx, nsy);
     nodelist.push_back (NewNode);
     selected_node = NewNode;
     node_seq_id ++;
-		on_timeout();
+    on_timeout();
 }
 
 void CustomWidget::CreateInput()
@@ -1045,17 +1045,17 @@ int  CustomWidget::GetGraphConnectionCount()
 GraphConnection* CustomWidget::GetGraphConnectionBySlot(int slotnum)
 {
     GraphConnection *connectptr = NULL;
-		int slot = 0;
+    int slot = 0;
 
     for (std::vector < GraphConnection * >::iterator it =
                 connectionlist.begin (); it != connectionlist.end (); ++it)
     {
-        				GraphConnection *connectptr = *it;
-								if (slot == slotnum) return connectptr;
-								slot++;
-		}
+        GraphConnection *connectptr = *it;
+        if (slot == slotnum) return connectptr;
+        slot++;
+    }
 
-	return NULL;
+    return NULL;
 }
 
 GraphConnection* CustomWidget::GetGraphConnectionRef(int id)
@@ -1078,14 +1078,74 @@ GraphConnection* CustomWidget::GetGraphConnectionRef(int id)
 
 int CustomWidget::get_next_free_graphnode_id()
 {
-	int max_id = 0;
-	for (int i = 0 ; i < nodelist.size(); i++ ) {
-			GraphNode *nodeptr = GetNodeBySlot(i);
-			if (nodeptr) {
-					if (nodeptr->GetID() > max_id) {
-						max_id = nodeptr->GetID();
-						}
-					}
-			}
-	return(max_id+1);
+    int max_id = 0;
+    for (int i = 0 ; i < nodelist.size(); i++ ) {
+        GraphNode *nodeptr = GetNodeBySlot(i);
+        if (nodeptr) {
+            if (nodeptr->GetID() > max_id) {
+                max_id = nodeptr->GetID();
+            }
+        }
+    }
+    return(max_id+1);
 }
+
+bool CustomWidget::GetBackingStoreEnabled()
+{
+		return backingstore_enabled;
+}
+
+
+bool CustomWidget::SetBackingStoreEnabled(bool a)
+{
+		backingstore_enabled = a;
+}
+
+std::string CustomWidget::GetFilename()
+{
+	return ondisk_filename;
+}
+
+
+bool CustomWidget::run_file_chooser()
+{
+    char *retptr = NULL;
+    Gtk::FileChooserDialog dialog("Please choose a folder",
+                                  Gtk::FILE_CHOOSER_ACTION_SAVE);
+//  dialog.set_transient_for(*this);
+
+    /*   Add response buttons the the dialog: */
+    dialog.add_button("_Cancel", Gtk::RESPONSE_CANCEL);
+    dialog.add_button("Select", Gtk::RESPONSE_OK);
+
+    int result = dialog.run();
+
+    switch(result)
+    {
+    case(Gtk::RESPONSE_OK):
+    {
+        std::cout << "Filname selected: " << dialog.get_filename()
+                  << std::endl;
+        ondisk_filename = dialog.get_filename();
+				SetBackingStoreEnabled(true);
+        return true;
+        break;
+    }
+    case(Gtk::RESPONSE_CANCEL):
+    {
+        std::cout << "Cancel clicked." << std::endl;
+        break;
+    }
+    default:
+    {
+        std::cout << "Unexpected button clicked." << std::endl;
+        break;
+    }
+    }
+
+				SetBackingStoreEnabled(false);
+
+    return false;
+}
+
+

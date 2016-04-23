@@ -51,6 +51,8 @@ private:
 	Gtk::MenuItem Item4;
 	Pango::FontDescription font;
   int get_next_free_graphnode_id();
+	bool backingstore_enabled = false;
+	std::string ondisk_filename;
  
 public:
   static void register_type ();
@@ -75,6 +77,10 @@ public:
 	void CreateConduit();
 	void CreateSplitter();
 	void CreateOutput();
+  bool run_file_chooser();
+	bool GetBackingStoreEnabled();
+	bool SetBackingStoreEnabled(bool a);
+	std::string GetFilename();
 
 protected:
 	bool on_timeout();
