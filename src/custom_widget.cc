@@ -64,7 +64,7 @@ CustomWidget::register_type ()
 bool
 CustomWidget::on_draw (const Cairo::RefPtr < Cairo::Context > &cr)
 {
-
+		int sx=0, sy=0, tx=0, ty=0;
 //      std::cerr << "CustomWidget::on_draw()\n";
 
     Gtk::Allocation allocation = get_allocation ();
@@ -142,20 +142,26 @@ CustomWidget::on_draw (const Cairo::RefPtr < Cairo::Context > &cr)
         /* FIXME: a good reason NOT to return a pointer to subroutine local storage, ever */
 
         src_vec = src_node->GetPinXY(connectptr->src_port, connectptr->src_type);
-        int sx = src_vec->x;
-        int sy = src_vec->y;
-        tgt_vec = tgt_node->GetPinXY(connectptr->tgt_port, connectptr->tgt_type);
-        int tx = tgt_vec->x;
-        int ty = tgt_vec->y;
+        if (src_vec) {
+            sx = src_vec->x;
+            sy = src_vec->y;
+        }
+        if (tgt_vec) {
+            tgt_vec = tgt_node->GetPinXY(connectptr->tgt_port, connectptr->tgt_type);
+            tx = tgt_vec->x;
+            ty = tgt_vec->y;
+        }
 
         //std::cerr << std::dec << "drawing (" << sx << "," << sy << ":" << tx << "," << ty << ")\n";
-        cr->set_line_width (2);
-        cr->set_source_rgba (0.0, 0.0, 0.0, 1.0);
-        cr->move_to (sx, sy);
-        int mx = (sx + tx) / 2;
-        int my = (sy + ty) / 2;
-        cr->curve_to (sx + 64, sy - 32, tx - 64, ty + 32, tx, ty);
-        cr->stroke ();
+        if (src_vec && tgt_vec) {
+            cr->set_line_width (2);
+            cr->set_source_rgba (0.0, 0.0, 0.0, 1.0);
+            cr->move_to (sx, sy);
+            int mx = (sx + tx) / 2;
+            int my = (sy + ty) / 2;
+            cr->curve_to (sx + 64, sy - 32, tx - 64, ty + 32, tx, ty);
+            cr->stroke ();
+        }
     }
 
 
@@ -326,14 +332,18 @@ CustomWidget::on_draw (const Cairo::RefPtr < Cairo::Context > &cr)
         GraphNode *src_node = connect_xref.node;
         if (src_node) {
             GraphVector *src_vec = src_node->GetPinXY(connect_xref.portnum, connect_xref.type);
-            int sx = src_vec->x;
-            int sy = src_vec->y;
-            cr->set_source_rgba (0.0, 0.0, 0.0, 1.0);
-            cr->set_line_width(2.0);
-            cr->move_to(sx, sy);
-            cr->curve_to (sx + 64, sy - 32, cx - 64, cy + 32, cx, cy);
-            cr->stroke ();
-            on_timeout();
+            if (src_vec) {
+                int sx = src_vec->x;
+                int sy = src_vec->y;
+                cr->set_source_rgba (0.0, 0.0, 0.0, 1.0);
+                cr->set_line_width(2.0);
+                cr->move_to(sx, sy);
+                cr->curve_to (sx + 64, sy - 32, cx - 64, cy + 32, cx, cy);
+                cr->stroke ();
+                on_timeout();
+            } else {
+                std::cerr << "*** WARNING: src_vec was NULL during draw" << std::endl;
+            }
         }
     }
 
@@ -1112,7 +1122,7 @@ bool CustomWidget::run_file_chooser()
     char *retptr = NULL;
     Gtk::FileChooserDialog dialog("Please choose a folder",
                                   Gtk::FILE_CHOOSER_ACTION_SAVE);
-		//  dialog.set_transient_for(*this);
+    //  dialog.set_transient_for(*this);
 
     /*   Add response buttons the the dialog: */
     dialog.add_button("_Cancel", Gtk::RESPONSE_CANCEL);
@@ -1144,9 +1154,9 @@ bool CustomWidget::run_file_chooser()
 
 void CustomWidget::ClearCanvas()
 {
-		std::cerr << "ClearCanvas()" << std::endl;
-		connectionlist.clear();
-		on_timeout();
-		nodelist.clear();
-		on_timeout();
+    std::cerr << "ClearCanvas()" << std::endl;
+    connectionlist.clear();
+    on_timeout();
+    nodelist.clear();
+    on_timeout();
 }
