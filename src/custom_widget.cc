@@ -142,26 +142,22 @@ CustomWidget::on_draw (const Cairo::RefPtr < Cairo::Context > &cr)
         /* FIXME: a good reason NOT to return a pointer to subroutine local storage, ever */
 
         src_vec = src_node->GetPinXY(connectptr->src_port, connectptr->src_type);
-        if (src_vec) {
-            sx = src_vec->x;
-            sy = src_vec->y;
-        }
-        if (tgt_vec) {
-            tgt_vec = tgt_node->GetPinXY(connectptr->tgt_port, connectptr->tgt_type);
-            tx = tgt_vec->x;
-            ty = tgt_vec->y;
-        }
+        sx = src_vec->x;
+        sy = src_vec->y;
+        tgt_vec = tgt_node->GetPinXY(connectptr->tgt_port, connectptr->tgt_type);
+        tx = tgt_vec->x;
+        ty = tgt_vec->y;
 
         //std::cerr << std::dec << "drawing (" << sx << "," << sy << ":" << tx << "," << ty << ")\n";
-        if (src_vec && tgt_vec) {
-            cr->set_line_width (2);
-            cr->set_source_rgba (0.0, 0.0, 0.0, 1.0);
-            cr->move_to (sx, sy);
-            int mx = (sx + tx) / 2;
-            int my = (sy + ty) / 2;
-            cr->curve_to (sx + 64, sy - 32, tx - 64, ty + 32, tx, ty);
-            cr->stroke ();
-        }
+        //if (src_vec && tgt_vec) {
+        cr->set_line_width (2);
+        cr->set_source_rgba (0.0, 0.0, 0.0, 1.0);
+        cr->move_to (sx, sy);
+        int mx = (sx + tx) / 2;
+        int my = (sy + ty) / 2;
+        cr->curve_to (sx + 64, sy - 32, tx - 64, ty + 32, tx, ty);
+        cr->stroke ();
+        //}
     }
 
 
