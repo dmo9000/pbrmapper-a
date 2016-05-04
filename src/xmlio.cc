@@ -219,6 +219,14 @@ bool XML_Save(std::string filename)
             return false;
         }
 
+        rc = xmlTextWriterStartElement(writer, BAD_CAST "module");
+        std::string module_name = "builtin::testpattern";
+        memset(&buffer, 0, 256);
+        snprintf((char *) &buffer, 255, "%s", module_name.c_str());
+        rc = xmlTextWriterWriteAttribute(writer, BAD_CAST "name", BAD_CAST buffer);
+
+        rc = xmlTextWriterEndElement(writer);
+
         /* write per-node inputs */
 
         for (int i = 0; i <  nodeptr->NumberOfInputs(); i++) {
