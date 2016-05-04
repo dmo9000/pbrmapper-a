@@ -2,33 +2,33 @@
 <Workspace name="">
  <!--this file format is currently subject to change-->
  <GraphNodes nodecount="8">
-  <GraphNode id="1" x="126.1687012" y="639.1657715" sx="64.0000000" sy="64.0000000" inputs="0" outputs="1">
+  <GraphNode id="1" x="230.9079590" y="170.1543884" sx="64.0000000" sy="64.0000000" inputs="0" outputs="1">
    <output label="Output"/>
   </GraphNode>
-  <GraphNode id="2" x="508.9846191" y="280.4273071" sx="64.0000000" sy="64.0000000" inputs="1" outputs="2">
+  <GraphNode id="2" x="693.3647461" y="261.9321899" sx="64.0000000" sy="64.0000000" inputs="1" outputs="2">
    <input label="Input"/>
    <output label="Output A"/>
    <output label="Output B"/>
   </GraphNode>
-  <GraphNode id="3" x="739.5864258" y="593.9348755" sx="64.0000000" sy="64.0000000" inputs="1" outputs="2">
+  <GraphNode id="3" x="707.0605469" y="566.5928955" sx="64.0000000" sy="64.0000000" inputs="1" outputs="2">
    <input label="Input"/>
    <output label="Output A"/>
    <output label="Output B"/>
   </GraphNode>
-  <GraphNode id="4" x="540.0000000" y="65.0000000" sx="64.0000000" sy="64.0000000" inputs="1" outputs="1">
+  <GraphNode id="4" x="893.6518555" y="104.9107971" sx="64.0000000" sy="64.0000000" inputs="1" outputs="1">
    <input label="Input"/>
    <output label="Output"/>
   </GraphNode>
-  <GraphNode id="6" x="1121.5673828" y="123.0685120" sx="64.0000000" sy="64.0000000" inputs="1" outputs="0">
+  <GraphNode id="6" x="1172.7399902" y="191.8455200" sx="64.0000000" sy="64.0000000" inputs="1" outputs="0">
    <input label="Input"/>
   </GraphNode>
-  <GraphNode id="7" x="1082.2844238" y="285.0459900" sx="64.0000000" sy="64.0000000" inputs="1" outputs="0">
+  <GraphNode id="7" x="1176.0866699" y="400.7817383" sx="64.0000000" sy="64.0000000" inputs="1" outputs="0">
    <input label="Input"/>
   </GraphNode>
-  <GraphNode id="8" x="1117.0617676" y="551.8527832" sx="64.0000000" sy="64.0000000" inputs="1" outputs="0">
+  <GraphNode id="8" x="1179.0764160" y="610.8294067" sx="64.0000000" sy="64.0000000" inputs="1" outputs="0">
    <input label="Input"/>
   </GraphNode>
-  <GraphNode id="9" x="348.6625977" y="368.2031250" sx="64.0000000" sy="64.0000000" inputs="1" outputs="2">
+  <GraphNode id="9" x="432.5224609" y="395.8500977" sx="64.0000000" sy="64.0000000" inputs="1" outputs="2">
    <input label="Input"/>
    <output label="Output A"/>
    <output label="Output B"/>

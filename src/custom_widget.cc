@@ -160,7 +160,7 @@ CustomWidget::on_draw (const Cairo::RefPtr < Cairo::Context > &cr)
         cr->move_to (sx, sy);
         int mx = (sx + tx) / 2;
         int my = (sy + ty) / 2;
-        cr->curve_to (sx + 64, sy - 32, tx - 64, ty + 32, tx, ty);
+        cr->curve_to (sx + 128, sy, tx - 128, ty, tx, ty);
         cr->stroke ();
         //}
     }
