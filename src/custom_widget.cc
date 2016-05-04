@@ -5,6 +5,7 @@
 #include <glibmm/main.h>
 #include <gtkmm.h>
 #include <gtkmm/drawingarea.h>
+#include <assert.h>
 #include "graphnode.h"
 
 #define MOUSEBUTTON_LEFT			1
@@ -136,15 +137,19 @@ CustomWidget::on_draw (const Cairo::RefPtr < Cairo::Context > &cr)
         GraphNode *tgt_node = NULL;
         GraphVector *src_vec = NULL;
         GraphVector *tgt_vec = NULL;
-        src_node = GetNodeByID (connectptr->src_node);
-        tgt_node = GetNodeByID (connectptr->tgt_node);
 
         /* FIXME: a good reason NOT to return a pointer to subroutine local storage, ever */
 
+        src_node = GetNodeByID (connectptr->src_node);
         src_vec = src_node->GetPinXY(connectptr->src_port, connectptr->src_type);
+
+				assert(src_vec);
         sx = src_vec->x;
         sy = src_vec->y;
+
+        tgt_node = GetNodeByID (connectptr->tgt_node);
         tgt_vec = tgt_node->GetPinXY(connectptr->tgt_port, connectptr->tgt_type);
+				assert(tgt_vec);
         tx = tgt_vec->x;
         ty = tgt_vec->y;
 

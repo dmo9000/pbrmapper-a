@@ -148,22 +148,21 @@ int GraphNode::NumberOfOutputs()
 
 GraphVector *GraphNode::GetPinXY(int portnum, int type)
 {
-    GraphVector localvec;
-
     switch (type) {
     case SOCKTYPE_INPUT:
-        localvec.x = location.x;
+        //localvec.x = location.x;
+        inputs[portnum]->location.x = location.x;
+        inputs[portnum]->location.y = location.y + 8 + ((portnum) * 16) + 8;
+        return &inputs[portnum]->location;
         break;
     case SOCKTYPE_OUTPUT:
-        localvec.x = location.x + 64;
-        break;
-    default:
-        /* will appear in the middle */
-        localvec.x = location.x + 32;
+        //localvec.x = location.x + 64;
+        outputs[portnum]->location.x = location.x + 64;
+        outputs[portnum]->location.y = location.y + 8 + ((portnum) * 16) + 8;
+        return &outputs[portnum]->location;
         break;
     }
-    localvec.y = location.y + 8 + ((portnum) * 16) + 8;
-    return &localvec;
+    return NULL;
 }
 
 
