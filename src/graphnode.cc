@@ -8,19 +8,19 @@ GraphNode::GraphNode(int seq_id, double spawnx, double spawny)
     SetLocation(spawnx, spawny);
     SetSize(64, 64);
     is_valid = 1;
-    std::cerr << "GraphNode(" << node_seq_id << ":" << location.x << ":" << location.y << ") constructor\n";
+//    std::cerr << "GraphNode(" << node_seq_id << ":" << location.x << ":" << location.y << ") constructor\n";
 }
 
 GraphNode::~GraphNode()
 {
-    std::cerr << "GraphNode(" << node_seq_id << ") destructor\n";
+//    std::cerr << "GraphNode(" << node_seq_id << ") destructor\n";
     is_valid = 0;
 }
 
 GraphConnection* GraphNode::GetPortConnection(int portnum, int type)
 {
     GraphConnector *connector = NULL;
-    fprintf(stderr, "GetPortConnection(%u:%d,%d)\n", node_seq_id, portnum, type);
+    //fprintf(stderr, "GetPortConnection(%u:%d,%d)\n", node_seq_id, portnum, type);
     switch (type) {
     case SOCKTYPE_INPUT:
         connector = inputs[portnum];

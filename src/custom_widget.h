@@ -39,6 +39,7 @@ private:
 	XRef hover_xref = { NULL, -1, SOCKTYPE_UNDEF };
 	XRef connect_xref = { NULL, -1, SOCKTYPE_UNDEF };
 	/* FIXME: cursor location - replace with GraphVector */
+	bool is_dirty = false;
 	double cx = 0;
   double cy = 0;			
 	double ocx = 0;
@@ -82,6 +83,7 @@ public:
 	bool SetBackingStoreEnabled(bool a);
 	std::string GetFilename();
   void ClearCanvas();
+	void SetDirty(bool state);
 
 protected:
 	bool on_timeout();

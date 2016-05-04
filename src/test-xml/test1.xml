@@ -2,10 +2,10 @@
 <Workspace name="">
  <!--this file format is currently subject to change-->
  <GraphNodes nodecount="8">
-  <GraphNode id="1" x="230.9079590" y="170.1543884" sx="64.0000000" sy="64.0000000" inputs="0" outputs="1">
+  <GraphNode id="1" x="116.4604492" y="259.7033081" sx="64.0000000" sy="64.0000000" inputs="0" outputs="1">
    <output label="Output"/>
   </GraphNode>
-  <GraphNode id="2" x="693.3647461" y="261.9321899" sx="64.0000000" sy="64.0000000" inputs="1" outputs="2">
+  <GraphNode id="2" x="567.4711914" y="145.3209229" sx="64.0000000" sy="64.0000000" inputs="1" outputs="2">
    <input label="Input"/>
    <output label="Output A"/>
    <output label="Output B"/>
@@ -28,19 +28,19 @@
   <GraphNode id="8" x="1179.0764160" y="610.8294067" sx="64.0000000" sy="64.0000000" inputs="1" outputs="0">
    <input label="Input"/>
   </GraphNode>
-  <GraphNode id="9" x="432.5224609" y="395.8500977" sx="64.0000000" sy="64.0000000" inputs="1" outputs="2">
+  <GraphNode id="9" x="299.5686035" y="229.0119324" sx="64.0000000" sy="64.0000000" inputs="1" outputs="2">
    <input label="Input"/>
    <output label="Output A"/>
    <output label="Output B"/>
   </GraphNode>
  </GraphNodes>
  <GraphConnections connectioncount="7">
-  <GraphConnection id="0" src_node="2" tgt_node="4" src_type="1" tgt_type="0" src_port="0" tgt_port="0"/>
-  <GraphConnection id="1" src_node="3" tgt_node="8" src_type="1" tgt_type="0" src_port="1" tgt_port="0"/>
-  <GraphConnection id="2" src_node="1" tgt_node="9" src_type="1" tgt_type="0" src_port="0" tgt_port="0"/>
-  <GraphConnection id="3" src_node="9" tgt_node="2" src_type="1" tgt_type="0" src_port="0" tgt_port="0"/>
-  <GraphConnection id="4" src_node="9" tgt_node="3" src_type="1" tgt_type="0" src_port="1" tgt_port="0"/>
-  <GraphConnection id="5" src_node="2" tgt_node="7" src_type="1" tgt_type="0" src_port="1" tgt_port="0"/>
-  <GraphConnection id="6" src_node="4" tgt_node="6" src_type="1" tgt_type="0" src_port="0" tgt_port="0"/>
+  <GraphConnection id="7" src_node="2" tgt_node="4" src_type="1" tgt_type="0" src_port="0" tgt_port="0"/>
+  <GraphConnection id="8" src_node="3" tgt_node="8" src_type="1" tgt_type="0" src_port="1" tgt_port="0"/>
+  <GraphConnection id="9" src_node="1" tgt_node="9" src_type="1" tgt_type="0" src_port="0" tgt_port="0"/>
+  <GraphConnection id="10" src_node="9" tgt_node="2" src_type="1" tgt_type="0" src_port="0" tgt_port="0"/>
+  <GraphConnection id="11" src_node="9" tgt_node="3" src_type="1" tgt_type="0" src_port="1" tgt_port="0"/>
+  <GraphConnection id="12" src_node="2" tgt_node="7" src_type="1" tgt_type="0" src_port="1" tgt_port="0"/>
+  <GraphConnection id="13" src_node="4" tgt_node="6" src_type="1" tgt_type="0" src_port="0" tgt_port="0"/>
  </GraphConnections>
 </Workspace>

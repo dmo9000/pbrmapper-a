@@ -432,7 +432,7 @@ bool XML_Load(std::string filename)
 				int gn_in	=  atoi((char *) attr_in);
 				int gn_out =  atoi((char *) attr_out);
 				//fprintf(stderr, "new_node(id=%s, x=%s, y=%s, sx=%s, sy=%s, in=%s, out=%s)\n", attr_id, attr_x, attr_y, attr_sx, attr_sy, attr_in, attr_out);
-				 fprintf(stderr, "new_node(id=%u, x=%f, y=%f, sx=%f, sy=%f, in=%u, out=%u)\n", gn_id, gn_x, gn_y, gn_sx, gn_sy, gn_in, gn_out);
+				 //fprintf(stderr, "new_node(id=%u, x=%f, y=%f, sx=%f, sy=%f, in=%u, out=%u)\n", gn_id, gn_x, gn_y, gn_sx, gn_sy, gn_in, gn_out);
 	
 				pCustomWidget->CreateCustom(gn_id, gn_x, gn_y, gn_sx, gn_sy, gn_in, gn_out);
 				nodeptr = pCustomWidget->GetNodeByID(gn_id);
@@ -457,7 +457,7 @@ bool XML_Load(std::string filename)
 						xmlNodePtr cur_output;
 						cur_output = get_element_by_index(xpathObjOutputs, k); 
 						xmlChar *output_label = get_attribute_value(cur_output, (char *) "label");
-						fprintf(stderr, "output label->[%s]\n", (char*) output_label);
+						//fprintf(stderr, "output label->[%s]\n", (char*) output_label);
 						nodeptr->AddOutput((char *) output_label);
 						xmlFree(output_label);
 						}
@@ -504,8 +504,8 @@ bool XML_Load(std::string filename)
 				pCustomWidget->SetXRef(&b, pCustomWidget->GetNodeByID(atoi((char *) attr_tgtnode)), atoi((char*) attr_tgtport), atoi((char*) attr_tgttype));
 				pCustomWidget->EstablishConnection(&a, &b);
 
-			fprintf(stderr, "id=%s,src_node=%s,src_port=%s,tgt_node=%s,tgt_port=%s,src_type=%s,tgt_type=%s\n", attr_id, 
-														attr_srcnode, attr_srcport, attr_tgtnode, attr_tgtport,attr_srctype,attr_tgttype);
+			//fprintf(stderr, "id=%s,src_node=%s,src_port=%s,tgt_node=%s,tgt_port=%s,src_type=%s,tgt_type=%s\n", attr_id, 
+														//attr_srcnode, attr_srcport, attr_tgtnode, attr_tgtport,attr_srctype,attr_tgttype);
 			}
 
     xmlXPathFreeObject(xpathObj);

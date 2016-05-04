@@ -454,6 +454,7 @@ CustomWidget::on_button_release_event (GdkEventButton * event)
             {
                 //std::cerr << "+++ dropping grabbed node id=" << grabbed_node->GetID() << " +++\n";
                 grabbed_node = NULL;
+								SetDirty(true);
             }
             dragmode = DRAG_NONE;
             on_timeout();
@@ -664,6 +665,7 @@ CustomWidget::on_key_press_event (GdkEventKey * event)
                     UnlinkAll (selected_node);
                     RemoveNode (selected_node);
                     selected_node = NULL;
+										SetDirty(true);
                 }
                 break;
             case '+':
@@ -765,6 +767,7 @@ CustomWidget::UnlinkConnection (GraphConnection * c)
                                NULL);
             connectionlist.erase (it);
             delete connectptr;
+            SetDirty(true);
             return true;
         }
     }
@@ -823,6 +826,7 @@ CustomWidget::UnlinkAll (GraphNode * unlink_node)
         }
     }
 
+    SetDirty(true);
     on_timeout ();
 }
 
@@ -844,6 +848,7 @@ CustomWidget::RemoveNode (GraphNode * remove_node)
             nodelist.erase (it);
             /* FIXME: destroy all sockets */
             delete nodeptr;
+            SetDirty(true);
             return true;
         }
     }
@@ -948,6 +953,7 @@ CustomWidget::EstablishConnection(XRef *A, XRef *B)
     connection_seq_id++;
 
     connectionlist.push_back (new_connection);
+    SetDirty(true);
 
     return true;
 
@@ -958,7 +964,7 @@ CustomWidget::LoopDetector(GraphNode *src, GraphNode *tgt)
 {
 
     /* we are going to do some crazy recursion here */
-    std::cerr << "LoopDetector(" << std::hex << src->GetID() << ", " << tgt->GetID() << ")" << std::endl;
+//    std::cerr << "LoopDetector(" << std::hex << src->GetID() << ", " << tgt->GetID() << ")" << std::endl;
     if (src == tgt) {
         return true;
     }
@@ -969,7 +975,7 @@ CustomWidget::LoopDetector(GraphNode *src, GraphNode *tgt)
             if (connection) {
                 GraphNode *next_node = GetNodeByID(connection->tgt_node);
                 if (next_node) {
-                    std::cerr << "---> Found an active connection to node " << connection->tgt_node << std::endl;
+                    //std::cerr << "---> Found an active connection to node " << connection->tgt_node << std::endl;
                     if (LoopDetector(src, next_node)) return true;
                 }
             }
@@ -982,12 +988,13 @@ CustomWidget::LoopDetector(GraphNode *src, GraphNode *tgt)
 void CustomWidget::CreateCustom(int id, double nx, double ny, double nsx, double nsy, int inputs, int outputs)
 {
     GraphNode *NewNode = NULL;
-    fprintf(stderr, "CustomWidget::CreateCustom(%u, %f, %f, %f, %f, %u, %u)\n", id, nx, ny, nsx, nsy, inputs, outputs);
+//    fprintf(stderr, "CustomWidget::CreateCustom(%u, %f, %f, %f, %f, %u, %u)\n", id, nx, ny, nsx, nsy, inputs, outputs);
     NewNode = new GraphNode(id, nx, ny);
     NewNode->SetSize(nsx, nsy);
     nodelist.push_back (NewNode);
     selected_node = NewNode;
     node_seq_id ++;
+    SetDirty(true);
     on_timeout();
 }
 
@@ -995,11 +1002,12 @@ void CustomWidget::CreateInput()
 {
 
     GraphNode *NewNode = NULL;
-    std::cerr << "CreateInput()" << std::endl;
+//    std::cerr << "CreateInput()" << std::endl;
     NewNode = new GraphNode (get_next_free_graphnode_id(), (cx / viewport_scale), (cy / viewport_scale));
     nodelist.push_back (NewNode);
     selected_node = NewNode;
     NewNode->AddOutput ("Output");
+    SetDirty(true);
     on_timeout();
 
 }
@@ -1007,25 +1015,27 @@ void CustomWidget::CreateInput()
 void CustomWidget::CreateConduit()
 {
     GraphNode *NewNode = NULL;
-    std::cerr << "CreateConduit()" << std::endl;
+//    std::cerr << "CreateConduit()" << std::endl;
     NewNode = new GraphNode (get_next_free_graphnode_id(), (cx / viewport_scale), (cy / viewport_scale));
     nodelist.push_back (NewNode);
     selected_node = NewNode;
     NewNode->AddInput ("Input");
     NewNode->AddOutput ("Output");
+    SetDirty(true);
     on_timeout();
 }
 
 void CustomWidget::CreateSplitter()
 {
     GraphNode *NewNode = NULL;
-    std::cerr << "CreateSplitter()" << std::endl;
+//    std::cerr << "CreateSplitter()" << std::endl;
     NewNode = new GraphNode (get_next_free_graphnode_id(), (cx / viewport_scale), (cy / viewport_scale));
     nodelist.push_back (NewNode);
     selected_node = NewNode;
     NewNode->AddInput ("Input");
     NewNode->AddOutput ("Output A");
     NewNode->AddOutput ("Output B");
+    SetDirty(true);
     on_timeout();
 }
 
@@ -1038,6 +1048,7 @@ void CustomWidget::CreateOutput()
     nodelist.push_back (NewNode);
     selected_node = NewNode;
     NewNode->AddInput ("Input");
+    SetDirty(true);
     on_timeout();
 }
 
@@ -1159,5 +1170,17 @@ void CustomWidget::ClearCanvas()
     connectionlist.clear();
     on_timeout();
     nodelist.clear();
+    SetDirty(false);
     on_timeout();
+}
+
+
+void CustomWidget::SetDirty(bool state)
+{
+
+		if (is_dirty != state) {
+				is_dirty = state;
+				std::cerr << "+++ canvas widget dirty state is now " << is_dirty << std::endl;
+				}
+
 }

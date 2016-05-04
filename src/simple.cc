@@ -45,6 +45,7 @@ void on_open_clicked()
 		pCustomWidget->run_file_chooser();
 	  if (XML_Load(pCustomWidget->GetFilename())) {
 			pCustomWidget->SetBackingStoreEnabled(true);
+			pCustomWidget->SetDirty(false);
 			}
 
 		fflush(NULL);
@@ -61,6 +62,7 @@ void on_save_clicked()
 
   if (XML_Save(pCustomWidget->GetFilename())) {
 			pCustomWidget->SetBackingStoreEnabled(true);
+			pCustomWidget->SetDirty(false);
 			}
 
 }
@@ -72,6 +74,7 @@ void on_saveas_clicked()
 		if (pCustomWidget->run_file_chooser()) {
 		    if (XML_Save(pCustomWidget->GetFilename())) {
 					pCustomWidget->SetBackingStoreEnabled(true);
+					pCustomWidget->SetDirty(false);
 					}
 				}
 }
