@@ -182,13 +182,23 @@ CustomWidget::on_draw (const Cairo::RefPtr < Cairo::Context > &cr)
         double sy = node_size->y;
 
         //std::cerr << "Drawing: " << x << ":" << y << "\n";
+        
+				/* node "box" */
         cr->set_source_rgba (1.0, 1.0, 1.0, 1.0);
         cr->rectangle (x, y, sx, sy);
         cr->fill ();
+				/* outline */
         cr->set_source_rgba (0.0, 0.0, 0.0, 1.0);
         cr->rectangle (x, y, sx, sy);
         cr->set_line_width (2);
         cr->stroke ();
+				/* thumbnail */ 
+
+        cr->rectangle (x+8, y+8, sx-16, sy-16);
+        cr->set_line_width (1);
+        cr->stroke ();
+
+
 
         if (nodeptr == selected_node)
         {
