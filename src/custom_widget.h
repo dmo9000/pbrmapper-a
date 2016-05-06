@@ -55,6 +55,7 @@ private:
 	bool backingstore_enabled = false;
 	std::string ondisk_filename;
 	Gtk::ScrolledWindow *pScrolledWindow = NULL;
+	Gtk::Viewport *pViewPort = NULL;
 	GraphVector ScrolledWindowSize; 
  
 public:
@@ -86,8 +87,9 @@ public:
 	std::string GetFilename();
   void ClearCanvas();
 	void SetDirty(bool state);
-	void SetParent(Gtk::ScrolledWindow *sw);
+	void SetParent(Gtk::ScrolledWindow *sw, Gtk::Viewport *vp);
 	GraphVector* GetScrolledWindowSize();
+	void SetScrolledWindowSize(GraphVector *v);
 
 protected:
 	bool on_timeout();

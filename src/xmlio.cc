@@ -411,6 +411,17 @@ bool XML_Load(std::string filename)
         return false;
     }
 
+    xpathObj = xmlXPathEvalExpression(BAD_CAST "/Workspace", xpathCtx);
+		cur = get_element_by_index(xpathObj, 0);	
+		xmlChar *workspace_width = get_attribute_value(cur, (char *) "width");
+		xmlChar *workspace_height = get_attribute_value(cur, (char *) "height");
+		GraphVector workspace_size;
+		workspace_size.x =  strtod((char *) workspace_width, NULL);
+		workspace_size.y =  strtod((char *) workspace_height, NULL);
+		std::cerr << "---> Incoming workspace size is " << workspace_size.x << "x" << workspace_size.y << std::endl;
+
+		pCustomWidget->SetScrolledWindowSize(&workspace_size);
+
     /* Evaluate xpath expression */
     xpathObj = xmlXPathEvalExpression(BAD_CAST "/Workspace/GraphNodes", xpathCtx);
     if(xpathObj == NULL) {

@@ -115,7 +115,7 @@ int main (int argc, char **argv)
 		
     pStatusBar->push("Welcome to Substance Instainer!");
 
-		pCustomWidget->SetParent(myScrolledWindow);
+		pCustomWidget->SetParent(myScrolledWindow, pViewPort);
 		GraphVector *sws = pCustomWidget->GetScrolledWindowSize();
     pCustomWidget->show_now();
     pCustomWidget->enable_timeout();

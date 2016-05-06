@@ -1181,6 +1181,12 @@ void CustomWidget::ClearCanvas()
     connectionlist.clear();
     on_timeout();
     nodelist.clear();
+
+    std::cerr << "!!! setting scrolled window size to: 800x600" << std::endl;
+    Gtk::Container* toplevel = pScrolledWindow->get_toplevel();
+    toplevel->set_size_request(-1, -1);
+    toplevel->set_size_request(800, 600);
+
     SetDirty(false);
     on_timeout();
 }
@@ -1197,10 +1203,11 @@ void CustomWidget::SetDirty(bool state)
 }
 
 
-void CustomWidget::SetParent(Gtk::ScrolledWindow *sw)
+void CustomWidget::SetParent(Gtk::ScrolledWindow *sw, Gtk::Viewport *vp)
 {
 
 	pScrolledWindow = sw;
+	pViewPort = vp;
 
 }
 
@@ -1210,4 +1217,20 @@ GraphVector* CustomWidget::GetScrolledWindowSize()
 	ScrolledWindowSize.x =  allocation.get_width (); 
 	ScrolledWindowSize.y =  allocation.get_height (); 
 	return &ScrolledWindowSize;
+}
+
+void CustomWidget::SetScrolledWindowSize(GraphVector *v)
+{
+	//Gtk::Allocation allocation = pScrolledWindow->get_allocation ();
+	std::cerr << "!!! setting scrolled window size to: " << v->x << "x" << v->y << std::endl;
+	Gtk::Container* toplevel = pScrolledWindow->get_toplevel();
+	//pViewPort->set_default_size(v->x, v->y);
+//	pViewPort->set_size_request(v->x, v->y);
+//
+//	set_size_request(v->x, v->y);
+	toplevel->set_size_request(-1, -1);
+	toplevel->set_size_request(v->x, v->y);
+
+//
+//	toplevel->resize(v->x, v->y);
 }
