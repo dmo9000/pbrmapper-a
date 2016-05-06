@@ -10,10 +10,10 @@
 
 #define MY_ENCODING "ISO-8859-1"
 Gtk::Window* pMainWindow = nullptr;
-//Gtk::DrawingArea* pCustomWidget = nullptr;
 CustomWidget *pCustomWidget = NULL;
 Gtk::Statusbar* pStatusBar = nullptr;
 Gtk::Viewport *pViewPort = nullptr;
+Gtk::ScrolledWindow *myScrolledWindow = nullptr;
 
 static void on_new_clicked();
 static void on_open_clicked();
@@ -105,14 +105,21 @@ int main (int argc, char **argv)
         return 1;
     }
     //Get the GtkBuilder-instantiated Dialog:
+    //
     refBuilder->get_widget("applicationwindow1", pMainWindow);
     pMainWindow->set_title("Substance Instainer");
     refBuilder->get_widget("statusbar1", pStatusBar);
-    pStatusBar->push("Welcome to Substance Instainer!");
     refBuilder->get_widget("viewport1", pViewPort);
     refBuilder->get_widget("customwidget1", pCustomWidget);
+		refBuilder->get_widget("scrolledwindow1", myScrolledWindow); 
+		
+    pStatusBar->push("Welcome to Substance Instainer!");
+
+		pCustomWidget->SetParent(myScrolledWindow);
+		GraphVector *sws = pCustomWidget->GetScrolledWindowSize();
     pCustomWidget->show_now();
     pCustomWidget->enable_timeout();
+
     /* initialise GEGL */
     geglio_init();
     if(pMainWindow) {

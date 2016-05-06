@@ -72,6 +72,7 @@ CustomWidget::on_draw (const Cairo::RefPtr < Cairo::Context > &cr)
     const int width = allocation.get_width ();
     const int height = allocation.get_height ();
 
+		//std::cerr << "width: " << width << " height: " << height << std::endl;
     cr->scale (viewport_scale, viewport_scale);
     cr->translate (0, 0);
     //cr->translate(0.1, 0.1);
@@ -1193,4 +1194,20 @@ void CustomWidget::SetDirty(bool state)
 				std::cerr << "+++ canvas widget dirty state is now " << is_dirty << std::endl;
 				}
 
+}
+
+
+void CustomWidget::SetParent(Gtk::ScrolledWindow *sw)
+{
+
+	pScrolledWindow = sw;
+
+}
+
+GraphVector* CustomWidget::GetScrolledWindowSize()
+{
+	Gtk::Allocation allocation = pScrolledWindow->get_allocation ();
+	ScrolledWindowSize.x =  allocation.get_width (); 
+	ScrolledWindowSize.y =  allocation.get_height (); 
+	return &ScrolledWindowSize;
 }

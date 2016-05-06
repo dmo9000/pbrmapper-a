@@ -94,6 +94,7 @@ bool XML_Save(std::string filename)
     xmlChar *tmp;
     FILE *fp;
     char buffer[256];
+		GraphVector *sw_size = NULL;
 
     std::cerr << "+++ File->Save As ... selected\n" << std::endl;
     writer = xmlNewTextWriterFilename(filename.c_str(), 0);
@@ -120,10 +121,19 @@ bool XML_Save(std::string filename)
     }
 
     rc = xmlTextWriterWriteAttribute(writer, BAD_CAST "name", BAD_CAST "");
-    if (rc < 0) {
-        printf ("testXmlwriterFilename: Error at xmlTextWriterWriteAttribute\n");
-        return false;
-    }
+
+		sw_size = pCustomWidget->GetScrolledWindowSize();
+		std::cerr << "---- SCROLLED WINDOW SIZE IS " << sw_size->x << "x" << sw_size->y << std::endl;
+
+		int swx = sw_size->x;
+		int swy = sw_size->y;
+
+    memset(&buffer, 0, 256);
+    snprintf((char*) &buffer, 255, "%u", swx);
+    rc = xmlTextWriterWriteAttribute(writer, BAD_CAST "width", BAD_CAST buffer);
+    memset(&buffer, 0, 256);
+    snprintf((char*) &buffer, 255, "%u", swy);
+    rc = xmlTextWriterWriteAttribute(writer, BAD_CAST "height", BAD_CAST buffer);
 
     /* Write a comment as child of Workspace.
     *      * Please observe, that the input to the xmlTextWriter functions
