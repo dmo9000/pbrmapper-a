@@ -1181,6 +1181,7 @@ void CustomWidget::ClearCanvas()
     connectionlist.clear();
     on_timeout();
     nodelist.clear();
+		connection_seq_id = 0;
 
     std::cerr << "!!! setting scrolled window size to: 800x600" << std::endl;
     Gtk::Container* toplevel = pScrolledWindow->get_toplevel();
