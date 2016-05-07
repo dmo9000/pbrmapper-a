@@ -22,8 +22,8 @@
   </GraphNode>
  </GraphNodes>
  <GraphConnections connectioncount="3">
-  <GraphConnection id="49" src_node="1" tgt_node="2" src_type="1" tgt_type="0" src_port="0" tgt_port="0"/>
-  <GraphConnection id="50" src_node="2" tgt_node="3" src_type="1" tgt_type="0" src_port="0" tgt_port="0"/>
-  <GraphConnection id="51" src_node="2" tgt_node="4" src_type="1" tgt_type="0" src_port="1" tgt_port="0"/>
+  <GraphConnection id="40" src_node="1" tgt_node="2" src_type="1" tgt_type="0" src_port="0" tgt_port="0"/>
+  <GraphConnection id="41" src_node="2" tgt_node="3" src_type="1" tgt_type="0" src_port="0" tgt_port="0"/>
+  <GraphConnection id="42" src_node="2" tgt_node="4" src_type="1" tgt_type="0" src_port="1" tgt_port="0"/>
  </GraphConnections>
 </Workspace>
