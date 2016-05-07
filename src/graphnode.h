@@ -65,6 +65,7 @@ private:
 	GraphVector Image_Size;
 	int img_format = FMT_8BIT;
 	GeglNode *gegl_root = NULL;
+	std::string ModuleName;
   
 public:
 	GraphNode (int seq_id, double spawnx, double spawny);

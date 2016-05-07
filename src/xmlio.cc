@@ -168,7 +168,7 @@ bool XML_Save(std::string filename)
         GraphNode *nodeptr = NULL;
         GraphVector *location = NULL;
         GraphVector *size = NULL;
-        fprintf(stderr, "writing node %u\n", i);
+    //    fprintf(stderr, "writing node %u\n", i);
         fflush(NULL);
 
         nodeptr = pCustomWidget->GetNodeBySlot(i);
@@ -323,7 +323,7 @@ bool XML_Save(std::string filename)
     for (int i = 0; i < pCustomWidget->GetGraphConnectionCount(); i++) {
         GraphConnection *connectptr = pCustomWidget->GetGraphConnectionBySlot(i);
         if (connectptr) {
-            fprintf(stderr, "got connection data for id %u\n", i);
+//            fprintf(stderr, "got connection data for id %u\n", i);
 
             rc = xmlTextWriterStartElement(writer, BAD_CAST "GraphConnection");
             if (rc < 0) {
