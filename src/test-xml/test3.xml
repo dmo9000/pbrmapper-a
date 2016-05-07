@@ -1,70 +1,70 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<Workspace name="" width="1446" height="777">
+<Workspace name="" width="800" height="600">
  <!--this file format is currently subject to change-->
  <GraphNodes nodecount="13">
-  <GraphNode id="1" x="53.0000000" y="681.0000000" sx="64.0000000" sy="64.0000000" inputs="0" outputs="1">
+  <GraphNode id="1" x="35.0000000" y="43.0000000" sx="64.0000000" sy="64.0000000" inputs="0" outputs="1">
    <module name="builtin::testpattern"/>
    <output label="Output"/>
   </GraphNode>
-  <GraphNode id="2" x="883.0000000" y="283.0000000" sx="64.0000000" sy="64.0000000" inputs="1" outputs="2">
+  <GraphNode id="2" x="466.0000000" y="219.0000000" sx="64.0000000" sy="64.0000000" inputs="1" outputs="2">
    <module name="builtin::testpattern"/>
    <input label="Input"/>
    <output label="Output A"/>
    <output label="Output B"/>
   </GraphNode>
-  <GraphNode id="3" x="880.0000000" y="546.0000000" sx="64.0000000" sy="64.0000000" inputs="1" outputs="2">
+  <GraphNode id="3" x="410.0000000" y="312.0000000" sx="64.0000000" sy="64.0000000" inputs="1" outputs="2">
    <module name="builtin::testpattern"/>
    <input label="Input"/>
    <output label="Output A"/>
    <output label="Output B"/>
   </GraphNode>
-  <GraphNode id="7" x="1161.0000000" y="324.0000000" sx="64.0000000" sy="64.0000000" inputs="1" outputs="0">
+  <GraphNode id="7" x="672.0000000" y="254.0000000" sx="64.0000000" sy="64.0000000" inputs="1" outputs="0">
    <module name="builtin::testpattern"/>
    <input label="Input"/>
   </GraphNode>
-  <GraphNode id="8" x="1211.0000000" y="630.0000000" sx="64.0000000" sy="64.0000000" inputs="1" outputs="0">
+  <GraphNode id="8" x="588.0000000" y="379.0000000" sx="64.0000000" sy="64.0000000" inputs="1" outputs="0">
    <module name="builtin::testpattern"/>
    <input label="Input"/>
   </GraphNode>
-  <GraphNode id="9" x="532.0000000" y="509.0000000" sx="64.0000000" sy="64.0000000" inputs="1" outputs="2">
-   <module name="builtin::testpattern"/>
-   <input label="Input"/>
-   <output label="Output A"/>
-   <output label="Output B"/>
-  </GraphNode>
-  <GraphNode id="10" x="1228.0000000" y="451.0000000" sx="64.0000000" sy="64.0000000" inputs="1" outputs="0">
-   <module name="builtin::testpattern"/>
-   <input label="Input"/>
-  </GraphNode>
-  <GraphNode id="11" x="488.0000000" y="246.0000000" sx="64.0000000" sy="64.0000000" inputs="1" outputs="2">
+  <GraphNode id="9" x="250.0000000" y="210.0000000" sx="64.0000000" sy="64.0000000" inputs="1" outputs="2">
    <module name="builtin::testpattern"/>
    <input label="Input"/>
    <output label="Output A"/>
    <output label="Output B"/>
   </GraphNode>
-  <GraphNode id="12" x="673.0000000" y="189.0000000" sx="64.0000000" sy="64.0000000" inputs="1" outputs="2">
+  <GraphNode id="10" x="687.0000000" y="338.0000000" sx="64.0000000" sy="64.0000000" inputs="1" outputs="0">
+   <module name="builtin::testpattern"/>
+   <input label="Input"/>
+  </GraphNode>
+  <GraphNode id="11" x="230.0000000" y="64.0000000" sx="64.0000000" sy="64.0000000" inputs="1" outputs="2">
    <module name="builtin::testpattern"/>
    <input label="Input"/>
    <output label="Output A"/>
    <output label="Output B"/>
   </GraphNode>
-  <GraphNode id="13" x="863.0000000" y="76.0000000" sx="64.0000000" sy="64.0000000" inputs="1" outputs="2">
+  <GraphNode id="12" x="391.0000000" y="133.0000000" sx="64.0000000" sy="64.0000000" inputs="1" outputs="2">
    <module name="builtin::testpattern"/>
    <input label="Input"/>
    <output label="Output A"/>
    <output label="Output B"/>
   </GraphNode>
-  <GraphNode id="14" x="1035.0000000" y="149.0000000" sx="64.0000000" sy="64.0000000" inputs="1" outputs="2">
+  <GraphNode id="13" x="477.0000000" y="44.0000000" sx="64.0000000" sy="64.0000000" inputs="1" outputs="2">
    <module name="builtin::testpattern"/>
    <input label="Input"/>
    <output label="Output A"/>
    <output label="Output B"/>
   </GraphNode>
-  <GraphNode id="15" x="1240.0000000" y="83.0000000" sx="64.0000000" sy="64.0000000" inputs="1" outputs="0">
+  <GraphNode id="14" x="562.0000000" y="130.0000000" sx="64.0000000" sy="64.0000000" inputs="1" outputs="2">
+   <module name="builtin::testpattern"/>
+   <input label="Input"/>
+   <output label="Output A"/>
+   <output label="Output B"/>
+  </GraphNode>
+  <GraphNode id="15" x="692.0000000" y="182.0000000" sx="64.0000000" sy="64.0000000" inputs="1" outputs="0">
    <module name="builtin::testpattern"/>
    <input label="Input"/>
   </GraphNode>
-  <GraphNode id="16" x="327.0000000" y="514.0000000" sx="64.0000000" sy="64.0000000" inputs="1" outputs="2">
+  <GraphNode id="16" x="106.0000000" y="169.0000000" sx="64.0000000" sy="64.0000000" inputs="1" outputs="2">
    <module name="builtin::testpattern"/>
    <input label="Input"/>
    <output label="Output A"/>
@@ -72,17 +72,17 @@
   </GraphNode>
  </GraphNodes>
  <GraphConnections connectioncount="12">
-  <GraphConnection id="0" src_node="3" tgt_node="8" src_type="1" tgt_type="0" src_port="1" tgt_port="0"/>
-  <GraphConnection id="1" src_node="9" tgt_node="2" src_type="1" tgt_type="0" src_port="0" tgt_port="0"/>
-  <GraphConnection id="2" src_node="9" tgt_node="3" src_type="1" tgt_type="0" src_port="1" tgt_port="0"/>
-  <GraphConnection id="3" src_node="2" tgt_node="7" src_type="1" tgt_type="0" src_port="1" tgt_port="0"/>
-  <GraphConnection id="4" src_node="3" tgt_node="10" src_type="1" tgt_type="0" src_port="0" tgt_port="0"/>
-  <GraphConnection id="5" src_node="11" tgt_node="12" src_type="1" tgt_type="0" src_port="1" tgt_port="0"/>
-  <GraphConnection id="6" src_node="12" tgt_node="13" src_type="1" tgt_type="0" src_port="0" tgt_port="0"/>
-  <GraphConnection id="7" src_node="13" tgt_node="14" src_type="1" tgt_type="0" src_port="1" tgt_port="0"/>
-  <GraphConnection id="8" src_node="14" tgt_node="15" src_type="1" tgt_type="0" src_port="1" tgt_port="0"/>
-  <GraphConnection id="9" src_node="1" tgt_node="16" src_type="1" tgt_type="0" src_port="0" tgt_port="0"/>
-  <GraphConnection id="10" src_node="16" tgt_node="9" src_type="1" tgt_type="0" src_port="1" tgt_port="0"/>
-  <GraphConnection id="11" src_node="16" tgt_node="11" src_type="1" tgt_type="0" src_port="0" tgt_port="0"/>
+  <GraphConnection id="44" src_node="3" tgt_node="8" src_type="1" tgt_type="0" src_port="1" tgt_port="0"/>
+  <GraphConnection id="45" src_node="9" tgt_node="2" src_type="1" tgt_type="0" src_port="0" tgt_port="0"/>
+  <GraphConnection id="46" src_node="9" tgt_node="3" src_type="1" tgt_type="0" src_port="1" tgt_port="0"/>
+  <GraphConnection id="47" src_node="2" tgt_node="7" src_type="1" tgt_type="0" src_port="1" tgt_port="0"/>
+  <GraphConnection id="48" src_node="3" tgt_node="10" src_type="1" tgt_type="0" src_port="0" tgt_port="0"/>
+  <GraphConnection id="49" src_node="11" tgt_node="12" src_type="1" tgt_type="0" src_port="1" tgt_port="0"/>
+  <GraphConnection id="50" src_node="12" tgt_node="13" src_type="1" tgt_type="0" src_port="0" tgt_port="0"/>
+  <GraphConnection id="51" src_node="13" tgt_node="14" src_type="1" tgt_type="0" src_port="1" tgt_port="0"/>
+  <GraphConnection id="52" src_node="14" tgt_node="15" src_type="1" tgt_type="0" src_port="1" tgt_port="0"/>
+  <GraphConnection id="53" src_node="16" tgt_node="9" src_type="1" tgt_type="0" src_port="1" tgt_port="0"/>
+  <GraphConnection id="54" src_node="16" tgt_node="11" src_type="1" tgt_type="0" src_port="0" tgt_port="0"/>
+  <GraphConnection id="55" src_node="1" tgt_node="16" src_type="1" tgt_type="0" src_port="0" tgt_port="0"/>
  </GraphConnections>
 </Workspace>

@@ -19,7 +19,7 @@ static void on_new_clicked();
 static void on_open_clicked();
 static void on_save_clicked();
 static void on_saveas_clicked();
-
+void Set_MainWindow_Title(std::string);
 
 static
 void on_button_clicked()
@@ -34,6 +34,7 @@ void on_new_clicked()
 		fprintf(stderr, "on_new_clicked()\n");
 		fflush(NULL);
 		pCustomWidget->ClearCanvas();
+		Set_MainWindow_Title("untitled");
 }
 
 static
@@ -45,6 +46,7 @@ void on_open_clicked()
 		pCustomWidget->run_file_chooser();
 	  if (XML_Load(pCustomWidget->GetFilename())) {
 			pCustomWidget->SetBackingStoreEnabled(true);
+			Set_MainWindow_Title(pCustomWidget->GetFilename());
 			pCustomWidget->SetDirty(false);
 			}
 
@@ -63,6 +65,7 @@ void on_save_clicked()
   if (XML_Save(pCustomWidget->GetFilename())) {
 			pCustomWidget->SetBackingStoreEnabled(true);
 			pCustomWidget->SetDirty(false);
+			Set_MainWindow_Title(pCustomWidget->GetFilename());
 			}
 
 }
@@ -75,6 +78,7 @@ void on_saveas_clicked()
 		    if (XML_Save(pCustomWidget->GetFilename())) {
 					pCustomWidget->SetBackingStoreEnabled(true);
 					pCustomWidget->SetDirty(false);
+				Set_MainWindow_Title(pCustomWidget->GetFilename());
 					}
 				}
 }
@@ -107,7 +111,7 @@ int main (int argc, char **argv)
     //Get the GtkBuilder-instantiated Dialog:
     //
     refBuilder->get_widget("applicationwindow1", pMainWindow);
-    pMainWindow->set_title("Substance Instainer");
+    pMainWindow->set_title("untitled1");
     refBuilder->get_widget("statusbar1", pStatusBar);
     refBuilder->get_widget("viewport1", pViewPort);
     refBuilder->get_widget("customwidget1", pCustomWidget);
@@ -142,4 +146,12 @@ int main (int argc, char **argv)
     geglio_exit();
 
     return 0;
+}
+
+
+void Set_MainWindow_Title(std::string s) 
+{
+
+  pMainWindow->set_title(s);
+	return;
 }
