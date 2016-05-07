@@ -1228,8 +1228,11 @@ void CustomWidget::SetScrolledWindowSize(GraphVector *v)
 //	pViewPort->set_size_request(v->x, v->y);
 //
 //	set_size_request(v->x, v->y);
-	toplevel->set_size_request(-1, -1);
-	toplevel->set_size_request(v->x, v->y);
+//	toplevel->set_size_request(-1, -1);
+//	toplevel->set_size_request(v->x, v->y);
+
+	auto win = toplevel->get_window();
+ 	win->resize(v->x, v->y);
 
 //
 //	toplevel->resize(v->x, v->y);

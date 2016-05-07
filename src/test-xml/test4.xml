@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<Workspace name="" width="925" height="621">
+<Workspace name="" width="925" height="600">
  <!--this file format is currently subject to change-->
  <GraphNodes nodecount="4">
-  <GraphNode id="1" x="104.0000000" y="78.0000000" sx="64.0000000" sy="64.0000000" inputs="0" outputs="1">
+  <GraphNode id="1" x="105.0000000" y="169.0000000" sx="64.0000000" sy="64.0000000" inputs="0" outputs="1">
    <module name="builtin::testpattern"/>
    <output label="Output"/>
   </GraphNode>
-  <GraphNode id="2" x="292.0000000" y="166.0000000" sx="64.0000000" sy="64.0000000" inputs="1" outputs="2">
+  <GraphNode id="2" x="331.0000000" y="307.0000000" sx="64.0000000" sy="64.0000000" inputs="1" outputs="2">
    <module name="builtin::testpattern"/>
    <input label="Input"/>
    <output label="Output A"/>
    <output label="Output B"/>
   </GraphNode>
-  <GraphNode id="3" x="492.0000000" y="83.0000000" sx="64.0000000" sy="64.0000000" inputs="1" outputs="0">
+  <GraphNode id="3" x="702.0000000" y="107.0000000" sx="64.0000000" sy="64.0000000" inputs="1" outputs="0">
    <module name="builtin::testpattern"/>
    <input label="Input"/>
   </GraphNode>
-  <GraphNode id="4" x="580.0000000" y="319.0000000" sx="64.0000000" sy="64.0000000" inputs="1" outputs="0">
+  <GraphNode id="4" x="697.0000000" y="446.0000000" sx="64.0000000" sy="64.0000000" inputs="1" outputs="0">
    <module name="builtin::testpattern"/>
    <input label="Input"/>
   </GraphNode>
